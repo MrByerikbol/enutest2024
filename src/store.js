@@ -20,10 +20,9 @@ export default new Vuex.Store({
     getDeliveryFormObject(state){
       return state.deliveryObject;
     },
-    getWareHouseProductBalance(state){
+    getWareHouseProductBalance(state,choosenProducts){
       // alert(wareHouseId + " " +productId);
       return (wareHouseId,productId)=>{
-        //alert(wareHouseId + " " +productId);
         for (let i = 0;i<state.wareHouseProducts.length;i++){
           let obj = state.wareHouseProducts[i];
           if(obj.wareHouseId===wareHouseId && obj.productId===productId){

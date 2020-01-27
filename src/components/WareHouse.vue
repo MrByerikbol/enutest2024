@@ -122,25 +122,53 @@
             @hide="onDetailModalClose"
             hide-footer>
             <b-form v-on:submit.prevent="addProductToWareHouse1" v-if="hasRole('ADMIN')">
-                    <b-form-row class="mb-3" >
-                        <b-col sm="auto" md="4">
-                            <label class="mr-sm-2" >Бараа сонгох</label>
-
+                    <b-form-row class="mb-3">
+                        <b-col lg="3" sm="auto" md="3">
+                            <label for="productCat">Төрөл</label>
+                            <select v-model="catId" @change="findProduct" class="form-control">
+                                <option value=0>--сонгох--</option>
+                                <option v-for="(c ,i) in productCats" :value=c.catId :key="i">
+                                    {{c.catName}}
+                                </option>
+                            </select>
+                        </b-col>
+                        <b-col lg="4" sm="auto" md="4">
+                            <label class="mr-sm-2" >Өнгө сонгох</label>
                             <model-list-select
-                                :list="products"
+                                :list="productColors"
                                 option-value="id"
                                 option-text="name"
-                                v-model="selectedProduct"
-                                placeholder="Бараа сонгох"
-                               
-                                @searchchange="searchProduct"
-                               
+                                v-model="selectedColor"
+                                placeholder="Өнгө сонгох"
+                                @searchchange="searchColor"
+                                :isDisabled="catId==0 ? true : false"
                             >
                             </model-list-select>
                         </b-col>
-                        
-
-                        <b-col sm="auto" md="3">
+                        <b-col lg="3" sm="auto" md="3">
+                            <label for="productCat">Хэмжээ</label>
+                            <select @change="findProduct" :disabled=" !selectedColor.id ? true : false " v-model="measureId" class="form-control">
+                                <option value=0>--сонгох--</option>
+                                <option v-for="(c ,i) in productMeasures" :value=c.id :key="i">
+                                    {{c.measureName}}
+                                </option>
+                            </select>
+                        </b-col>
+                        <b-col lg="2" sm="auto" md="2">
+                            <label for="productCat">Наалт</label>
+                            <select @change="findProduct" :disabled="measureId==0 ? true : false" v-model="isDirect" class="form-control">
+                                <option value=-1>--сонгох--</option>
+                                <option value=0>
+                                    Шууд бус
+                                </option>
+                                <option value=1>
+                                    Шууд
+                                </option>
+                            </select>
+                        </b-col>
+                    </b-form-row>
+                    <b-form-row class="mb-3" >
+                        <b-col sm="auto" md="4">
                             <label class="mr-sm-2" for="productChargePrice">Барааны үнэ</label>
                             <b-form-input
                                 id="productChargePrice"
@@ -149,7 +177,7 @@
                                 
                             ></b-form-input>
                         </b-col>
-                        <b-col sm="auto" md="2">
+                        <b-col sm="auto" md="4">
                             <label class="mr-sm-2" for="productCount">Барааны тоо</label>
                             <b-form-input
                                 id="productCount"
@@ -158,7 +186,7 @@
                                
                             ></b-form-input>
                         </b-col>
-                        <b-col sm="auto" md="3">
+                        <b-col sm="auto" md="4">
                             <label class="mr-sm-2" for="chargeTotalPrice1">Нийт үнэ</label>
                             <input type="number"
                                 id="chargeTotalPrice1"
@@ -182,7 +210,7 @@
                         </b-col>
                         
                         <b-col lg="6" md="3" class="pt-2">
-                            <b-button  v-if="selectedProduct!=null"
+                            <b-button  v-if="selectedProduct.id && selectedProduct.id>0"
                                 @click="addProduct" class="btn-block" variant="info">
                                 Барааг агуулхад бүртгэх 
                             </b-button>
@@ -211,11 +239,16 @@
                             </b-form-group>
                         </b-col>
                         <b-col lg="2" class="pt-3 text-right">
-                            <strong>тоо:</strong> {{totalRowsDetail}}  
+                            <strong>Барааны тоо:</strong>  {{recentSumOfProductCount}}  
                         </b-col>
-                        <b-col lg="4" class="pt-3 text-right">
-                            <strong>Таталт хийсэн нийт үнэ:</strong> <br> {{recentSumOfPrice}}  
+                        <b-col lg="2" class="pt-3 text-right">
+                            <strong>Нийт үнэ:</strong> {{recentSumOfProductPrice}}  
                         </b-col>
+
+                        <b-col lg="2" class="pt-3 text-right">
+                            <strong>Бичлэг:</strong> {{totalRowsDetail}}  
+                        </b-col>
+
                         <b-table 
                             ref="detailTableRef"
                             striped hover selectable
@@ -278,7 +311,7 @@
                 </b-col>
             </b-form-row>
             <b-form-row>
-                <b-col lg="5">
+                <b-col lg="6">
                     <select class="form-control-sm mt-3" v-model="wId" @change="getWareHouseProduct">
                         <option value=0>---Агуулах сонгох---</option>
                         <option v-for="(w,index) in wareHouses" :value="w.wareHouseId" :key="index">
@@ -286,7 +319,7 @@
                         </option>
                     </select>    
                 </b-col>
-                <b-col lg="5">
+                <b-col lg="6">
                     <b-form-group
                         label-cols-sm="1"
                         label-align-sm="left"
@@ -306,8 +339,11 @@
                     </b-form-group>
                 </b-col>
                 
-                <b-col lg="2" class="pt-3 text-right">
-                    <strong>тоо:</strong> {{totalRowsWareHouseProduct}}  
+                <b-col lg="12" class="py-3 text-right text-info">
+                    Барааны нийт тоо:<strong>{{sumOfProductCount}}</strong>
+                    Нийлбэр үнэ:<strong>{{sumOfProductPrice}}</strong>
+                    бичлэгийн тоо:<strong> {{totalRowsWareHouseProduct}}</strong>
+                    
                 </b-col>
                 <b-table 
                     ref="wareHouseProductTable"
@@ -482,12 +518,20 @@ export default {
         id:0,
         wareHouseName:""
       },
-      products : [],
+
+      catId : 0,
+      colorId : 0,
+      measureId:0,
+      isDirect : -1,  
+      isColorDisabled : true,
+      productColors : [],
+      selectedColor:{},
       selectedProduct:{},
       productCount:0,
       wareHouseId:0,
       chargeDate:"",
-      recentSumOfPrice:0,
+      recentSumOfProductPrice:0,
+      recentSumOfProductCount:0,
       chargingWareHouse:"",
       wareHouses:[],
       selectedChargeProduct:{},
@@ -496,10 +540,55 @@ export default {
       chargeOffWareHouseId:0,
       chargeOffWareHouseName:"",
 
-      choosenProductName : ""
+      choosenProductName : "",
+
+      sumOfProductPrice : 0,
+      sumOfProductCount : 0,
+
+      //the additional development
+      productMeasures: [],
+      
+      productCats : []
     }
   },
   methods:{
+    findProduct(){
+        //alert("came here");
+        if(this.catId > 0 && this.selectedColor.id>0 && this.measureId>0){
+            let findJSON  = {
+                catId : this.catId,
+                colorId : this.selectedColor.id,
+                measureId : this.measureId,
+                isDirect : this.isDirect
+
+            };
+            axios.post(apiDomain+'/admin/bay_warehouse/findproduct',findJSON,{headers:getHeader()})
+            .then(response=>{
+                
+                if(!response.data){
+                    this.selectedProduct={};
+                    this.productCount=0;
+                }   
+                else{
+                    //alert(JSON.stringify(response.data));
+                    this.selectedProduct=response.data;
+                } 
+                
+            })
+            .catch(error => {
+                //console.log(error.message)
+                this.$bvToast.toast(error.message, {
+                    title: 'алдаа',
+                    autoHideDelay: 5000,
+                    variant:'danger'
+                })
+            });     
+        }
+        else{
+            this.selectedProduct= {};
+            this.productCount=0;
+        }
+    },
     listRefresher(){
         this.$refs.wareHouseProductTable.refresh();
     },
@@ -512,6 +601,8 @@ export default {
             this.wId=0;
             this.$refs.wareHouseProductTable.refresh();
             this.totalRowsWareHouseProduct=0;
+            this.sumOfProductPrice=0;
+            this.sumOfProductCount=0;
         } 
     },
     inOutDblClick(row){
@@ -652,10 +743,17 @@ export default {
 
                         if("success"==result){
                             responseText="Үйлдэл амжилттай боллоо."
-                            this.selectedProduct=null;
+                            this.selectedProduct={};
                             this.productCount=0;
                             this.chargeDate="";
+                            this.selectedColor={};
+                            this.productColors=[];
+                            this.catId=0;
+                            this.colorId=0;
+                            this.measureId=0;
+                            this.isDirect=-1;
                             
+                        
                             this.$refs.detailTableRef.refresh();
                         }
                         else{
@@ -668,6 +766,7 @@ export default {
                             })
                         }
                         this.selectedProduct={};
+                        this.productCount=0;
                     })
                     .catch(error => {
                         //console.log(error.message)
@@ -686,19 +785,24 @@ export default {
 
             }
             else{
-                this.$bvToast.toast('Та таталт хийх барааг хайж олно уу', {
-                    title: 'алдаа',
-                    autoHideDelay: 5000
+                this.$bvToast.toast('Таны таталт хийх бараа өгөгдөлийн санд бүртгэгдээгүй байна .', {
+                    title: 'Бараа олох !!!',
+                    autoHideDelay: 5000,
+                    variant:'danger'
                 })    
             }
         }
     },
-    searchProduct(searchText){
+    searchColor(searchText){
         if(this.wareHouseId>0 && searchText.trim().length>0){
-            axios.get(apiDomain+'/admin/delivery/searchproduct/'+this.wareHouseId+'/'+searchText,{headers:getHeader()})
+            this.measureId=0;
+            this.isDirect=-1;
+            this.selectedColor={};
+            axios.get(apiDomain+'/admin/delivery/searchcolor/'+this.wareHouseId+'/'+searchText,{headers:getHeader()})
             .then(response=>{
                 //this.$refs.wareHouseTable.refresh();  
-                this.products=response.data;
+                this.productColors=response.data;
+                
             })
             .catch(error => {
                 //console.log(error.message)
@@ -719,7 +823,7 @@ export default {
           o.type='del_warehouse';
           
           axios.post(apiDomain+'/admin/delivery/deleteref',o,{headers:getHeader()})
-            .then(response=>{
+            .then(()=>{
               this.$refs.wareHouseTable.refresh();  
               this.getRef(6);
             })
@@ -758,7 +862,7 @@ export default {
     submitWareHouse(evt){
           evt.preventDefault();
           axios.post(apiDomain+'/admin/delivery/addwarehouse/',this.wareHouseForm,{headers:getHeader()})
-            .then(response=>{
+            .then(()=>{
                 let alertMsg = "Шинээр агуулах амжилттай үүслээ";
                 this.$bvToast.toast(alertMsg, {
                     title: 'Амжилт',
@@ -802,7 +906,9 @@ export default {
           //alert(JSON.stringify(result));
           return(result.items)
         }).catch(error => {
+
           this.isBusy = false
+          alert(error.message);
           return []
         })
     },
@@ -816,9 +922,12 @@ export default {
             return promise.then((response) => {
                 const result = response.data;
                 this.isBusyWareHouseProduct = false;
-                this.totalRowsWareHouseProduct=result.recordCount;
-                //alert(JSON.stringify(result));
-                return(result.items)
+                this.totalRowsWareHouseProduct=result.dataList.recordCount;
+                this.sumOfProductCount=result.sumOfProductCount;
+                
+                this.sumOfProductPrice=result.sumOfPrice;
+              
+                return(result.dataList.items);
             }).catch(error => {
                 alert(error.message);
                 this.isBusyWareHouseProduct = false;
@@ -838,11 +947,15 @@ export default {
             return promise.then((response) => {
                 const result = response.data;
                 this.isBusyDetail = false
-                this.totalRowsDetail=result.recordCount;
-                this.recentSumOfPrice = result.sumOfPrice;
-                return(result.items);
+                this.totalRowsDetail=result.dataList.recordCount;
+
+                this.recentSumOfProductCount = result.sumOfProductCount;
+                this.recentSumOfProductPrice = result.sumOfPrice;
+
+                return(result.dataList.items);
             }).catch(error => {
             this.isBusyDetail = false
+            alert(error.message);
             return []
             })
         }
@@ -856,16 +969,19 @@ export default {
             if(type===6){
                 this.wareHouses=response.data;
             }
-        })  
-    },
-    mainConsumer(){
-        if(2>5){
-            alert("something is better than something");
-        }
+            if(type===12){
+                this.productMeasures=response.data;
+            }
+            if(type===7){
+                this.productCats=response.data;
+            }
+        });  
     }
   },
   created(){
       this.getRef(6);
+      this.getRef(7);
+      this.getRef(12);
       this.getLoginedUser();
   },
   components: {

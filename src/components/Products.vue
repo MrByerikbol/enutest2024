@@ -1,6 +1,6 @@
 <template>
     <b-row>
-      <b-col lg="5">
+      <b-col lg="4">
         <b-col lg="12">
           <h3>
             <span class="bd-content-title">Барааны төрөл</span>
@@ -11,7 +11,6 @@
             <b-button variant="success" size="sm" class="mr-2" v-b-modal.productCatModal>Шинэ</b-button>
             <b-button variant="info" v-if="selectedCatRows.length==1" size="sm" @click="updateCatRecord" class="mr-2">Засах</b-button>
             <b-button variant="danger" v-if="selectedCatRows.length>0" size="sm" class="mr-2" @click="deleteCatRecord">Устгах</b-button>
-
         </b-col>
         <b-row>
           <b-col lg="6">
@@ -48,21 +47,11 @@
           :per-page="catPerPage"
           :table-variant="tableVariant"
           :filter="catfilter"
-          :select-mode="selectMode"
+          :small="isSmall"
           selected-variant="active"
-        
+          isSmall=true
           @row-selected="onCatSelected"
           >
-          <template v-slot:cell(id)="{ rowSelected }">
-            <template v-if="rowCatSelected">
-              <span aria-hidden="true">&check;</span>
-              <span class="sr-only">Selected</span>
-            </template>
-            <template v-else>
-              <span aria-hidden="true">&nbsp;</span>
-              <span class="sr-only">Not selected</span>
-            </template>
-          </template>
           <template v-slot:table-busy>
             <div class="text-center text-info my-2">
               <b-spinner class="align-middle"></b-spinner>
@@ -108,7 +97,7 @@
               </b-form>    
           </b-modal>
       </b-col>
-      <b-col lg="7">
+      <b-col lg="8">
         <b-col lg="12">
           <h3>
             <span class="bd-content-title">Барааны жагсаалт</span>
@@ -119,7 +108,7 @@
             <b-button variant="success" size="sm" class="mr-2" v-b-modal.productModal>Шинэ</b-button>
             <b-button variant="info" v-if="selectedRows.length==1" size="sm" @click="updateRecord" class="mr-2">Засах</b-button>
             <b-button variant="danger" v-if="selectedRows.length>0" size="sm" class="mr-2" @click="deleteRecord">Устгах</b-button>
-
+            <b-button style="float:right;" variant="primary" size="sm" class="mr-2" @click="productRef">Лавлах сангууд</b-button>
         </b-col>
         <b-row>
           <b-col lg="6">
@@ -168,19 +157,10 @@
           :filter="filter"
           :select-mode="selectMode"
           selected-variant="active"
-        
+          :small="isSmall"
           @row-selected="onProductSelected"
           >
-          <template v-slot:cell(id)="{ rowSelected }">
-            <template v-if="rowSelected">
-              <span aria-hidden="true">&check;</span>
-              <span class="sr-only">Selected</span>
-            </template>
-            <template v-else>
-              <span aria-hidden="true">&nbsp;</span>
-              <span class="sr-only">Not selected</span>
-            </template>
-          </template>
+         
           <template v-slot:table-busy>
             <div class="text-center text-info my-2">
               <b-spinner class="align-middle"></b-spinner>
@@ -203,25 +183,47 @@
         <b-modal id="productModal" title="Шинэ бараа нэмэх" hide-footer>
             <b-form v-on:submit.prevent="submitProduct">
                   <b-form-row class="mb-3">
+
                       <b-col sm="auto" md="12">
-                          <label for="productName">Барааны нэр</label>
+                          <label for="productName">Барааны төрөл</label>
                           <select class="form-control" v-model="productForm.catId">
-                            <option value="0">---сонгох---</option>
+                            <option value=0>---сонгох---</option>
                             <option v-for="(p,i) in productCats " :value="p.catId" :key="i">
                               {{p.catName}}
                             </option>
                           </select>
                       </b-col>
                       <b-col sm="auto" md="12">
-                          <label for="productName">Барааны нэр</label>
-                          <b-form-input
-                              id="productName"
-                              v-model="productForm.productName"
-                              type="text"
-                              required
-                              placeholder="Барааны нэр"
-                          ></b-form-input>
+                          <label for="productColor">Барааны өнгө</label>
+                          <select id="productColor" class="form-control" v-model="productForm.colorId">
+                            <option value=0>---сонгох---</option>
+                            <option v-for="(p,i) in productColors " :value="p.id" :key="i">
+                              {{p.colorName}}
+                            </option>
+                          </select>
                       </b-col>
+                      <b-col sm="auto" md="12">
+                          <label for="productName">Барааны хэмжээ</label>
+                          <select class="form-control" v-model="productForm.measureId">
+                            <option value=0>---сонгох---</option>
+                            <option v-for="(p,i) in productMeasures " :value="p.id" :key="i">
+                              {{p.measureName}}
+                            </option>
+                          </select>
+                      </b-col>
+
+                      <b-col sm="auto" md="12">
+                          <label for="isDirect">Наалтын төрөл</label>
+                          <select 
+                              id="isDirect"
+                              v-model="productForm.isDirect"
+                              class="form-control">
+                          >
+                            <option value=0>Шууд бус</option>
+                            <option value=1>Шууд</option>
+                          </select>
+                      </b-col>
+
                       <b-col sm="auto" md="12">
                           <label  for="productPrice">Барааны үнэ</label>
                           <b-form-input
@@ -249,6 +251,8 @@
                   <b-button type="reset" variant="danger">Арилгах</b-button>
               </b-form>    
           </b-modal>
+
+          <ProductRef v-if="showRef" :parentRefs="getRefs"></ProductRef>
       </b-col>
       
     </b-row>
@@ -257,29 +261,34 @@
 
 <script>
 import axios from 'axios';
-import {apiDomain,loginUrl,getHeader} from "../config/config";
-
+import {apiDomain,getHeader} from "../config/config";
+import ProductRef from './ProductRef';
 export default {
 
   name: 'Products',
   data(){
     return {
       fields: [
-          // {
-          //   key: 'id',
-          //   label: 'Id',
-          // },
+        
           {
             key: 'catName',
-            label: 'Барааны төрөл',
+            label: 'Төрөл',
           },
           {
             key: 'productName',
-            label: 'Барааны нэр',
+            label: 'Өнгө',
+          },
+          {
+            key: 'measureName',
+            label: 'Хэмжээ',
+          },
+          {
+            key: 'isDirect',
+            label: 'Наалт',
           },
           {
             key: 'productPrice',
-            label: 'Барааны үнэ',
+            label: 'Үнэ',
           },
           {
             key: 'productOutPrice',
@@ -301,11 +310,15 @@ export default {
         productName:"",
         productPrice:0,
         productOutPrice:0,
-        catId:0
+        catId:0,
+        measureId:0 , 
+        colorId : 0,
+        isDirect : 0
       },
       catId:0,
       productCats:[],
-
+      productMeasures : [],
+      productColors : [],
       //begining of the product category
       catFields: [
           {
@@ -325,9 +338,9 @@ export default {
       catTotalRows:0,
       catCurrentPage: 1,
       catPerPage: 20,
-      tableVariant:'light',
+     
       catfilter:"",
-      selectMode:'multi',
+    
       selectedCatRows:[],
 
       //begining of the form submission
@@ -335,10 +348,16 @@ export default {
         catId:0,
         catName:""
       },
-      totalCatRows:0
+      totalCatRows:0,
+      showRef : false,
+      isSmall:true 
     }
   },
   methods:{
+    productRef(){
+      this.showRef=true;
+      this.$bvModal.show("productRefModal");
+    },
     catChange(){
       this.$refs.productTable.refresh();
     },
@@ -356,7 +375,7 @@ export default {
           o.type='del_delivery_product';
 
           axios.post(apiDomain+'/admin/delivery/deleteref',o,{headers:getHeader()})
-            .then(response=>{
+            .then(()=>{
               this.$refs.productTable.refresh();  
             })
             .catch(error => {
@@ -374,6 +393,7 @@ export default {
       if(this.selectedRows.length==1){
         let id = this.selectedRows[0].id;
         if(id>0){
+          
           axios.post(apiDomain+'/admin/delivery/getref',{type:'product',id:id},{headers:getHeader()})
           .then(response=>{
             this.productForm=response.data;
@@ -392,28 +412,52 @@ export default {
     },
     submitProduct(evt){
           evt.preventDefault();
-          axios.post(apiDomain+'/admin/delivery/addproduct/',this.productForm,{headers:getHeader()})
-            .then(response=>{
-                let alertMsg = "Шинээр дэлгүүр амжилттай үүслээ";
-                this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
-                    autoHideDelay: 5000
-                })  
-                this.$bvModal.hide('productModal')
+          let dbProduct= this.productForm;
+          if(dbProduct.measureId==0 || dbProduct.colorId==0){
+            this.$bvToast.toast("Та хэмжээ эсвэл өнгө сонгоогүй байна .", {
+                title: 'Алдааны мэдээлэл',
+                variant:'danger',
+                autoHideDelay: 5000
+            });
+            return ;
+          }
+          axios.post(apiDomain+'/admin/delivery/addproduct/',dbProduct,{headers:getHeader()})
+            .then((response)=>{
                 this.productForm={
                     id:0,
                     productName:"",
                     productPrice:0,
                     productOutPrice:0,
-                    catId:0
+                    catId:0,
+                    measureId : 0,
+                    colorId : 0,
+                    isDirect : 0
                 }
+                if(response.data == 'dublicated'){
+                  this.$bvToast.toast('Энэ бараа лавлах санд бүртгэгдсэн байна .', {
+                    title: 'Алдааны мэдээлэл',
+                    variant:'danger',
+                    autoHideDelay: 5000
+                  })
+                  return ;
+                }
+                let alertMsg = "Шинээр дэлгүүр амжилттай үүслээ";
+                this.$bvToast.toast(alertMsg, {
+                    title: 'Амжилт',
+                    autoHideDelay: 5000,
+                    variant:"info"
+                })  
+                this.$bvModal.hide('productModal')
+                
+                
                 this.$refs.productTable.refresh();
                 this.$refs.catTable.refresh();
             })
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Амжилт',
+                    title: 'Алдааны мэдээлэл',
+                    variant:'danger',
                     autoHideDelay: 5000
                 })
             }
@@ -436,6 +480,7 @@ export default {
           return(result.items)
         }).catch(error => {
           this.isBusy = false
+          alert(error.message);
           return []
         })
     },
@@ -453,9 +498,11 @@ export default {
           o.type='bay_product_category';
 
           axios.post(apiDomain+'/admin/delivery/deleteref',o,{headers:getHeader()})
-            .then(response=>{
+            .then(()=>{
               this.$refs.catTable.refresh(); 
-              this.getRefs(); 
+              this.getRefs(7);
+              this.getRefs(11);
+              this.getRefs(12);
             })
             .catch(error => {
                 //console.log(error.message)
@@ -476,7 +523,9 @@ export default {
           .then(response=>{
             this.catForm=response.data;
             this.$bvModal.show('productCatModal');
-            this.getRefs(); 
+            this.getRefs(7);
+            this.getRefs(11);
+            this.getRefs(12);
           })
           .catch(error => {
               //console.log(error.message)
@@ -492,7 +541,7 @@ export default {
     submitCat(evt){
           evt.preventDefault();
           axios.post(apiDomain+'/admin/pcat/addproductcategory/',this.catForm,{headers:getHeader()})
-            .then(response=>{
+            .then(()=>{
                 let alertMsg = "Шинээр барааны амжилттай үүслээ";
                 this.$bvToast.toast(alertMsg, {
                     title: 'Амжилт',
@@ -505,7 +554,9 @@ export default {
                 }
                 this.$refs.catTable.refresh();
                 this.$refs.productTable.refresh();
-                this.getRefs();
+                this.getRefs(7);
+                this.getRefs(11);
+                this.getRefs(12);
             })
             .catch(error => {
                 //console.log(error.message)
@@ -532,13 +583,23 @@ export default {
           return(result.items)
         }).catch(error => {
           this.isCatBusy = false
+          alert(error.message);
           return []
         })
     },
-    getRefs(){
-      axios.get(apiDomain+'/admin/delivery/refs/'+7,{headers:getHeader()})
+    getRefs(type){
+     
+      axios.get(apiDomain+'/admin/delivery/refs/'+type,{headers:getHeader()})
           .then(response=>{
-              this.productCats=response.data;
+              if(type==7){
+                this.productCats=response.data;
+              }
+              if(type==11){
+                this.productColors=response.data;
+              }
+              if(type==12){
+                this.productMeasures=response.data;
+              }
           })
           .catch(error => {
             alert(error.message);
@@ -547,8 +608,13 @@ export default {
     }
   },
   created(){
-    this.getRefs();
+    this.getRefs(7);
+    this.getRefs(11);
+    this.getRefs(12);
+  },
+  components:{
+    ProductRef
   }
- 
+  
 }
 </script>

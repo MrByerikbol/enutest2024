@@ -58,12 +58,29 @@
                                 </option>
                             </select>
                         </b-col>
+                        <b-col sm="auto"  md="2" lg="2">
+                            <label class="mr-sm-2" :for="'wareHouse'+index">Склад</label>
+                            <select class="form-control"
+                                :id="'wareHouse'+index"
+                                
+                                :disabled="!choosenProducts[index].deliveryProductId || 
+                                    choosenProducts[index].deliveryProductId==null"
+                                v-model="choosenProducts[index].wareHouseId">
+                                
+                                <option v-for="(w,index) in wareHouses" :key="index" :value="w.wareHouseId">
+                                    {{w.wareHouseName}}
+                                </option>
+                                
+                            ></select>
+                        </b-col>
                         <b-col sm="auto" md="2" lg="2">
                             <label class="mr-sm-2" for="productPrice">Нэгжийн үнэ</label>
                             <b-form-input
                                 id="productPrice"
                                 v-model="choosenProducts[index].productPrice"
                                 type="number"
+                                :disabled="choosenProducts[index].wareHouseId==0 ||
+                                    !choosenProducts[index].wareHouseId"
                                 required
                                 @change="totalCalculation(index)"
                             ></b-form-input>
@@ -76,12 +93,16 @@
                                 type="number"
                                 min="1"
                                 required
-                                @change="totalCalculation(index)"
+                                :disabled="choosenProducts[index].wareHouseId==0 ||
+                                    !choosenProducts[index].wareHouseId"
+                                
+                                
                             ></b-form-input>
                         </b-col>
                         <b-col sm="auto"  md="2" lg="2">
                             <label class="mr-sm-2" for="totalPrice">Нийт дүн</label>
                             <b-form-input
+                                
                                 id="totalPrice"
                                 v-model="choosenProducts[index].totalPrice"
                                 type="number"
@@ -89,18 +110,7 @@
                                 readonly
                             ></b-form-input>
                         </b-col>
-                         <b-col sm="auto"  md="2" lg="2">
-                            <label class="mr-sm-2" :for="'wareHouse'+index">Склад</label>
-                            <select class="form-control"
-                                :id="'wareHouse'+index"
-                                v-model="choosenProducts[index].wareHouseId">
-
-                                <option v-for="(w,index) in wareHouses" :key="index" :value="w.wareHouseId">
-                                    {{w.wareHouseName}}
-                                </option>
-                                
-                            ></select>
-                        </b-col>
+                        
                         <b-col sm="auto" md="2" lg="2" >
                              <b-form-row>
                                  
@@ -119,14 +129,17 @@
                                      
                                      
                                      <strong>
-                                         <span :class="{'text-danger':(lastBalance(choosenProducts[index].wareHouseId, 
-                                                    choosenProducts[index].deliveryProductId )
-                                                    -choosenProducts[index].productCount)<=0}">
-
-                                                     {{lastBalance(choosenProducts[index].wareHouseId , 
-                                                    choosenProducts[index].deliveryProductId )
-                                                    -choosenProducts[index].productCount}}
-
+                                        
+                                         <span :class="{'text-danger':(lastBalance(
+                                                    
+                                                    choosenProducts[index].wareHouseId, 
+                                                    choosenProducts[index].deliveryProductId
+                                                    ))<=0}">
+                                                     {{lastBalance(
+                                                        
+                                                         choosenProducts[index].wareHouseId ,
+                                                         choosenProducts[index].deliveryProductId
+                                                    )}}
                                         </span>
                                     </strong>
                                  </b-col>
@@ -166,6 +179,18 @@
                                         </option>
                                     </select>
                                 </b-col>
+                                <b-col sm="auto"  md="2" lg="2">
+                                    <label class="mr-sm-2" :for="'wareHouse'+r+27">Склад</label>
+                                    <select class="form-control"
+                                        :id="'wareHouse'+r+27"
+                                        v-model="c.wareHouseId">
+
+                                        <option v-for="(w,wx) in wareHouses" :key="wx" :value="w.wareHouseId">
+                                            {{w.wareHouseName}}
+                                        </option>
+                                        
+                                    ></select>
+                                </b-col>
                                 <b-col lg="2">
                                     <label class="mr-sm-2" >Нэгжийн үнэ </label>
                                     <b-form-input
@@ -183,7 +208,10 @@
                                         type="number"
                                         min="1"
                                         required
+                                        :disabled="c.wareHouseId==0 || !c.wareHouseId"
+
                                         @change="pvhTotalCalculation(c)"
+
                                     ></b-form-input>
                                 </b-col>
                                 <b-col sm="auto" md="2" lg="2">
@@ -196,18 +224,7 @@
                                         readonly
                                     ></b-form-input>
                                 </b-col>
-                                <b-col sm="auto"  md="2" lg="2">
-                                    <label class="mr-sm-2" :for="'wareHouse'+r+27">Склад</label>
-                                    <select class="form-control"
-                                        :id="'wareHouse'+r+27"
-                                        v-model="c.wareHouseId">
-
-                                        <option v-for="(w,wx) in wareHouses" :key="wx" :value="w.wareHouseId">
-                                            {{w.wareHouseName}}
-                                        </option>
-                                        
-                                    ></select>
-                                </b-col>
+                                
                                 <b-col lg="1" class="mt-4 pt-3 text-right" 
                                     v-if="c.wareHouseId 
                                          && c.productId &&
@@ -216,11 +233,13 @@
                                      
                                      
                                      <strong>
-                                         <span :class="{'text-warning':(lastBalance(c.wareHouseId, 
-                                                    c.productId )
-                                                    -c.productCount)<=0}">
-                                            {{lastBalance(c.wareHouseId , c.producId)-c.productCount}}
+                                       
+                                     
+                                        <span :class="{'text-warning':lastBalance(c.wareHouseId, 
+                                                    c.productId ) <=0}">
+                                            {{lastBalance(c.wareHouseId , c.productId)}}
                                         </span>
+                                         
                                     </strong>
                                  </b-col>
                                  <b-col lg="1" class="mt-3 pt-3 text-right">
@@ -256,22 +275,95 @@
                                 <b-col lg="3" class="text-right text-danger font-italic" 
                                     style="text-decoration:underline !important;">
                                     Зээлийн хэтрэлт: <strong>{{totalPriceOfOrder-loanDbResult.possibleLoan}}</strong>
+                                    <br>
+                                    <span class="text-info" v-if="(totalPriceOfOrder-loanDbResult.possibleLoan)>0">
+                                        Та зээлийн хэтрэлтгүй байж зээл авах боломжтой.
+                                    </span>
                                 </b-col>
                             </b-form-row>
                         </b-col>
                         <b-col lg="12" v-if="!loanResult && loanDbResult.loanBalance>0" class="text-right">
-                            <button type="button" class="btn btn-sm btn-secondary">
+                            <button type="button" v-b-modal.loanPaymentModal class="btn btn-sm btn-secondary">
                                 зээл төлөх
                             </button>
+
+                            <b-modal id="loanPaymentModal" title="Клиентийн зээл төлөх" hide-footer>
+                                <b-form v-on:submit.prevent="submitUserLoan">
+                                    <b-form-row class="mb-3">
+                                        
+                                        <b-col sm="auto" md="12">
+                                            <label for="userLoan">Зээлийн хэжмээ</label>
+                                            <input
+                                                id="userLoan"
+                                                v-model="userLoanForm.userLoan"
+                                                type="number"
+                                                min="1"
+                                                :max="loanDbResult.loanBalance"
+                                                required
+                                                class="form-control"
+                                                oninvalid="this.setCustomValidity('Төлөх зээлийн хэмжээ буруу байна !!!')"
+                                                oninput="(function(e){e.setCustomValidity('');return !e.validity.valid && e.setCustomValidity(' ')})(this)"
+                                                placeholder="Төлөх зээлийн хэмжээ"
+                                            />
+                                        </b-col>
+                                        <b-col sm="auto" md="12">
+                                            <label for="loanDescription">Тайлбар</label>    
+                                            <textarea id="loanDesciprion" class="form-control"
+                                             oninvalid="this.setCustomValidity('Та тайлбар заавал оруулах хэрэгтэй !!!')"
+                                             onvalid="this.setCustomValidity('')"
+                                             required v-model="userLoanForm.loanDescription"></textarea>
+                                        </b-col>
+
+                                    </b-form-row>
+                                    <b-button type="submit" variant="primary" class="mr-2">Зээл төлөх</b-button>
+                                    <b-button type="reset" variant="danger">Арилгах</b-button>
+                                </b-form>    
+                            </b-modal>
                         </b-col>
+                        
                     </b-form-row>
                     <b-form-row>
-                        <b-col lg="12" class="text-right">
+                        <b-col lg="4">
+                            <b-alert show variant="danger"  v-if="prematureList.length>0">
+                                <h6>Татах шаардлагатай листүүд</h6> 
+                                <hr>
+                              
+                                <div v-for="(p,i) in prematureList" :key="i"    >
+                                    <span v-if="lastBalance(p.wareHouseId,p.productId)<0 
+
+                                        && productName(p.productId,'dbList')!=null">
+
+
+                                       {{ productName(p.productId,'dbList')+':'}} 
+                                       <span class="text-danger">{{lastBalance(p.wareHouseId,p.productId)}}</span>
+
+                                    </span>
+                                    
+
+                                </div>
+                            
+                            </b-alert>
+                        </b-col>
+                        <b-col lg="4">
+                            <b-alert show variant="warning"  v-if="prematurePvh.length>0">
+                                <h6>Татах шаардлагатай пвх</h6> 
+                                <hr>
+                                <div v-for="(p,i) in prematurePvh" :key="i" >
+                                    <span v-if="lastBalance(p.wareHouseId,p.productId)<0 
+                                        && productName(p.productId,'pvh')!=null">
+                                       {{ productName(p.productId,'pvh')+':'}} <span class="text-danger">{{lastBalance(p.wareHouseId,p.productId)}}</span>
+                                    </span>
+                                </div>                          
+                            </b-alert>
+                        </b-col>
+                        <b-col lg="4" class="text-right">
                             <b-button type="submit" 
                                 v-if="totalPriceOfOrder>0 && choosenProducts.length>0
-                                    && deliveryObject.userId>0 && mainOrderFormChecker && loanResult" 
+                                    && deliveryObject.userId>0
+                                    && mainOrderFormChecker && loanResult" 
                                 variant="primary" class="mr-2">Листийн захиалага үүсгэх</b-button>
-                            <b-button type="reset" variant="danger">Арилгах</b-button>
+
+                                <b-button type="reset" variant="danger">Арилгах</b-button>
                         </b-col>
                     </b-form-row>
 
@@ -284,8 +376,8 @@
 </template>
 <script>
     import axios from 'axios';
-    import {apiDomain,loginUrl,getHeader} from "../config/config";
-    import {mapActions,mapState ,mapGetters} from 'vuex';
+    import {apiDomain,getHeader} from "../config/config";
+    import {mapState ,mapGetters} from 'vuex';
     export default{
         name:'NewDelivery',
 
@@ -293,10 +385,45 @@
             return {
                 choosenProducts:[],
                 loanResult : true,
-                loanDbResult : {}
+                loanDbResult : {},
+                userLoanForm:{
+                    userId:0,
+                    userLoan:1,
+                    loanDescription:""
+                },
+                prematureList : [],
+                prematurePvh:[]
             }
         },
         methods: {
+            submitUserLoan(){
+                this.userLoanForm.userId=this.deliveryFormObject.userId;
+                if(this.userLoanForm.userId > 0 && this.userLoanForm.userLoan>1 
+                    && this.userLoanForm.loanDescription.trim().length>0){
+                    
+                    axios.post(apiDomain+'/admin/order/payloan',
+                        this.userLoanForm,{headers:getHeader()})
+                    .then(()=>{
+                        this.checkLoan(this.userLoanForm.userId,this.totalPriceOfOrder);
+
+                    })
+                    .catch(error => {
+                        //console.log(error.message)
+                        this.$bvToast.toast(error.message, {
+                            title: 'алдаа',
+                            autoHideDelay: 5000
+                        });
+                        this.loanResult=false;
+                    }) 
+                }
+                else{
+                    this.$bvToast.toast("Та бүх талбаруудыг бөглөнө үү.", {
+                        title: 'алдаа',
+                        autoHideDelay: 5000
+                    });    
+                }
+            },
+
             checkLoan(userId,loan){
                 try {
                     if(this.deliveryFormObject.isLoan){
@@ -309,6 +436,12 @@
                             if(!response.data.result){
                                 this.loanResult=false;
                                 this.loanDbResult=response.data;
+                                this.$bvModal.hide("loanPaymentModal");
+                                this.userLoanForm={
+                                    userId:0,
+                                    userLoan:1,
+                                    loanDescription:""    
+                                }
                             }
                             else{
                                 this.loanDbResult={};
@@ -335,9 +468,12 @@
             getTotalPvh(){
                 let totalPvh =0;
                 for(let j = 0;j<this.choosenProducts.length;j++){
-                    for(let m = 0;m<this.choosenProducts[j].relDetails.length;m++){
-                        totalPvh++;
+                    if(this.choosenProducts[j].relDetails){
+                        for(let m = 0;m<this.choosenProducts[j].relDetails.length;m++){
+                            totalPvh++;
+                        }
                     }
+                    
                 }
                 return totalPvh;
             },
@@ -353,7 +489,11 @@
                 if(this.deliveryFormObject.isLoan){
                     this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
                 }
+
+                this.deleteFromPremateurePvh();
+
             },
+             
             pvhTotalCalculation(c){
                 c.totalPrice=c.productCount*c.productPrice;
                 if(this.deliveryFormObject.isLoan){
@@ -378,6 +518,8 @@
                 if(this.deliveryFormObject.isLoan){
                     this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
                 }
+
+                this.deleteFromPremateurePvh();
             },
             hasRelDetail(index){
                 //alert("has pvh "+this.choosenProducts[index].hasRelDetail);
@@ -426,8 +568,14 @@
                 if(this.deliveryFormObject.isLoan){
                     this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
                 }
+
+                 this.deleteFromPremateurePvh();
+
+                 this.deleteFromPremateureList();
             },
+            
             productChange(item){
+               
                 let productId=this.choosenProducts[item].deliveryProductId;
                 //alert(productId);
                 let found =null;
@@ -445,6 +593,8 @@
                 if(this.deliveryFormObject.isLoan){
                     this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
                 }
+
+                this.deleteFromPremateureList();
             },
             addProductField(){
                 this.choosenProducts.push(
@@ -477,34 +627,31 @@
                     }
                     else{
                         this.deliveryObject.deliveryProducts=this.choosenProducts;
-                        axios.post(apiDomain+'/admin/delivery/adddelivery/',this.deliveryObject,{headers:getHeader()})
-                        .then(response=>{
+
+                        if(this.deliveryObject.isLoan===false){
+                            this.deliveryObject.isLoan=0;
+                        }
+                        if(this.deliveryObject.isLoan===true){
+                            this.deliveryObject.isLoan=1;
+                        }
+                        //this.deliveryObject.totalProductPrice=this.totalPriceOfOrder;
+                        //this.deliveryObject.totalCash=this.totalPriceOfOrder;
+
+                        axios.post(apiDomain+'/admin/order/postorder',this.deliveryObject,{headers:getHeader()})
+                        .then(()=>{
                             //alert(response.data);
-                            if(response.data=='norole'){
-                                this.$bvToast.toast('Та энэ үйлдэлийг хийх эрхгүй', {
-                                title: 'Алдаа',
-                                autoHideDelay: 5000
-                                })
-                            }
-                            if(response.data=='noOperatorRole'){
-                                this.$bvToast.toast('Та зөвхөн өөрийн үүсгэсэн хүргэлт засах боломжтой', {
-                                title: 'Алдаа',
-                                autoHideDelay: 5000
-                                })
-                            }
-                            if(response.data=='success'){
-                                this.$router.push({name:'Deliveries'});
-                                this.$bvToast.toast('Хүргэлт амжилттай үүслээ', {
+                            this.$bvToast.toast('Захиалага амжилттай үүслээ.', {
                                 title: 'Амжилт',
                                 autoHideDelay: 5000
-                                })
-                            }
-                            
+                            });
+                            this.prematureList=[];
+                            this.prematurePvh=[];
+                            this.$router.push({name:'Deliveries'});
                         })
                         .catch(error => {
                             //console.log(error.message)
                             this.$bvToast.toast(error.message, {
-                                title: 'Амжилт',
+                                title: 'Алдааны мэдээлэл',
                                 autoHideDelay: 5000
                             })
                         }) 
@@ -515,7 +662,7 @@
                     this.$bvToast.toast('Та хамгийн багадаа 1 бараа сонгох хэрэгтэй.', {
                         title: 'Анхааруулга',
                         autoHideDelay: 5000
-                    })    
+                    });    
                 }
                 
             },
@@ -531,9 +678,141 @@
             onReset(evt) {
                 evt.preventDefault()
                
+            },
+            deleteFromPremateureList(){
+                if(this.choosenProducts.length==0){
+                    for (let q = 0;q<this.prematureList.length;q++){
+                        this.prematureList.splice(q,1);
+                    }
+                }
+
+                let delIndexes;
+                for (let r = 0;r<this.prematureList.length;r++){
+                    let productId = this.prematureList[r].productId;
+                    let wareHouseId = this.prematureList[r].wareHouseId;
+
+                    let exist=false;
+                    for (let t = 0;t<this.choosenProducts.length;t++){
+                        if(this.choosenProducts[t].wareHouseId===wareHouseId
+                            && this.choosenProducts[t].productId===productId){
+                                exist=true;
+                                break;
+                        }
+                    }
+                    if(!exist){
+                        delIndexes.push(r);
+                    }
+                }
+                if(delIndexes.length>0){
+                    for (let d = 0;d<delIndexes.length;d++){
+                        this.prematureList.splice(parseInt(delIndexes[d]),1);
+                    }
+                    
+                }
+            },
+            deleteFromPremateurePvh(){
+                let delIndexes= [];
+                for (let r = 0;r<this.prematurePvh.length;r++){
+                    let productId = this.prematurePvh[r].productId;
+                    let wareHouseId = this.prematurePvh[r].wareHouseId;
+
+                    let exist=false;
+                    for (let t = 0;t<this.choosenProducts.length;t++){
+                        let details = this.choosenProducts[t].relDetails;
+                        if(details){
+                            for (let k = 0;k<details.length;k++){
+                                if(details[k].wareHouseId===wareHouseId && 
+                                    details[k].productId===productId){
+                                        exist=true;
+                                        break;
+                                }
+                            }
+                        }
+                        if(exist){
+                            break;
+                        }
+                    }
+                    if(!exist){
+                        delIndexes.push(r);
+                    }
+                }
+                if(delIndexes.length>0){
+                    for (let d = 0;d<delIndexes.length;d++){
+                        this.prematurePvh.splice(parseInt(delIndexes[d]),1);
+                    }
+                    
+                }
+            },
+            getGivenProductCount(wareHouseId, productId) {
+                let totalPrice = 0;
+                for (let m =0 ;m<this.choosenProducts.length;m++){
+                    if(this.choosenProducts[m].deliveryProductId===productId
+                     && this.choosenProducts[m].wareHouseId===wareHouseId){
+                        totalPrice=totalPrice+parseInt(this.choosenProducts[m].productCount);
+                       
+                        if(this.prematureList.length==0){
+                            this.prematureList.push({"wareHouseId":wareHouseId, "productId":productId});
+                        }
+                        else{
+                             let checker = 0;
+                             for (let y = 0;y<this.prematureList.length;y++){
+                                 if(this.prematureList[y].productId===productId){
+                                     checker++;
+                                 }
+                             }
+                             if(checker==0){
+                                this.prematureList.push({"wareHouseId":wareHouseId, "productId":productId});    
+                             }
+                        }
+
+                    }
+                    
+                    let detailProducts=this.choosenProducts[m].relDetails;
+                    if(detailProducts){
+                        for(let k = 0;k<detailProducts.length;k++){
+                            if(detailProducts[k].productId===productId &&
+                               detailProducts[k].wareHouseId===wareHouseId){
+                                totalPrice=totalPrice+parseInt(detailProducts[k].productCount);
+                                if(this.prematurePvh.length==0){
+                                    this.prematurePvh.push({"wareHouseId":detailProducts[k].wareHouseId, "productId":productId});
+                                }
+                                else{
+                                    let checker = 0;
+                                    for (let y = 0;y<this.prematurePvh.length;y++){
+                                        if(this.prematurePvh[y].wareHouseId===wareHouseId && this.prematurePvh[y].productId===productId){
+                                            checker++;
+                                        }
+                                    }
+                                    if(checker==0){
+                                        this.prematurePvh.push({"wareHouseId":detailProducts[k].wareHouseId, "productId":productId});    
+                                    }
+                                }
+                            }
+
+
+                            
+                        }
+                    }
+                    
+                }
+                
+                return totalPrice;
+            },
+            getRegProduct(productId,type){
+              
+                if(type==='choosen'){
+                    return element=>element.deliveryProductId===productId;
+                }
+                if(type==='dbList'){
+                    return element=>element.value===productId;
+                }
+                if(type==='pvh'){
+                    return element=>element.value===productId;
+                }
+                
             }
-            
         },
+        
         computed: {
             ...mapState([
                 'products',
@@ -559,15 +838,22 @@
                 for (let m =0 ;m<this.choosenProducts.length;m++){
                     totalPrice=totalPrice+this.choosenProducts[m].totalPrice;
                     let detailProducts=this.choosenProducts[m].relDetails;
-                    for(let k = 0;k<detailProducts.length;k++){
-                        totalPrice=totalPrice+detailProducts[k].totalPrice;
+                    if(detailProducts){
+                        for(let k = 0;k<detailProducts.length;k++){
+                            totalPrice=totalPrice+detailProducts[k].totalPrice;
+                        }
                     }
+                    
                 }
                 
                 return totalPrice;
             },
+           
             lastBalance:function(){
-                return (wareHouseId,productId) => this.getWareHouseProductBalance(wareHouseId,productId);
+                
+                return (wareHouseId,productId) => {
+                    return this.getWareHouseProductBalance(wareHouseId,productId)-this.getGivenProductCount(wareHouseId,productId);  
+                }
             },
             mainOrderFormChecker : function(){
                 let theResult = true;
@@ -596,6 +882,28 @@
                     return false;
                 }
                 
+            },
+            productName:function(){
+                return (productId,pType)=>{
+                    if(pType=='pvh'){
+                         if(this.detailProducts.filter(this.getRegProduct(productId,pType)).length>0){
+                             return this.detailProducts.filter(this.getRegProduct(productId,pType))[0].text    
+                         }
+                         else{
+                            
+                             return null;
+                         }
+                    }
+                    else{
+                        if(this.products.filter(this.getRegProduct(productId,pType)).length>0){
+                            return this.products.filter(this.getRegProduct(productId,pType))[0].text    
+                        }
+                        else{
+                            //alert("danda");
+                            return null;
+                        }
+                    }
+                }
             }
            
         }

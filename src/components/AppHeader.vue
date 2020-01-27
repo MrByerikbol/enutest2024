@@ -1,7 +1,7 @@
 <template>
   <div>
   <b-navbar toggleable="lg" type="dark" variant="info">
-    <b-navbar-brand href="#">Хүргэлтийн систем</b-navbar-brand>
+    <b-navbar-brand href="#">Распилийн систем</b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -11,7 +11,7 @@
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') " href="javascript:void(0)" @click="newDelivery">
           Шинэ лист
         </b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') || hasRole('DELIVERY')" href="/#/deliveries">Хүргэлт</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') || hasRole('DELIVERY')" href="/#/deliveries">Захиалгууд</b-nav-item>
 
         <b-nav-item v-if="hasRole('ADMIN') 
           || hasRole('MANAGER')" href="javascript:void(0)" @click="doCalculation1">Тооцоо</b-nav-item>
@@ -118,7 +118,7 @@ export default {
           this.$router.push({name:'Login'});
       })
       .catch(error => {
-          console.log(error.message)    
+          alert(error.message);    
       })
        
     },

@@ -96,12 +96,23 @@
                         </b-input-group>
                         </b-form-group>
                     </b-col>
-                    <b-col lg="2" class="pt-3 text-right">
-                        <strong>тоо:</strong> {{totalRowsDetail}}  
+
+                    <b-col lg="12" class="py-3 text-right text-info">
+                        <b-form-row>
+                            <b-col lg="5" class="pt-3 text-right">
+                                <strong>Зарлага хийсэн нийт үнэ:</strong> {{recentSumOfProductPrice}}  
+                            </b-col>  
+                            <b-col lg="4" class="pt-3 text-right">
+                                <strong>Нийт тоо:</strong>  {{recentSumOfProductCount}}  
+                            </b-col>
+                            <b-col lg="3" class="pt-3 text-right">
+                                <strong>Бичлэг:</strong>{{totalRowsDetail}}
+                            </b-col>
+                        </b-form-row>    
+                      
+                        
                     </b-col>
-                    <b-col lg="4" class="pt-3 text-right">
-                        <strong>Зарлага хийсэн нийт үнэ:</strong> <br> {{recentSumOfPrice}}  
-                    </b-col>
+                    
                     <b-table 
                         ref="chargeOffTable"
                         striped hover selectable
@@ -198,7 +209,8 @@
                 perPageDetail: 20,
                 tableVariantDetail:'light',
                 filterDetail:"",
-                recentSumOfPrice:0,
+                recentSumOfProductPrice:0,
+                recentSumOfProductCount:0,
 
                 chargeOff:{
                     wareHouseId : 0,
@@ -322,12 +334,14 @@
                     return promise.then((response) => {
                         const result = response.data;
                         this.isBusyDetail = false
-                        this.totalRowsDetail=result.recordCount;
-                        this.recentSumOfPrice = result.sumOfPrice;
-                        return(result.items);
+                        this.totalRowsDetail=result.dataList.recordCount;
+                        this.recentSumOfProductPrice = result.sumOfPrice;
+                        this.recentSumOfProductCount = result.sumOfProductCount;
+                        return(result.dataList.items);
                     }).catch(error => {
-                    this.isBusyDetail = false
-                    return []
+                        this.isBusyDetail = false
+                        alert(error.message);
+                        return []
                     })
                 }
             }

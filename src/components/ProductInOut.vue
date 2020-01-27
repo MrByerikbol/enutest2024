@@ -77,13 +77,13 @@
                                 <strong>тоо:</strong> {{totalRowsDetail}}  
                             </b-col>
                             <b-col lg="4" class="pt-3 text-right">
-                                <strong>Зарлага хийсэн нийт үнэ:</strong> <br>{{chargeSumOfPrice}}   
+                                <strong>Зарлага хийсэн нийт үнэ:</strong> <br>{{sumOfchargeProductPrice}}   
                             </b-col>
                             <b-col lg="4" class="mt-2">
                                 <button v-if="iBeginDate!='' && iEndDate!=''" type="button" @click="getHistory(1)" class="btn btn-primary btn-sm mt-2">Шүүх</button>
                             </b-col>
                             <b-col lg="8" class="text-right mt-2 text-primary">
-                                <strong>Нийт орлогодосон тоо:</strong> {{sumOfChargeCount}}
+                                <strong>Нийт орлогодосон тоо:</strong> {{sumOfchargeProductCount}}
                             </b-col>
                          </b-form-row>
                          <b-form-row>
@@ -180,17 +180,18 @@
                                     placeholder="Хайлт хийх утгаа оруулна уу"
                                 ></b-form-input>
                             </b-col>
+
                             <b-col lg="2" class="pt-3 text-right">
                                 <strong>тоо:</strong> {{totalRowsOff}}  
                             </b-col>
                             <b-col lg="4" class="pt-3 text-right">
-                                <strong>Зарлага хийсэн нийт үнэ:</strong> <br>{{chargeOffSumOfPrice}}   
+                                <strong>Зарлага хийсэн нийт үнэ:</strong> <br>{{sumOfchargeOffProductPrice}}   
                             </b-col>
                             <b-col lg="4" class="mt-2">
                                 <button v-if="oBeginDate!='' && oEndDate!=''" type="button" @click="getHistory(2)" class="btn btn-danger btn-sm mt-2">Шүүх</button>
                             </b-col>
                             <b-col lg="8" class="text-right mt-2 text-danger">
-                                <strong>Нийт зарлагадсан тоо:</strong> {{sumOfChargeOutCount}}
+                                <strong>Нийт зарлагадсан тоо:</strong> {{sumOfchargeOffProductCount}}
                             </b-col>
                          </b-form-row>
                          <b-form-row>
@@ -237,7 +238,7 @@
 
 <script>
 import axios from 'axios';
-import {mapActions,mapState} from 'vuex';
+
 import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import {kk} from 'vuejs-datepicker/dist/locale'
@@ -292,9 +293,8 @@ require('moment/locale/es')
                 perPageDetail: 20,
                 tableVariantDetail:'light',
                 filterDetail:"",
-                chargeSumOfPrice:0,
-
-                sumOfChargeCount:0,
+                sumOfchargeProductPrice:0,
+                sumOfchargeProductCount:0,
                 //begining of the chargeoff list
                 
                 chargeOutFields: [
@@ -329,8 +329,8 @@ require('moment/locale/es')
                 perPageOff: 20,
               
                 filterOff:"",
-                chargeOffSumOfPrice:0,
-                sumOfChargeOutCount:0
+                sumOfchargeOffProductPrice:0,
+                sumOfchargeOffProductCount:0
             }
         },
         methods:{
@@ -350,18 +350,22 @@ require('moment/locale/es')
                 this.iBeginDate="";
                 this.iEndDate="";
                 this.wareHouseId=0;
-                this.chargeSumOfPrice=0;
+                this.sumOfchargeProductPrice=0;
                 this.totalRowsDetail=0;
 
                 this.filterOff="";
                 this.oBeginDate="";
                 this.oEndDate="";
                 this.wareHouseOffId=0;
-                this.chargeOffSumOfPrice=0;
+
+                this.sumOfchargeOffProductPrice=0;
+
                 this.totalRowsOff=0;
 
-                this.sumOfChargeCount=0;
-                this.sumOfChargeOutCount=0;
+                this.sumOfChargeProductCount=0;
+                this.sumOfChargeOffProductCount=0;
+
+
             },
             chargeInProvider(ctx){
                 //alert(this.iBeginDate + " " +this.iEndDate);
@@ -379,13 +383,14 @@ require('moment/locale/es')
                     return promise.then((response) => {
                         const result = response.data;
                         this.isBusyDetail = false
-                        this.totalRowsDetail=result.recordCount;
-                        this.chargeSumOfPrice = result.sumOfPrice;
-                        this.sumOfChargeCount=result.sumOfProductCount;
-                        return(result.items);
+                        this.totalRowsDetail=result.dataList.recordCount;
+                        this.sumOfchargeProductPrice = result.sumOfPrice;
+                        this.sumOfchargeProductCount=result.sumOfProductCount;
+                        return(result.dataList.items);
                     }).catch(error => {
-                    this.isBusyDetail = false
-                    return []
+                        this.isBusyDetail = false;
+                        alert(error.message);
+                        return []
                     })
                 }
             },
@@ -406,13 +411,16 @@ require('moment/locale/es')
                     return promise.then((response) => {
                         const result = response.data;
                         this.isBusyOff = false
-                        this.totalRowsOff=result.recordCount;
-                        this.chargeOffSumOfPrice = result.sumOfPrice;
-                        this.sumOfChargeOutCount=result.sumOfProductCount;
-                        return(result.items);
+                        this.totalRowsOff=result.dataList.recordCount;
+
+                        this.sumOfchargeOffProductPrice = result.sumOfPrice;
+                        this.sumOfchargeOffProductCount=result.sumOfProductCount;
+
+                        return(result.dataList.items);
                     }).catch(error => {
-                    this.isBusyOff = false
-                    return []
+                        this.isBusyOff = false
+                        alert(error.message);
+                        return []
                     })
                 }
             }
