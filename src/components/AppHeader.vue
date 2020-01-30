@@ -1,6 +1,6 @@
 <template>
   <div>
-  <b-navbar toggleable="lg" type="dark" variant="info">
+  <b-navbar toggleable="lg" type="dark" variant="info" class="fixed-top">
     <b-navbar-brand href="#">Распилийн систем</b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -88,7 +88,7 @@
 <script>
 import {mapActions,mapState} from 'vuex';
 import axios from 'axios';
-import {apiDomain,loginUrl,getHeader} from "../config/config";
+import {apiDomain,getHeader} from "../config/config";
 export default {
   name: 'AppHeader',
   data(){
@@ -106,14 +106,14 @@ export default {
 
       })
       .catch(error => {
-          console.log(error.message)    
+          alert(error.message)    
       })
     },
     logOut : function(){
       //alert("Server taliin token arilgahaa martavaa Bek chuhal shvv!!! ");
      
       axios.get(apiDomain+'/admin/logout',{headers:getHeader()})
-      .then(response=>{
+      .then(()=>{
           window.localStorage.removeItem("authUser");
           this.$router.push({name:'Login'});
       })
@@ -132,10 +132,9 @@ export default {
       let reqData = {deliveryId:0};
       this.setDeliveryFormObject(reqData);
       this.setDeliveryRefs(2);
-      this.setDeliveryRefs(4);
-      this.setDeliveryRefs(8);
       this.setDeliveryRefs(9);
       this.setDeliveryRefs(10);
+      
       if(this.$route.name.trim()!='NewDelivery'){
         this.$router.push({name:'NewDelivery'});
       }

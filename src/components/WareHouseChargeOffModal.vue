@@ -2,31 +2,49 @@
     <div class="row">
         <b-modal 
             size="lg" 
+            
             id="chargeOffModal" 
             :title="''+wareHouseName+' агуулахаас бараа зарлагдах'"
             ref="chargeOffModal"
             @hide="onChargeOffModalHide"
             hide-footer>
             <b-form v-on:submit.prevent="chargeOffWareHouseProduct" >
-                <b-form-row class="mb-3" >
-                    <b-col sm="auto" md="4">
-                        <label class="mr-sm-2" >Бараа сонгох</label>
-
+                <b-form-row class="mb-3">
+                    <b-col lg="4" sm="auto" md="3">
+                        <label for="productCat">Төрөл</label>
+                        <select v-model="catId" @change="catChange" class="form-control">
+                            <option value=0>--сонгох--</option>
+                            <option v-for="(c ,i) in comProductCats" :value=c.catId :key="i">
+                                {{c.catName}}
+                            </option>
+                        </select>
+                    </b-col>
+                    <b-col lg="4" sm="auto" md="4">
+                        <label class="mr-sm-2" >Өнгө сонгох</label>
                         <model-list-select
-                            :list="products"
+                            :list="productColors"
                             option-value="id"
                             option-text="name"
-                            v-model="selectedProduct"
-                            placeholder="Бараа сонгох"
-                            
-                            @searchchange="searchChargeOffProduct"
-                            
+                            v-model="selectedColor"
+                            placeholder="Өнгө сонгох"
+                            @searchchange="searchColor"
+                            :isDisabled="catId==0 ? true : false"
                         >
                         </model-list-select>
                     </b-col>
+                    <b-col lg="4" sm="auto" md="3">
+                        <label for="productCat">Хэмжээ</label>
+                        <select @change="findProduct" :disabled=" !selectedColor.id ? true : false " v-model="measureId" class="form-control">
+                            <option value=0>--сонгох--</option>
+                            <option v-for="(c ,i) in productFilteredMeasures" :value=c.id :key="i">
+                                {{c.measureName}}
+                            </option>
+                        </select>
+                    </b-col>
                     
-
-                    <b-col sm="auto" md="3">
+                </b-form-row>
+                <b-form-row class="mb-3" >
+                    <b-col sm="auto" lg="4" md="4">
                         <label class="mr-sm-2" for="productChargePrice">Барааны үнэ</label>
                         <b-form-input
                             id="productChargePrice"
@@ -35,7 +53,7 @@
                             
                         ></b-form-input>
                     </b-col>
-                    <b-col sm="auto" md="2">
+                    <b-col sm="auto" lg="4" md="4">
                         <label class="mr-sm-2" for="productCount">Барааны тоо</label>
                         <b-form-input
                             id="productCount"
@@ -44,7 +62,7 @@
                             
                         ></b-form-input>
                     </b-col>
-                    <b-col sm="auto" md="3">
+                    <b-col sm="auto" lg="4" md="4">
                         <label class="mr-sm-2" for="chargeOffTotalPrice1">Нийт үнэ</label>
                         <input type="number"
                             id="chargeOffTotalPrice1"
@@ -68,7 +86,8 @@
                     </b-col>
                     
                     <b-col lg="6" md="3" class="pt-2">
-                        <b-button @click="chargeOffProduct" v-if="selectedProduct!=null"
+                        <b-button @click="chargeOffProduct" v-if="selectedProduct.id && 
+                            selectedProduct.id>0"
                             class="btn-block" variant="danger">
                             Барааг агуулахаас зарлагдах 
                         </b-button>
@@ -76,28 +95,18 @@
                 </b-form-row>
 
                 
-                <b-form-row class="mb-3">
+                <b-form-row class="mb-1 mt-3">
                     <b-col lg="6">
-                        <b-form-group
-                        label-cols-sm="1"
-                        label-align-sm="left"
-                        label-size="sm"
-                        label-for="filterInputDetail"
-                        class="mb-2 mt-3"
-                        >
-                        <b-input-group size="sm">
-                            <b-form-input
+                        <input
                             v-model="filterDetail"
                             type="search"
                             id="filterInputDetail"
                             placeholder="Хайлт хийх утгаа оруулна уу"
-                            ></b-form-input>
-                            
-                        </b-input-group>
-                        </b-form-group>
+                            class="form-control" size="sm">
+                        
                     </b-col>
-
-                    <b-col lg="12" class="py-3 text-right text-info">
+                  
+                    <b-col lg="12" class="pb-3 text-right text-info">
                         <b-form-row>
                             <b-col lg="5" class="pt-3 text-right">
                                 <strong>Зарлага хийсэн нийт үнэ:</strong> {{recentSumOfProductPrice}}  
@@ -167,20 +176,37 @@
         name: "WareHouseChargeOffModal",
         props:[
             'choosenWareHouseName',
-            'choosenWareHouseId'
+            'choosenWareHouseId',
+            'productCats',
+            'productMeasures'
         ],
         data(){
             return {
                 kk:kk,
                 products:[],
                 selectedProduct:{},
-
+                
+                catId : 0,
+                colorId : 0,
+                measureId:0,
+              
+                isColorDisabled : true,
+                productColors : [],
+                selectedColor:{},
                
                 //begining of the ware house chargeoff product list
                 chargeOffFields: [
                     {
+                        key: 'catName',
+                        label: 'Төрөл',
+                    },
+                    {
                         key: 'productName',
                         label: 'Барааны нэр',
+                    },
+                    {
+                        key: 'measureName',
+                        label: 'Хэмжээ',
                     },
                     {
                         key: 'productPrice',
@@ -217,11 +243,76 @@
                     productCount:0,
                     chargeOffDate : "",
                     productId:0,
-                    productPrice:0
-                }
+                    productPrice:0,
+                    
+                },
+                productFilteredMeasures:[]
             }
         },
         methods:{
+            catChange(){
+                if(this.catId>0){
+                    this.productFilteredMeasures=this.comProductMeasures.filter(m=>m.catId===this.catId);
+                }
+                this.findProduct();
+            },
+            searchColor(searchText){
+                if(this.wareHouseId>0 && searchText.trim().length>0){
+                    this.measureId=0;
+                   
+                    this.selectedColor={};
+                    axios.get(apiDomain+'/admin/delivery/searchcolor/'+this.wareHouseId+'/'+searchText,{headers:getHeader()})
+                    .then(response=>{
+                        //this.$refs.wareHouseTable.refresh();  
+                        this.productColors=response.data;
+                        
+                    })
+                    .catch(error => {
+                        //console.log(error.message)
+                        this.$bvToast.toast(error.message, {
+                            title: 'алдаа',
+                            autoHideDelay: 5000
+                        })
+                    })     
+                }
+                
+            },
+            findProduct(){
+                //alert("came here");
+                if(this.catId > 0 && this.selectedColor.id>0 && this.measureId>0){
+                    let findJSON  = {
+                        catId : this.catId,
+                        colorId : this.selectedColor.id,
+                        measureId : this.measureId
+
+                    };
+                    axios.post(apiDomain+'/admin/bay_warehouse/findproduct',findJSON,{headers:getHeader()})
+                    .then(response=>{
+                        
+                        if(!response.data){
+                            this.selectedProduct={};
+                            this.productCount=0;
+                        }   
+                        else{
+                            //alert(JSON.stringify(response.data));
+                            this.selectedProduct=response.data;
+                        } 
+                        
+                    })
+                    .catch(error => {
+                        //console.log(error.message)
+                        this.$bvToast.toast(error.message, {
+                            title: 'алдаа',
+                            autoHideDelay: 5000,
+                            variant:'danger'
+                        })
+                    });     
+                }
+                else{
+                    this.selectedProduct= {};
+                    this.productCount=0;
+                }
+            },
             chargeOffProduct(){
                 if(confirm("Та итгэлтэй байна уу ?")){
                     if(this.selectedProduct.id 
@@ -258,25 +349,35 @@
                                         productId:0 ,
                                         productPrice:0   
                                     }
-                                    
+                                    this.$bvToast.toast(responseText, {
+                                        title: 'Мэдээлэл',
+                                        autoHideDelay: 5000,
+                                        variant:"success"
+                                    })
                                     this.$refs.chargeOffTable.refresh();
                                 }
                                 else{
                                     responseText="Алдаа үүслээ дахиж оролдоно уу."
-                                }
-                                if(responseText!=null){
                                     this.$bvToast.toast(responseText, {
                                         title: 'Мэдээлэл',
-                                        autoHideDelay: 5000
+                                        autoHideDelay: 5000,
+                                        variant:"danger"
                                     })
                                 }
+
+                                this.catId=0;
+                                this.measureId=0;
+                              
+                                this.productColors=[];
+                                this.selectedColor={};
                                 this.selectedProduct={};
                             })
                             .catch(error => {
                                 //console.log(error.message)
                                 this.$bvToast.toast(error.message, {
                                     title: 'алдаа',
-                                    autoHideDelay: 5000
+                                    autoHideDelay: 5000,
+                                    variant:'danger'
                                 })
                             }) 
                             
@@ -286,7 +387,8 @@
                         else{
                             this.$bvToast.toast('Та бүх талбаруудыг бөглөнө үү', {
                                 title: 'алдаа',
-                                autoHideDelay: 5000
+                                autoHideDelay: 5000,
+                                variant:'danger'
                             })
                         }
 
@@ -306,23 +408,7 @@
                 this.$emit("refreshTrigger");
 
             },
-            searchChargeOffProduct(searchText){
-                if(this.wareHouseId>0 && searchText.trim().length>0){
-                    axios.get(apiDomain+'/admin/delivery/searchproduct/'+this.wareHouseId+'/'+searchText,{headers:getHeader()})
-                    .then(response=>{
-                        //this.$refs.wareHouseTable.refresh();  
-                        this.products=response.data;
-                    })
-                    .catch(error => {
-                        //console.log(error.message)
-                        this.$bvToast.toast(error.message, {
-                            title: 'алдаа',
-                            autoHideDelay: 5000
-                        })
-                    })     
-                }
-                
-            },
+            
            
             detailProvider(ctx){
                 //alert("yes");
@@ -355,10 +441,18 @@
             },
             wareHouseName :function(){
                 return this.choosenWareHouseName;
+            },
+            comProductCats :function(){
+                return this.productCats;
+            },
+            comProductMeasures :function(){
+                return this.productMeasures;
             }
         }    
     }
 </script>
 <style scoped>
-
+    .modal-lg{
+        max-width: 90% !important;
+    }
 </style>

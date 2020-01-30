@@ -58,7 +58,7 @@
               <strong>Ачаалж байна...</strong>
             </div>
           </template>
-          <template slot="catDetail" slot-scope="row">
+          <template v-slot:cell(catDetail)="row">
               <!-- {{row.item}} -->
               <b-button size="sm" @click="getDetailProduct(row.item.id)"  variant="warning">
                   Задаргаа
@@ -108,7 +108,9 @@
             <b-button variant="success" size="sm" class="mr-2" v-b-modal.productModal>Шинэ</b-button>
             <b-button variant="info" v-if="selectedRows.length==1" size="sm" @click="updateRecord" class="mr-2">Засах</b-button>
             <b-button variant="danger" v-if="selectedRows.length>0" size="sm" class="mr-2" @click="deleteRecord">Устгах</b-button>
-            <b-button style="float:right;" variant="primary" size="sm" class="mr-2" @click="productRef">Лавлах сангууд</b-button>
+            
+            <b-button style="float:right;" variant="primary" size="sm" class="mr-2" @click="productRef">Барааны лавлах сангууд</b-button>
+            <b-button style="float:right;" variant="info" size="sm" class="mr-2" @click="priceRef">Ажлын хөлс</b-button>
         </b-col>
         <b-row>
           <b-col lg="6">
@@ -137,7 +139,7 @@
         </b-row>
         <b-row>
           <b-col lg="6" md="6" sm="12">
-            <select @change="catChange" class="form-control" v-model="catId">
+            <select @change="catChange1" class="form-control" v-model="catId">
               <option value="0">---сонгох---</option>
               <option v-for="(cat,i) in productCats " :key="i" :value="cat.catId">
                 {{cat.catName}}
@@ -186,7 +188,7 @@
 
                       <b-col sm="auto" md="12">
                           <label for="productName">Барааны төрөл</label>
-                          <select class="form-control" v-model="productForm.catId">
+                          <select class="form-control" @change="catChange" v-model="productForm.catId">
                             <option value=0>---сонгох---</option>
                             <option v-for="(p,i) in productCats " :value="p.catId" :key="i">
                               {{p.catName}}
@@ -206,24 +208,11 @@
                           <label for="productName">Барааны хэмжээ</label>
                           <select class="form-control" v-model="productForm.measureId">
                             <option value=0>---сонгох---</option>
-                            <option v-for="(p,i) in productMeasures " :value="p.id" :key="i">
+                            <option v-for="(p,i) in productFilteredMeasures " :value="p.id" :key="i">
                               {{p.measureName}}
                             </option>
                           </select>
                       </b-col>
-
-                      <b-col sm="auto" md="12">
-                          <label for="isDirect">Наалтын төрөл</label>
-                          <select 
-                              id="isDirect"
-                              v-model="productForm.isDirect"
-                              class="form-control">
-                          >
-                            <option value=0>Шууд бус</option>
-                            <option value=1>Шууд</option>
-                          </select>
-                      </b-col>
-
                       <b-col sm="auto" md="12">
                           <label  for="productPrice">Барааны үнэ</label>
                           <b-form-input
@@ -253,6 +242,7 @@
           </b-modal>
 
           <ProductRef v-if="showRef" :parentRefs="getRefs"></ProductRef>
+          <WorkPriceRef v-if="showPrice"></WorkPriceRef>
       </b-col>
       
     </b-row>
@@ -263,6 +253,7 @@
 import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import ProductRef from './ProductRef';
+import WorkPriceRef from './WorkPriceRef';
 export default {
 
   name: 'Products',
@@ -282,10 +273,7 @@ export default {
             key: 'measureName',
             label: 'Хэмжээ',
           },
-          {
-            key: 'isDirect',
-            label: 'Наалт',
-          },
+         
           {
             key: 'productPrice',
             label: 'Үнэ',
@@ -312,8 +300,7 @@ export default {
         productOutPrice:0,
         catId:0,
         measureId:0 , 
-        colorId : 0,
-        isDirect : 0
+        colorId : 0
       },
       catId:0,
       productCats:[],
@@ -350,15 +337,27 @@ export default {
       },
       totalCatRows:0,
       showRef : false,
-      isSmall:true 
+      showPrice : false,
+      isSmall:true ,
+      productFilteredMeasures:[]
     }
   },
   methods:{
+    catChange(){
+      if(this.productForm.catId>0){
+        this.productFilteredMeasures=this.productMeasures.filter(m=>m.catId===this.productForm.catId);
+      }
+    },
     productRef(){
       this.showRef=true;
       this.$bvModal.show("productRefModal");
     },
-    catChange(){
+    priceRef(){
+      
+      this.showPrice=true;
+      this.$bvModal.show("workPriceRefModal");
+    },
+    catChange1(){
       this.$refs.productTable.refresh();
     },
     getDetailProduct(catId){
@@ -423,16 +422,7 @@ export default {
           }
           axios.post(apiDomain+'/admin/delivery/addproduct/',dbProduct,{headers:getHeader()})
             .then((response)=>{
-                this.productForm={
-                    id:0,
-                    productName:"",
-                    productPrice:0,
-                    productOutPrice:0,
-                    catId:0,
-                    measureId : 0,
-                    colorId : 0,
-                    isDirect : 0
-                }
+                
                 if(response.data == 'dublicated'){
                   this.$bvToast.toast('Энэ бараа лавлах санд бүртгэгдсэн байна .', {
                     title: 'Алдааны мэдээлэл',
@@ -448,7 +438,15 @@ export default {
                     variant:"info"
                 })  
                 this.$bvModal.hide('productModal')
-                
+                this.productForm={
+                    id:0,
+                    productName:"",
+                    productPrice:0,
+                    productOutPrice:0,
+                    catId:0,
+                    measureId : 0,
+                    colorId : 0
+                }
                 
                 this.$refs.productTable.refresh();
                 this.$refs.catTable.refresh();
@@ -613,7 +611,8 @@ export default {
     this.getRefs(12);
   },
   components:{
-    ProductRef
+    ProductRef,
+    WorkPriceRef
   }
   
 }

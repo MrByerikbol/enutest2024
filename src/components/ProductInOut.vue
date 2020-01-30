@@ -263,8 +263,16 @@ require('moment/locale/es')
                 //begining of the in product list
                 chargeInFields: [
                     {
+                        key: 'catName',
+                        label: 'Төрөл',
+                    },
+                    {
                         key: 'productName',
                         label: 'Барааны нэр',
+                    },
+                    {
+                        key: 'measureName',
+                        label: 'Хэмжээ',
                     },
                     {
                         key: 'productPrice',
@@ -298,9 +306,17 @@ require('moment/locale/es')
                 //begining of the chargeoff list
                 
                 chargeOutFields: [
+                     {
+                        key: 'catName',
+                        label: 'Төрөл',
+                    },
                     {
                         key: 'productName',
                         label: 'Барааны нэр',
+                    },
+                    {
+                        key: 'measureName',
+                        label: 'Хэмжээ',
                     },
                     {
                         key: 'productPrice',

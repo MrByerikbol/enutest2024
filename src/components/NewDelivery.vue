@@ -19,8 +19,7 @@
                                     <select
                                         
                                         v-model="deliveryObject.userId"
-                                        @change="checkLoan(deliveryObject.userId,
-                                            totalPriceOfOrder)"
+                                       
                                         class="form-control"
                                     >
                                         <option value=0>--- Захиалага өгсөн клиент сонгох ---</option>
@@ -44,91 +43,144 @@
 
                     <b-form-row  v-show="choosenProducts.length>0" class="mb-3" 
                         v-for="(p,index) in choosenProducts" :key="index">
-                        <b-col sm="auto" md="3" lg="3">
-                            <label class="mr-sm-2" >Лист сонгох</label>
+                        <b-col sm="auto" md="2" lg="2" >
+                            <label class="mr-sm-2" >
+                               <small> Төрөл </small>
+                            </label>
                             <select
-                                    v-model="choosenProducts[index].deliveryProductId"
-                                    @change="productChange(index)"
-                                    class="form-control"
+                                    @change="findProduct(index)"
+                                    v-model="choosenProducts[index].catId"
+                                     class="d-block small-font" style="width:100% !important;"
                                 >
-                                <option :value="null">--- Лист сонгох ---</option>
-                                <option v-for="(option,productIndex)
-                                     in products" v-bind:value="option.value" :key="productIndex">
-                                    {{ option.text }}
+                                <option value=0 >-- сонгох --</option>
+                                <option  v-for="(option,catIndex)
+                                     in productCats" v-bind:value=option.catId :key="catIndex">
+                                    {{ option.catName}}
+                                </option>
+                            </select>
+                        </b-col>
+                        <b-col sm="auto" md="2" lg="2">
+                            <label class="mr-sm-2">
+                                <small>Өнгө</small>
+                            </label>
+                            <select
+                                   @change="findProduct(index)"
+                                    :disabled="choosenProducts[index].catId &&
+                                        choosenProducts[index].catId>0 ? false : true"
+                                    v-model="choosenProducts[index].colorId"
+                                    class="d-block small-font" style="width:100% !important;"
+                                >
+                                <option :value=0>-- сонгох --</option>
+                                <option v-for="(option,colorIndex)
+                                     in productColors" v-bind:value=option.id :key="colorIndex">
+                                    {{ option.colorName}}
+                                </option>
+                            </select>
+                        </b-col>
+                        <b-col sm="auto" md="1" lg="1">
+                            <label class="mr-sm-2">
+                               <small> Хэмжээ </small>
+                            </label>
+                            <select
+                                   @change="findProduct(index)"
+                                    :disabled="choosenProducts[index].colorId &&
+                                        choosenProducts[index].colorId>0 ? false : true"
+                                    class="d-block xs-font" style="width:100% !important; height:25px;"
+                                    v-model="choosenProducts[index].measureId"
+                                >
+                                <option value=0>--сонгох--</option>
+                                <option v-for="(option,measureIndex)
+                                     in filteredMeasures " v-bind:value=option.id :key="measureIndex">
+                                    {{ option.measureName}}
                                 </option>
                             </select>
                         </b-col>
                         <b-col sm="auto"  md="2" lg="2">
-                            <label class="mr-sm-2" :for="'wareHouse'+index">Склад</label>
-                            <select class="form-control"
+                            <label class="mr-sm-2" :for="'wareHouse'+index">
+                                <small>Склад</small>
+                            </label>
+                            <select
+                                class="d-block small-font" style="width:100% !important;"
                                 :id="'wareHouse'+index"
-                                
-                                :disabled="!choosenProducts[index].deliveryProductId || 
-                                    choosenProducts[index].deliveryProductId==null"
+                                :disabled="choosenProducts[index].measureId &&
+                                        choosenProducts[index].measureId>0 ? false : true"
                                 v-model="choosenProducts[index].wareHouseId">
                                 
+                                <option  value=0>--сонгох--</option>        
                                 <option v-for="(w,index) in wareHouses" :key="index" :value="w.wareHouseId">
                                     {{w.wareHouseName}}
                                 </option>
                                 
                             ></select>
                         </b-col>
-                        <b-col sm="auto" md="2" lg="2">
-                            <label class="mr-sm-2" for="productPrice">Нэгжийн үнэ</label>
-                            <b-form-input
+                        <b-col sm="auto" md="1" lg="1">
+                            <label class="mr-sm-2" for="productPrice">
+                                <small>Үнэ</small>
+                            </label>
+                            <input
+                                class="d-block small-font" style="width:100% !important;height : 25px !important;"
                                 id="productPrice"
                                 v-model="choosenProducts[index].productPrice"
                                 type="number"
-                                :disabled="choosenProducts[index].wareHouseId==0 ||
-                                    !choosenProducts[index].wareHouseId"
+                                disabled
                                 required
-                                @change="totalCalculation(index)"
-                            ></b-form-input>
+                                
+                            >
                         </b-col>
                         <b-col sm="auto"  md="1" lg="1">
-                            <label class="mr-sm-2" for="productCount">Тоо</label>
-                            <b-form-input
+                            <label class="mr-sm-2" for="productCount">
+                                <small>Тоо</small>
+                            </label>
+                            <input
+                                class="d-block small-font" style="width:100% !important;height : 25px !important;"
                                 id="productCount"
                                 v-model="choosenProducts[index].productCount"
                                 type="number"
-                                min="1"
+                                min="0"
+                                @change="totalCalculation(index)"
                                 required
-                                :disabled="choosenProducts[index].wareHouseId==0 ||
-                                    !choosenProducts[index].wareHouseId"
-                                
-                                
-                            ></b-form-input>
+                                :disabled="choosenProducts[index].wareHouseId &&
+                                           choosenProducts[index].wareHouseId>0 ? false : true"
+                            />
+
                         </b-col>
-                        <b-col sm="auto"  md="2" lg="2">
-                            <label class="mr-sm-2" for="totalPrice">Нийт дүн</label>
-                            <b-form-input
-                                
+                        <b-col sm="auto"  md="1" lg="1">
+                            <label class="mr-sm-2" for="totalPrice">
+                                <small>Нийт дүн</small>
+                            </label>
+                            <input
+                                class="d-block small-font" style="width:100% !important;
+                                                                  height : 25px !important;"
                                 id="totalPrice"
                                 v-model="choosenProducts[index].totalPrice"
                                 type="number"
                                 required
-                                readonly
-                            ></b-form-input>
+                                disabled
+                            />
                         </b-col>
                         
                         <b-col sm="auto" md="2" lg="2" >
                              <b-form-row>
                                  
-                                  <b-col lg="2" class="text-right">
-                                      <label class="mr-sm-2" :for="'pvh'+index">ПВХ</label>
-                                      <input type="checkbox" 
+                                <b-col lg="2" class="text-right">
+                                      <label class="mr-sm-2" :for="'pvh'+index" style="margin-bottom:0 !important;">
+                                          <small>ПВХ</small>
+                                      </label>
+                                      <input 
+                                       
+
+                                        type="checkbox" 
                                         @change="hasRelDetail(index)"
-                                        v-model="choosenProducts[index].hasRelDetail" :id="'pvh'+index" class="form-control float-right">
+                                        v-model="choosenProducts[index].hasRelDetail" :id="'pvh'+index"  class="form-control float-right">
                                  </b-col>
                                  
-                                 <b-col lg="3" class="mt-4 pt-3 text-right" 
-                                    v-if="choosenProducts[index].wareHouseId 
+                                 <b-col lg="3" class="mt-4 pt-2 text-right">
+                                     
+                                     
+                                     <strong  v-if="choosenProducts[index].wareHouseId 
                                          && choosenProducts[index].deliveryProductId &&
                                          choosenProducts[index].wareHouseId>0 
                                          && choosenProducts[index].deliveryProductId>0">
-                                     
-                                     
-                                     <strong>
                                         
                                          <span :class="{'text-danger':(lastBalance(
                                                     
@@ -144,7 +196,7 @@
                                     </strong>
                                  </b-col>
                                  <b-col lg="7" class="text-right pt-2">
-                                     <b-button type="button" class="mt-4" @click="removeProduct(index)" variant="danger">лист -</b-button>    
+                                     <b-button type="button" size="sm" class="mt-4" @click="removeProduct(index)" variant="danger">лист -</b-button>    
                                  </b-col>
                              </b-form-row>
                              
@@ -164,65 +216,149 @@
 
                             <b-form-row 
                                 v-for="(c,r) in choosenProducts[index].relDetails" :key="r+10000"
-                                class="bg-secondary mx-2 mb-2 p-2">
-                                <b-col lg="3">
-                                    <label class="mr-sm-2" >ПВХ сонгох</label>
+                                class="bg-info mx-2 mb-2 p-2">
+
+                                <b-col lg="2">
+                                    <label class="mr-sm-2" >
+                                        <small>Өнгө</small>
+                                    </label>
                                     <select
-                                            v-model="c.productId"
-                                            class="form-control input-sm"
-                                            @change="pvhChange(c)"
-                                        >
-                                        <option value=0>--ПВХ сонгох--</option>
-                                        <option v-for="(option,productIndex)
-                                            in detailProducts" v-bind:value="option.value" :key="productIndex+2000">
-                                            {{ option.text }}
+                                        @change="findPvh(index,r)"
+                                        v-model="c.colorId"
+                                        class="d-block small-font"
+
+                                        style="width:100% !important;"
+                                    >
+                                        <option value=0>-- сонгох --</option>
+                                        <option  v-for="(option,catIndex)
+                                            in productColors" v-bind:value=option.id :key="catIndex">
+                                            {{ option.colorName}}
                                         </option>
                                     </select>
                                 </b-col>
+                               
+                                <b-col sm="auto" md="2" lg="2">
+                                    <label class="mr-sm-2">
+                                    <small> Хэмжээ </small>
+                                    </label>
+                                    <select
+                                        @change="findPvh(index,r)"
+                                            :disabled="c.colorId &&
+                                                c.colorId>0 ? false : true"
+                                            class="d-block small-font" style="width:100% !important;"
+                                            v-model="c.measureId"
+                                        >
+                                        <option value=0>--сонгох--</option>
+                                        <option v-for="(option,measureIndex)
+                                            in filteredPvhMeasures " v-bind:value=option.id :key="measureIndex">
+                                            {{ option.measureName}}
+                                        </option>
+                                    </select>
+                                </b-col>
+                                
                                 <b-col sm="auto"  md="2" lg="2">
-                                    <label class="mr-sm-2" :for="'wareHouse'+r+27">Склад</label>
-                                    <select class="form-control"
+                                    <label class="mr-sm-2" :for="'wareHouse'+r+27">
+                                        <small>Склад</small>
+                                    </label>
+                                    <select 
+                                        class="d-block small-font" style="width:100% !important;"
                                         :id="'wareHouse'+r+27"
+                                        :disabled="c.measureId &&
+                                                c.measureId>0 ? false : true"
                                         v-model="c.wareHouseId">
-
+                                        <option value=0>--сонгох--</option>
                                         <option v-for="(w,wx) in wareHouses" :key="wx" :value="w.wareHouseId">
                                             {{w.wareHouseName}}
                                         </option>
                                         
                                     ></select>
                                 </b-col>
-                                <b-col lg="2">
-                                    <label class="mr-sm-2" >Нэгжийн үнэ </label>
-                                    <b-form-input
-                                        type="number"
-                                        required
-                                        class="form-control"
+                                <!-- <b-col sm="auto" md="1" lg="1">
+                                    <label class="mr-sm-2" for="productPrice">
+                                        <small>Үнэ</small>
+                                    </label>
+                                    <input
+                                        class="d-block small-font" style="width:100% !important;height : 25px !important;"
+                                        id="productPrice"
                                         v-model="c.productPrice"
-                                        @change="pvhTotalCalculation(c)"
-                                    ></b-form-input>
-                                </b-col>
-                                <b-col sm="auto" md="1" lg="1">
-                                    <label class="mr-sm-2" >Тоо</label>
-                                    <b-form-input
+                                        type="number"
+                                        disabled
+                                        required
+                                        
+                                        >
+                                </b-col> -->
+                                <b-col sm="auto"  md="1" lg="1">
+                                    <label class="mr-sm-2" for="productCount">
+                                        <small>Тоо</small>
+                                    </label>
+                                    <input
+                                        class="d-block small-font" style="width:100% !important;height : 25px !important;"
+                                        id="productCount"
                                         v-model="c.productCount"
                                         type="number"
-                                        min="1"
+                                        min="0"
+                                        @change="pvhTotalCalculation(index)"
                                         required
-                                        :disabled="c.wareHouseId==0 || !c.wareHouseId"
+                                        :disabled="c.wareHouseId &&
+                                                c.wareHouseId>0 ? false : true"
+                                    />
 
-                                        @change="pvhTotalCalculation(c)"
-
-                                    ></b-form-input>
                                 </b-col>
-                                <b-col sm="auto" md="2" lg="2">
-                                    <label class="mr-sm-2" >Нийт дүн</label>
-                                    <b-form-input
-                                        
+                                <b-col sm="auto" md="2" lg="2"> 
+                                    <b-form-row>
+                                        <b-col sm="auto" md="6" lg="6">
+                                            <label class="mr-sm-2" :for="'wareHouse'+r+27">
+                                                <small>Наалт</small>
+                                            </label>
+                                            <select
+                                                class="d-block small-font" style="width:100% !important;"
+                                                @change="filterWorkPrices(index,r)"
+
+                                                :disabled="c.productCount>0 &&
+                                                        c.productPrice>0 ? false : true"
+                                                v-model="c.isDirect">
+                                                <option value=-1>--сонгох--</option>        
+                                                <option value=1>
+                                                    Прямой
+                                                </option>
+                                                <option value=0>
+                                                    Обалный
+                                                </option>
+                                            ></select>
+                                        </b-col>
+                                        <b-col sm="auto" md="6" lg="6">
+                                            <label class="mr-sm-2" :for="'wareHouse'+r+27">
+                                                <small>Ажил</small>
+                                            </label>
+                                            <select
+                                                @change="setWorkPrice(index,r)"
+                                                class="d-block small-font" style="width:100% !important;"
+                                                :disabled="c.isDirect==-1  ? true : false"
+                                                v-model="c.workPriceId">
+                                                <option value=0>--сонгох--</option>        
+                                                <option v-for="(w,wi) in workFilteredPrices"  :key="wi" :value=w.id>
+                                                    {{w.workName}}
+                                                </option>
+                                            </select>
+
+
+
+                                        </b-col>
+                                    </b-form-row>
+                                </b-col>
+                                <b-col sm="auto"  md="1" lg="1">
+                                    <label class="mr-sm-2" for="totalPrice">
+                                        <small>Нийт</small>
+                                    </label>
+                                    <input
+                                        class="d-block small-font" style="width:100% !important;
+                                                                        height : 25px !important;"
+                                        id="totalPrice"
                                         v-model="c.totalPrice"
                                         type="number"
                                         required
-                                        readonly
-                                    ></b-form-input>
+                                        disabled
+                                    />
                                 </b-col>
                                 
                                 <b-col lg="1" class="mt-4 pt-3 text-right" 
@@ -251,83 +387,24 @@
                     </b-form-row>
                     <b-form-row class="py-3 " v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
                         <b-col lg="2">
-                            <label class="label-container text-danger">Зээлээр эсэх
+                            <!-- <label class="label-container text-danger">Зээлээр эсэх
                                 <input @change="checkLoan(deliveryObject.userId,
                                     totalPriceOfOrder)" type="checkbox" v-model="deliveryObject.isLoan">
                                 <span class="checkmark"></span>
-                            </label>                         
+                            </label>                          -->
                         </b-col>
                         
                          <b-col lg="10" class="text-right text-info font-weight-bold" style="text-decoration:underline !important;">
                             Захиалгын нийлбэр дүн : {{totalPriceOfOrder}}
                         </b-col>
-                        <b-col v-if="!loanResult" lg="12">
-                            <b-form-row>
-                                <b-col lg="3" class="pl-1 pb-2">
-                                    Зээлийн хэжмээ: <strong>{{loanDbResult.loanLimit}}</strong>
-                                </b-col>
-                                <b-col lg="3" class="pl-2">
-                                    Одоогийн зээл: <strong>{{loanDbResult.loanBalance}}</strong>
-                                </b-col>
-                                <b-col lg="3" class="pl-2">
-                                    Боломжит зээл: <strong>{{loanDbResult.possibleLoan}}</strong>
-                                </b-col>
-                                <b-col lg="3" class="text-right text-danger font-italic" 
-                                    style="text-decoration:underline !important;">
-                                    Зээлийн хэтрэлт: <strong>{{totalPriceOfOrder-loanDbResult.possibleLoan}}</strong>
-                                    <br>
-                                    <span class="text-info" v-if="(totalPriceOfOrder-loanDbResult.possibleLoan)>0">
-                                        Та зээлийн хэтрэлтгүй байж зээл авах боломжтой.
-                                    </span>
-                                </b-col>
-                            </b-form-row>
-                        </b-col>
-                        <b-col lg="12" v-if="!loanResult && loanDbResult.loanBalance>0" class="text-right">
-                            <button type="button" v-b-modal.loanPaymentModal class="btn btn-sm btn-secondary">
-                                зээл төлөх
-                            </button>
-
-                            <b-modal id="loanPaymentModal" title="Клиентийн зээл төлөх" hide-footer>
-                                <b-form v-on:submit.prevent="submitUserLoan">
-                                    <b-form-row class="mb-3">
-                                        
-                                        <b-col sm="auto" md="12">
-                                            <label for="userLoan">Зээлийн хэжмээ</label>
-                                            <input
-                                                id="userLoan"
-                                                v-model="userLoanForm.userLoan"
-                                                type="number"
-                                                min="1"
-                                                :max="loanDbResult.loanBalance"
-                                                required
-                                                class="form-control"
-                                                oninvalid="this.setCustomValidity('Төлөх зээлийн хэмжээ буруу байна !!!')"
-                                                oninput="(function(e){e.setCustomValidity('');return !e.validity.valid && e.setCustomValidity(' ')})(this)"
-                                                placeholder="Төлөх зээлийн хэмжээ"
-                                            />
-                                        </b-col>
-                                        <b-col sm="auto" md="12">
-                                            <label for="loanDescription">Тайлбар</label>    
-                                            <textarea id="loanDesciprion" class="form-control"
-                                             oninvalid="this.setCustomValidity('Та тайлбар заавал оруулах хэрэгтэй !!!')"
-                                             onvalid="this.setCustomValidity('')"
-                                             required v-model="userLoanForm.loanDescription"></textarea>
-                                        </b-col>
-
-                                    </b-form-row>
-                                    <b-button type="submit" variant="primary" class="mr-2">Зээл төлөх</b-button>
-                                    <b-button type="reset" variant="danger">Арилгах</b-button>
-                                </b-form>    
-                            </b-modal>
-                        </b-col>
+                        
                         
                     </b-form-row>
                     <b-form-row>
-                        <b-col lg="4">
+                        <!-- <b-col lg="4">
                             <b-alert show variant="danger"  v-if="prematureList.length>0">
                                 <h6>Татах шаардлагатай листүүд</h6> 
                                 <hr>
-                              
                                 <div v-for="(p,i) in prematureList" :key="i"    >
                                     <span v-if="lastBalance(p.wareHouseId,p.productId)<0 
 
@@ -336,16 +413,15 @@
 
                                        {{ productName(p.productId,'dbList')+':'}} 
                                        <span class="text-danger">{{lastBalance(p.wareHouseId,p.productId)}}</span>
-
                                     </span>
                                     
 
                                 </div>
                             
                             </b-alert>
-                        </b-col>
+                        </b-col> -->
                         <b-col lg="4">
-                            <b-alert show variant="warning"  v-if="prematurePvh.length>0">
+                            <!-- <b-alert show variant="warning"  v-if="prematurePvh.length>0">
                                 <h6>Татах шаардлагатай пвх</h6> 
                                 <hr>
                                 <div v-for="(p,i) in prematurePvh" :key="i" >
@@ -354,9 +430,9 @@
                                        {{ productName(p.productId,'pvh')+':'}} <span class="text-danger">{{lastBalance(p.wareHouseId,p.productId)}}</span>
                                     </span>
                                 </div>                          
-                            </b-alert>
+                            </b-alert> -->
                         </b-col>
-                        <b-col lg="4" class="text-right">
+                        <b-col lg="8" class="text-right">
                             <b-button type="submit" 
                                 v-if="totalPriceOfOrder>0 && choosenProducts.length>0
                                     && deliveryObject.userId>0
@@ -391,79 +467,141 @@
                     userLoan:1,
                     loanDescription:""
                 },
+
                 prematureList : [],
-                prematurePvh:[]
+                prematurePvh:[],
+                productColors : [],
+                productMeasures : [],
+                workPrices:[],
+                productCats:[],
+                filteredMeasures : [],
+                filteredPvhMeasures:[],
+                workFilteredPrices:[]
             }
         },
         methods: {
-            submitUserLoan(){
-                this.userLoanForm.userId=this.deliveryFormObject.userId;
-                if(this.userLoanForm.userId > 0 && this.userLoanForm.userLoan>1 
-                    && this.userLoanForm.loanDescription.trim().length>0){
-                    
-                    axios.post(apiDomain+'/admin/order/payloan',
-                        this.userLoanForm,{headers:getHeader()})
-                    .then(()=>{
-                        this.checkLoan(this.userLoanForm.userId,this.totalPriceOfOrder);
-
+            getRefs(type){
+                axios.get(apiDomain+'/admin/delivery/refs/'+type,{headers:getHeader()})
+                    .then(response=>{
+                        if(type==7){
+                            this.productCats=response.data;
+                        }
+                        if(type==11){
+                            this.productColors=response.data;
+                        }
+                        if(type==12){
+                            this.productMeasures=response.data;
+                        }
+                        if(type==13){
+                            this.workPrices=response.data;
+                        }
                     })
                     .catch(error => {
-                        //console.log(error.message)
-                        this.$bvToast.toast(error.message, {
-                            title: 'алдаа',
-                            autoHideDelay: 5000
-                        });
-                        this.loanResult=false;
-                    }) 
-                }
-                else{
-                    this.$bvToast.toast("Та бүх талбаруудыг бөглөнө үү.", {
-                        title: 'алдаа',
-                        autoHideDelay: 5000
-                    });    
-                }
+                        alert(error.message);
+                    }
+                ) 
             },
+            findProduct(index){
+                let checker=this.choosenProducts[index];
+                this.filteredMeasures=checker.catId>0 ? 
+                    this.productMeasures.filter(p=>p.catId===checker.catId) : [];
 
-            checkLoan(userId,loan){
-                try {
-                    if(this.deliveryFormObject.isLoan){
-                        axios.post(apiDomain+'/admin/order/checkloan',{
-                        'userId':userId,
-                        'userLoan':loan
-                        },{headers:getHeader()})
-                        .then(response=>{
-                            //alert(JSON.stringify(response.data));   
-                            if(!response.data.result){
-                                this.loanResult=false;
-                                this.loanDbResult=response.data;
-                                this.$bvModal.hide("loanPaymentModal");
-                                this.userLoanForm={
-                                    userId:0,
-                                    userLoan:1,
-                                    loanDescription:""    
-                                }
-                            }
-                            else{
-                                this.loanDbResult={};
-                                this.loanResult=true;
-                            }
-                        })
-                        .catch(error => {
-                            //console.log(error.message)
-                            this.$bvToast.toast(error.message, {
-                                title: 'алдаа',
-                                autoHideDelay: 5000
-                            });
-                            this.loanResult=false;
-                        }) 
-                    }
-                    else{
-                        this.loanResult=true;
-                    }
+                if(checker.catId==0 || checker.colorId == 0 || checker.measureId==0){
+                    checker.productPrice=0;
+                    checker.productCount=0;
+                    checker.totalPrice = 0;
+                    //herev turul songoogui bol
+                    checker.catId==0 ? checker.colorId=0 : checker.colorId;
+                    //herev ungu songoogui bol
+                    checker.colorId==0 ? checker.measureId=0 : checker.measureId;
+                    //herev hemjee songoogui bol
+                    checker.measureId==0 ? checker.wareHouseId=0 : checker.wareHouseId;
+
+                    return ;
                 }
-                catch(err){
-                    alert(err.message);
-                }  
+                //yag tuhain turuliin measure uudiig avah
+                
+                axios.post(apiDomain+'/admin/order/findproduct',{
+                    'catId':checker.catId,
+                    'colorId':checker.colorId,
+                    'measureId':checker.measureId
+                },{headers:getHeader()})
+                .then((response)=>{
+                    if(!response.data || response.data==null){
+                        checker.productPrice=0;
+                        checker.productCount=0;
+                        checker.totalPrice = 0;
+
+                        this.choosenProducts[index].deliveryProductId=0;
+                        return ;
+                    }
+                    let rData = response.data;
+
+                    this.choosenProducts[index].deliveryProductId=rData.id;
+                    this.choosenProducts[index].productPrice=rData.productOutPrice;
+                })
+                .catch(error => {
+                    //console.log(error.message)
+                    this.$bvToast.toast(error.message, {
+                        title: 'Алдааны мэдээлэл',
+                        autoHideDelay: 5000
+                    })
+                }) 
+            },
+            findPvh(index,r){
+                //alert("now it will search the pvh");
+                let checker=this.choosenProducts[index].relDetails[r];
+                this.filteredPvhMeasures=checker.colorId>0 ? 
+                    this.productMeasures.filter(p=>p.catName==='PVH') : [];
+                if(checker.colorId == 0 || checker.measureId==0){
+                    checker.productPrice=0;
+                    checker.productCount=0;
+                    checker.totalPrice = 0;
+                   
+                    //herev ungu songoogui bol
+                    checker.colorId==0 ? checker.measureId=0 : checker.measureId;
+                    //herev hemjee songoogui bol
+                    checker.measureId==0 ? checker.wareHouseId=0 : checker.wareHouseId;
+
+                    return ;
+                }
+                axios.post(apiDomain+'/admin/order/findpvh',{
+                    'colorId':checker.colorId,
+                    'measureId':checker.measureId
+                },{headers:getHeader()})
+                .then((response)=>{
+                    if(!response.data || response.data==null){
+                        checker.productPrice=0;
+                        checker.productCount=0;
+                        checker.totalPrice = 0;
+                        checker.productId=0;
+                        return ;
+                    }
+                    let rData = response.data;
+                    checker.productId=rData.id;
+                    checker.productPrice=rData.productOutPrice;
+                })
+                .catch(error => {
+                    //console.log(error.message)
+                    this.$bvToast.toast(error.message, {
+                        title: 'Алдааны мэдээлэл',
+                        autoHideDelay: 5000
+                    })
+                }) 
+            },
+            filterWorkPrices(index,r){
+                let pvh = this.choosenProducts[index].relDetails[r];
+                
+                if(parseInt(pvh.isDirect)==-1){
+                    pvh.workPriceId=0;
+                }
+                //garaar shuud bichsen option value zaaval int ruu hurvuuleh 
+                this.workFilteredPrices=this.workPrices.filter(w => parseInt(w.workTypeId)==parseInt(pvh.isDirect));
+            },
+            setWorkPrice(choosenIndex){
+                
+                let foundWorkPrice = this.workFilteredPrices[choosenIndex].workPrice;
+                alert(foundWorkPrice);
             },
             getTotalPvh(){
                 let totalPvh =0;
@@ -486,9 +624,7 @@
                     this.choosenProducts[index].hasRelDetail=false;
 
                 }
-                if(this.deliveryFormObject.isLoan){
-                    this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
-                }
+                
 
                 this.deleteFromPremateurePvh();
 
@@ -496,9 +632,6 @@
              
             pvhTotalCalculation(c){
                 c.totalPrice=c.productCount*c.productPrice;
-                if(this.deliveryFormObject.isLoan){
-                    this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
-                }
             },
             pvhChange(item){
                
@@ -515,9 +648,8 @@
                     item.productCount=1;
                     item.totalPrice=found.productPrice*1;
                 }
-                if(this.deliveryFormObject.isLoan){
-                    this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
-                }
+               
+               
 
                 this.deleteFromPremateurePvh();
             },
@@ -529,7 +661,13 @@
                    
 
                     this.choosenProducts[index].relDetails.push(
-                        {   
+                        {  
+                          catId:0,   
+                          colorId:0,
+                          measureId:0,
+                          isDirect:-1,
+                          workPriceId :0,
+                          workPrice:0,
                           detailId:0,
                           productId:0,
                           productPrice:0,
@@ -542,9 +680,7 @@
                 else{
                      this.choosenProducts[index].relDetails=[];
                 }
-                if(this.deliveryFormObject.isLoan){
-                    this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
-                }
+               
             },
             addPvh(index){
                  this.choosenProducts[index].relDetails.push(
@@ -565,9 +701,7 @@
                     this.loanResult=true;
                     this.loanDbResult={};
                 }
-                if(this.deliveryFormObject.isLoan){
-                    this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
-                }
+                
 
                  this.deleteFromPremateurePvh();
 
@@ -590,15 +724,38 @@
                     this.choosenProducts[item].productCount=1;
                     this.choosenProducts[item].totalPrice=found.productPrice*1;
                 }
-                if(this.deliveryFormObject.isLoan){
-                    this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
-                }
-
+               
+               
                 this.deleteFromPremateureList();
             },
             addProductField(){
+                 if(this.productCats.length==0){
+                    this.getRefs(7);
+                }
+                if(this.productColors.length==0){
+                    this.getRefs(11);
+                }
+                if(this.productMeasures.length==0){
+                    this.getRefs(12);
+                }
+                if(this.workPrices.length==0){
+                    this.getRefs(13);
+                }
+
                 this.choosenProducts.push(
-                    {deliveryProductId:null,wareHouseId:0,productPrice:0,productCount:1,totalPrice:0,relId:0,relDetails:[]}
+                    {
+                        catId:0,
+                        colorId : 0,
+                        measureId : 0,
+
+                        deliveryProductId:null,
+                        wareHouseId:0,
+                        productPrice:0,
+                        productCount:0,
+                        totalPrice:0,
+                        relId:0,
+                        relDetails:[]
+                    }
                 );
             },
             onSubmit(evt) {
@@ -670,9 +827,7 @@
             totalCalculation(index){
                 this.choosenProducts[index].totalPrice=
                     this.choosenProducts[index].productPrice*this.choosenProducts[index].productCount;
-                    if(this.deliveryFormObject.isLoan){
-                        this.checkLoan(this.deliveryFormObject.userId,this.totalPriceOfOrder);
-                    }
+                    
             },
 
             onReset(evt) {
@@ -815,8 +970,6 @@
         
         computed: {
             ...mapState([
-                'products',
-                'detailProducts',
                 'users',
                 'deliveryFormObject',
                 'wareHouses'
@@ -911,71 +1064,12 @@
     }
 </script>
 <style scoped>
-    /* The container */
-    .label-container {
-        display: block;
-        position: relative;
-        padding-left: 35px;
-        margin-bottom: 12px;
-        cursor: pointer;
-        font-size: 15px;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    /* Hide the browser's default checkbox */
-    .label-container input {
-        position: absolute;
-        opacity: 0;
-        cursor: pointer;
-        height: 0;
-        width: 0;
-    }
-
-    /* Create a custom checkbox */
-    .checkmark {
-        position: absolute;
-        top: 0px;
-        left: 0;
-        height: 25px;
-        width: 25px;
-        background-color: #eee;
-    }
-
-    /* On mouse-over, add a grey background color */
-    .label-container:hover input ~ .checkmark {
-         background-color: #ccc;
-    }
-
-    /* When the checkbox is checked, add a blue background */
-    .label-container input:checked ~ .checkmark {
-        background-color: #dc3545;
-    }
-
-    /* Create the checkmark/indicator (hidden when not checked) */
-    .checkmark:after {
-        content: "";
-        position: absolute;
-        display: none;
-    }
-
-    /* Show the checkmark when checked */
-    .label-container input:checked ~ .checkmark:after {
-        display: block;
-    }
-
-    /* Style the checkmark/indicator */
-    .label-container .checkmark:after {
-        left: 10px;
-        top: 6px;
-        width: 5px;
-        height: 10px;
-        border: solid white;
-        border-width: 0 3px 3px 0;
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-    }
+  .small-font{
+        font-size:90%;
+        font-weight: 400 
+   }
+   .xs-font{
+        font-size:80%;
+        font-weight: 400 
+   }
 </style>

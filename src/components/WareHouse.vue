@@ -53,30 +53,20 @@
             @row-dblclicked="rowDoubleClick"
             @row-selected="onWareHouseSelected"
             >
-            <template v-slot:cell(id)="{ rowSelected }">
-            <template v-if="rowSelected">
-                <span aria-hidden="true">&check;</span>
-                <span class="sr-only">Selected</span>
-            </template>
-            <template v-else>
-                <span aria-hidden="true">&nbsp;</span>
-                <span class="sr-only">Not selected</span>
-            </template>
-            </template>
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
                 <b-spinner class="align-middle"></b-spinner>
                 <strong>Ачаалж байна...</strong>
             </div>
             </template>
-            <template slot="getDetail" slot-scope="row">
+           <template v-slot:cell(getDetail)="row">
                 <!-- {{row.item}} -->
                 <b-button @click="chargeWareHouse(row.item.id,row.item.wareHouseName)" class="text-left mr-1 mt-1" variant="success" size="sm">
                     Татах    
                 </b-button>
             </template>    
 
-            <template slot="chargeOff" slot-scope="row">
+           <template v-slot:cell(chargeOff)="row">
                 <!-- {{row.item}} -->
                 <b-button @click="chargeOffWareHouse(row.item.id,row.item.wareHouseName)" class="text-left mr-1 mt-1" variant="info" size="sm">
                     Зарлагдах    
@@ -123,9 +113,9 @@
             hide-footer>
             <b-form v-on:submit.prevent="addProductToWareHouse1" v-if="hasRole('ADMIN')">
                     <b-form-row class="mb-3">
-                        <b-col lg="3" sm="auto" md="3">
+                        <b-col lg="4" sm="auto" md="3">
                             <label for="productCat">Төрөл</label>
-                            <select v-model="catId" @change="findProduct" class="form-control">
+                            <select v-model="catId" @change="catChange" class="form-control">
                                 <option value=0>--сонгох--</option>
                                 <option v-for="(c ,i) in productCats" :value=c.catId :key="i">
                                     {{c.catName}}
@@ -145,27 +135,16 @@
                             >
                             </model-list-select>
                         </b-col>
-                        <b-col lg="3" sm="auto" md="3">
+                        <b-col lg="4" sm="auto" md="3">
                             <label for="productCat">Хэмжээ</label>
                             <select @change="findProduct" :disabled=" !selectedColor.id ? true : false " v-model="measureId" class="form-control">
                                 <option value=0>--сонгох--</option>
-                                <option v-for="(c ,i) in productMeasures" :value=c.id :key="i">
+                                <option v-for="(c ,i) in productFilteredMeasures" :value=c.id :key="i">
                                     {{c.measureName}}
                                 </option>
                             </select>
                         </b-col>
-                        <b-col lg="2" sm="auto" md="2">
-                            <label for="productCat">Наалт</label>
-                            <select @change="findProduct" :disabled="measureId==0 ? true : false" v-model="isDirect" class="form-control">
-                                <option value=-1>--сонгох--</option>
-                                <option value=0>
-                                    Шууд бус
-                                </option>
-                                <option value=1>
-                                    Шууд
-                                </option>
-                            </select>
-                        </b-col>
+                        
                     </b-form-row>
                     <b-form-row class="mb-3" >
                         <b-col sm="auto" md="4">
@@ -296,7 +275,11 @@
                 </b-form>    
             </b-modal>
             <WareHouseChargeOffModal v-if="hasRole('ADMIN')" v-on:refreshTrigger="listRefresher"
-                :choosenWareHouseId="chargeOffWareHouseId" :choosenWareHouseName="chargeOffWareHouseName"></WareHouseChargeOffModal>
+                :choosenWareHouseId="chargeOffWareHouseId" 
+                :choosenWareHouseName="chargeOffWareHouseName"
+                :productCats = "productCats"
+                :productMeasures = "productMeasures"    
+                ></WareHouseChargeOffModal>
 
         </b-col>
         <b-col lg="7">
@@ -448,13 +431,18 @@ export default {
       // for warehouseproduct
 
       wareHouseProductFields: [
+         
           {
-            key: 'id',
-            label: 'Id',
+              key:'catName',
+              label:'Төрөл'
           },
           {
             key: 'productName',
-            label: 'Барааны нэр',
+            label: 'Нэр',
+          },
+          {
+            key: 'measureName',
+            label: 'Хэмжээ',
           },
           {
               key:'productCount',
@@ -478,8 +466,16 @@ export default {
       //for detail
       fieldsDetail: [
           {
+            key: 'catName',
+            label: 'Төрөл',
+          },
+          {
             key: 'productName',
             label: 'Барааны нэр',
+          },
+          {
+            key: 'measureName',
+            label: 'Хэмжээ',
           },
           {
             key: 'productPrice',
@@ -522,10 +518,11 @@ export default {
       catId : 0,
       colorId : 0,
       measureId:0,
-      isDirect : -1,  
+    
       isColorDisabled : true,
       productColors : [],
       selectedColor:{},
+
       selectedProduct:{},
       productCount:0,
       wareHouseId:0,
@@ -547,19 +544,25 @@ export default {
 
       //the additional development
       productMeasures: [],
-      
+      productFilteredMeasures:[],
       productCats : []
     }
   },
   methods:{
+    catChange(){
+        if(this.catId>0){
+            this.productFilteredMeasures=this.productMeasures.filter(m=>m.catId===this.catId);
+        }
+        this.findProduct();
+    },
     findProduct(){
         //alert("came here");
         if(this.catId > 0 && this.selectedColor.id>0 && this.measureId>0){
             let findJSON  = {
                 catId : this.catId,
                 colorId : this.selectedColor.id,
-                measureId : this.measureId,
-                isDirect : this.isDirect
+                measureId : this.measureId
+               
 
             };
             axios.post(apiDomain+'/admin/bay_warehouse/findproduct',findJSON,{headers:getHeader()})
@@ -751,8 +754,8 @@ export default {
                             this.catId=0;
                             this.colorId=0;
                             this.measureId=0;
-                            this.isDirect=-1;
-                            
+                         
+
                         
                             this.$refs.detailTableRef.refresh();
                         }
@@ -796,7 +799,7 @@ export default {
     searchColor(searchText){
         if(this.wareHouseId>0 && searchText.trim().length>0){
             this.measureId=0;
-            this.isDirect=-1;
+           
             this.selectedColor={};
             axios.get(apiDomain+'/admin/delivery/searchcolor/'+this.wareHouseId+'/'+searchText,{headers:getHeader()})
             .then(response=>{

@@ -1,9 +1,12 @@
 <template>
     <div class="app">
         <AppHeader/>
-        <b-container>
+        <b-container class="pt-5 mt-2">
             <router-view></router-view>
         </b-container>
+        <b-navbar toggleable="lg" type="dark" class="mt-5" variant="info">
+          <b-navbar-brand href="javascript:void(0)"><i><u>Байбесик апп version : 1.0</u></i> </b-navbar-brand>
+        </b-navbar>
    </div>
 </template>
 
@@ -37,7 +40,7 @@ export default {
         //console.log("this is the main struct of something",response.data);
         this.nav=response.data;
       })
-      .catch(error=>{
+      .catch(()=>{
         //alert("this is error section");
         //console.log(error);
         this.$router.push({name:'Login'});
