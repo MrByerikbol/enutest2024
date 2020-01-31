@@ -90,7 +90,7 @@
                                 >
                                 <option value=0>--сонгох--</option>
                                 <option v-for="(option,measureIndex)
-                                     in filteredMeasures " v-bind:value=option.id :key="measureIndex">
+                                     in productMeasures.filter(p=>p.catId===choosenProducts[index].catId) " v-bind:value=option.id :key="measureIndex">
                                     {{ option.measureName}}
                                 </option>
                             </select>
@@ -140,7 +140,7 @@
                                 @change="totalCalculation(index)"
                                 required
                                 :disabled="choosenProducts[index].wareHouseId &&
-                                           choosenProducts[index].wareHouseId>0 ? false : true"
+                                           choosenProducts[index].wareHouseId>0 && choosenProducts[index].deliveryProductId>0 ? false : true"
                             />
 
                         </b-col>
@@ -167,7 +167,8 @@
                                           <small>ПВХ</small>
                                       </label>
                                       <input 
-                                       
+                                        :disabled="choosenProducts[index].productCount>0 
+                                            && choosenProducts[index].productPrice>0 ? false : true"
 
                                         type="checkbox" 
                                         @change="hasRelDetail(index)"
@@ -250,7 +251,7 @@
                                         >
                                         <option value=0>--сонгох--</option>
                                         <option v-for="(option,measureIndex)
-                                            in filteredPvhMeasures " v-bind:value=option.id :key="measureIndex">
+                                            in productMeasures.filter(p=>p.catName==='PVH') " v-bind:value=option.id :key="measureIndex">
                                             {{ option.measureName}}
                                         </option>
                                     </select>
@@ -297,10 +298,10 @@
                                         v-model="c.productCount"
                                         type="number"
                                         min="0"
-                                        @change="pvhTotalCalculation(index)"
+                                        @change="pvhTotalCalculation(c)"
                                         required
                                         :disabled="c.wareHouseId &&
-                                                c.wareHouseId>0 ? false : true"
+                                                c.wareHouseId>0 && c.productId>0 ? false : true"
                                     />
 
                                 </b-col>
@@ -336,13 +337,10 @@
                                                 :disabled="c.isDirect==-1  ? true : false"
                                                 v-model="c.workPriceId">
                                                 <option value=0>--сонгох--</option>        
-                                                <option v-for="(w,wi) in workFilteredPrices"  :key="wi" :value=w.id>
+                                                <option v-for="(w,wi) in workPrices.filter(w => parseInt(w.workTypeId)==parseInt(c.isDirect))"  :key="wi" :value=w.id>
                                                     {{w.workName}}
                                                 </option>
                                             </select>
-
-
-
                                         </b-col>
                                     </b-form-row>
                                 </b-col>
@@ -361,21 +359,16 @@
                                     />
                                 </b-col>
                                 
-                                <b-col lg="1" class="mt-4 pt-3 text-right" 
+                                <b-col lg="1" class="mt-4 pt-2 text-right" 
                                     v-if="c.wareHouseId 
                                          && c.productId &&
                                          c.wareHouseId>0 
                                          && c.productId>0">
-                                     
-                                     
                                      <strong>
-                                       
-                                     
                                         <span :class="{'text-warning':lastBalance(c.wareHouseId, 
                                                     c.productId ) <=0}">
                                             {{lastBalance(c.wareHouseId , c.productId)}}
                                         </span>
-                                         
                                     </strong>
                                  </b-col>
                                  <b-col lg="1" class="mt-3 pt-3 text-right">
@@ -401,17 +394,16 @@
                         
                     </b-form-row>
                     <b-form-row>
-                        <!-- <b-col lg="4">
+                        <b-col lg="4">
                             <b-alert show variant="danger"  v-if="prematureList.length>0">
                                 <h6>Татах шаардлагатай листүүд</h6> 
                                 <hr>
+                                
                                 <div v-for="(p,i) in prematureList" :key="i"    >
                                     <span v-if="lastBalance(p.wareHouseId,p.productId)<0 
 
-                                        && productName(p.productId,'dbList')!=null">
-
-
-                                       {{ productName(p.productId,'dbList')+':'}} 
+                                        && productName(p.colorId,'dbList',p.measureId)!=null">
+                                       {{ productName(p.colorId,'dbList',p.measureId)+':'}} 
                                        <span class="text-danger">{{lastBalance(p.wareHouseId,p.productId)}}</span>
                                     </span>
                                     
@@ -419,20 +411,20 @@
                                 </div>
                             
                             </b-alert>
-                        </b-col> -->
+                        </b-col>
                         <b-col lg="4">
-                            <!-- <b-alert show variant="warning"  v-if="prematurePvh.length>0">
+                            <b-alert show variant="warning"  v-if="prematurePvh.length>0">
                                 <h6>Татах шаардлагатай пвх</h6> 
                                 <hr>
                                 <div v-for="(p,i) in prematurePvh" :key="i" >
                                     <span v-if="lastBalance(p.wareHouseId,p.productId)<0 
-                                        && productName(p.productId,'pvh')!=null">
-                                       {{ productName(p.productId,'pvh')+':'}} <span class="text-danger">{{lastBalance(p.wareHouseId,p.productId)}}</span>
+                                        && productName(p.colorId,'pvh',p.measureId)!=null">
+                                       {{ productName(p.colorId,'pvh',p.measureId)+':'}} <span class="text-danger">{{lastBalance(p.wareHouseId,p.productId)}}</span>
                                     </span>
                                 </div>                          
-                            </b-alert> -->
+                            </b-alert>
                         </b-col>
-                        <b-col lg="8" class="text-right">
+                        <b-col lg="12" class="text-right">
                             <b-button type="submit" 
                                 v-if="totalPriceOfOrder>0 && choosenProducts.length>0
                                     && deliveryObject.userId>0
@@ -473,10 +465,7 @@
                 productColors : [],
                 productMeasures : [],
                 workPrices:[],
-                productCats:[],
-                filteredMeasures : [],
-                filteredPvhMeasures:[],
-                workFilteredPrices:[]
+                productCats:[]
             }
         },
         methods: {
@@ -503,8 +492,7 @@
             },
             findProduct(index){
                 let checker=this.choosenProducts[index];
-                this.filteredMeasures=checker.catId>0 ? 
-                    this.productMeasures.filter(p=>p.catId===checker.catId) : [];
+               
 
                 if(checker.catId==0 || checker.colorId == 0 || checker.measureId==0){
                     checker.productPrice=0;
@@ -516,7 +504,7 @@
                     checker.colorId==0 ? checker.measureId=0 : checker.measureId;
                     //herev hemjee songoogui bol
                     checker.measureId==0 ? checker.wareHouseId=0 : checker.wareHouseId;
-
+                    this.deleteFromPremateureList();
                     return ;
                 }
                 //yag tuhain turuliin measure uudiig avah
@@ -546,14 +534,16 @@
                         title: 'Алдааны мэдээлэл',
                         autoHideDelay: 5000
                     })
-                }) 
+                }); 
+                this.deleteFromPremateureList();
             },
             findPvh(index,r){
                 //alert("now it will search the pvh");
                 let checker=this.choosenProducts[index].relDetails[r];
-                this.filteredPvhMeasures=checker.colorId>0 ? 
-                    this.productMeasures.filter(p=>p.catName==='PVH') : [];
-                if(checker.colorId == 0 || checker.measureId==0){
+               
+                if(!checker.colorId || checker.colorId == 0 || 
+                        !checker.measureId || checker.measureId==0){
+
                     checker.productPrice=0;
                     checker.productCount=0;
                     checker.totalPrice = 0;
@@ -562,7 +552,7 @@
                     checker.colorId==0 ? checker.measureId=0 : checker.measureId;
                     //herev hemjee songoogui bol
                     checker.measureId==0 ? checker.wareHouseId=0 : checker.wareHouseId;
-
+                    this.deleteFromPremateurePvh();
                     return ;
                 }
                 axios.post(apiDomain+'/admin/order/findpvh',{
@@ -575,6 +565,7 @@
                         checker.productCount=0;
                         checker.totalPrice = 0;
                         checker.productId=0;
+                        checker.workPrice = 0;
                         return ;
                     }
                     let rData = response.data;
@@ -587,21 +578,28 @@
                         title: 'Алдааны мэдээлэл',
                         autoHideDelay: 5000
                     })
-                }) 
+                });
+                this.deleteFromPremateurePvh();
             },
             filterWorkPrices(index,r){
-                let pvh = this.choosenProducts[index].relDetails[r];
-                
-                if(parseInt(pvh.isDirect)==-1){
-                    pvh.workPriceId=0;
-                }
-                //garaar shuud bichsen option value zaaval int ruu hurvuuleh 
-                this.workFilteredPrices=this.workPrices.filter(w => parseInt(w.workTypeId)==parseInt(pvh.isDirect));
+                this.pvhTotalCalculation(this.choosenProducts[index].relDetails[r]);
             },
-            setWorkPrice(choosenIndex){
-                
-                let foundWorkPrice = this.workFilteredPrices[choosenIndex].workPrice;
-                alert(foundWorkPrice);
+            setWorkPrice(index,r){
+                let foundWorkPrice = 0;
+                let workPriceId =this.choosenProducts[index].relDetails[r].workPriceId;
+                if(workPriceId==0){
+                    this.choosenProducts[index].relDetails[r].workPrice=0;
+                    this.pvhTotalCalculation(this.choosenProducts[index].relDetails[r]);
+                    return ;
+                }
+                let filteredPrice = this.workPrices.filter(p => p.id===workPriceId);
+                if(filteredPrice.length==1){
+                    foundWorkPrice=filteredPrice[0].workPrice;    
+                    //alert("this is very important "+foundWorkPrice);
+                    if(foundWorkPrice && foundWorkPrice!=null)
+                        this.choosenProducts[index].relDetails[r].workPrice=foundWorkPrice;    
+                }
+                this.pvhTotalCalculation(this.choosenProducts[index].relDetails[r]);
             },
             getTotalPvh(){
                 let totalPvh =0;
@@ -631,27 +629,8 @@
             },
              
             pvhTotalCalculation(c){
-                c.totalPrice=c.productCount*c.productPrice;
-            },
-            pvhChange(item){
-               
-                let productId=item.productId;
-                
-                let found =null;
-                for(let i=0;i<this.detailProducts.length;i++){
-                    if(this.detailProducts[i].value==productId){
-                        found = this.detailProducts[i];
-                    }
-                }
-                if(found!=null){
-                    item.productPrice=found.productPrice;
-                    item.productCount=1;
-                    item.totalPrice=found.productPrice*1;
-                }
-               
-               
+                c.totalPrice=(c.productCount*c.productPrice) + (c.workPrice*c.productCount);
 
-                this.deleteFromPremateurePvh();
             },
             hasRelDetail(index){
                 //alert("has pvh "+this.choosenProducts[index].hasRelDetail);
@@ -668,6 +647,7 @@
                           isDirect:-1,
                           workPriceId :0,
                           workPrice:0,
+
                           detailId:0,
                           productId:0,
                           productPrice:0,
@@ -685,6 +665,13 @@
             addPvh(index){
                  this.choosenProducts[index].relDetails.push(
                         {   
+                          catId:0,   
+                          colorId:0,
+                          measureId:0,
+                          isDirect:-1,
+                          workPriceId :0,
+                          workPrice:0,
+                          
                           detailId:0,
                           productId:0,
                           productPrice:0,
@@ -706,27 +693,6 @@
                  this.deleteFromPremateurePvh();
 
                  this.deleteFromPremateureList();
-            },
-            
-            productChange(item){
-               
-                let productId=this.choosenProducts[item].deliveryProductId;
-                //alert(productId);
-                let found =null;
-                for(let i=0;i<this.products.length;i++){
-                    if(this.products[i].value==productId){
-                        found = this.products[i];
-                    }
-                }
-                if(found!=null){
-                    //alert("hotah" +setIndex);
-                    this.choosenProducts[item].productPrice=found.productPrice;
-                    this.choosenProducts[item].productCount=1;
-                    this.choosenProducts[item].totalPrice=found.productPrice*1;
-                }
-               
-               
-                this.deleteFromPremateureList();
             },
             addProductField(){
                  if(this.productCats.length==0){
@@ -841,7 +807,7 @@
                     }
                 }
 
-                let delIndexes;
+                let delIndexes= [] ;
                 for (let r = 0;r<this.prematureList.length;r++){
                     let productId = this.prematureList[r].productId;
                     let wareHouseId = this.prematureList[r].wareHouseId;
@@ -899,14 +865,17 @@
                 }
             },
             getGivenProductCount(wareHouseId, productId) {
-                let totalPrice = 0;
+                let totalCount = 0;
                 for (let m =0 ;m<this.choosenProducts.length;m++){
+                   
                     if(this.choosenProducts[m].deliveryProductId===productId
                      && this.choosenProducts[m].wareHouseId===wareHouseId){
-                        totalPrice=totalPrice+parseInt(this.choosenProducts[m].productCount);
+
+                        totalCount=totalCount+parseInt(this.choosenProducts[m].productCount);
                        
                         if(this.prematureList.length==0){
-                            this.prematureList.push({"wareHouseId":wareHouseId, "productId":productId});
+                            this.prematureList.push({"wareHouseId":wareHouseId,
+                             "productId":productId,"measureId":this.choosenProducts[m].measureId,"colorId":this.choosenProducts[m].colorId});
                         }
                         else{
                              let checker = 0;
@@ -916,7 +885,8 @@
                                  }
                              }
                              if(checker==0){
-                                this.prematureList.push({"wareHouseId":wareHouseId, "productId":productId});    
+                                this.prematureList.push({"wareHouseId":wareHouseId,"colorId":this.choosenProducts[m].colorId,
+                                "measureId":this.choosenProducts[m].measureId, "productId":productId});    
                              }
                         }
 
@@ -927,9 +897,10 @@
                         for(let k = 0;k<detailProducts.length;k++){
                             if(detailProducts[k].productId===productId &&
                                detailProducts[k].wareHouseId===wareHouseId){
-                                totalPrice=totalPrice+parseInt(detailProducts[k].productCount);
+                                totalCount=totalCount+parseInt(detailProducts[k].productCount);
                                 if(this.prematurePvh.length==0){
-                                    this.prematurePvh.push({"wareHouseId":detailProducts[k].wareHouseId, "productId":productId});
+                                    this.prematurePvh.push({"colorId":detailProducts[k].colorId,"wareHouseId":detailProducts[k].wareHouseId, 
+                                        "productId":productId,"measureId":detailProducts[k].measureId});
                                 }
                                 else{
                                     let checker = 0;
@@ -939,30 +910,24 @@
                                         }
                                     }
                                     if(checker==0){
-                                        this.prematurePvh.push({"wareHouseId":detailProducts[k].wareHouseId, "productId":productId});    
+                                        this.prematurePvh.push({"measureId":detailProducts[k].measureId,"colorId":detailProducts[k].colorId,"wareHouseId":detailProducts[k].wareHouseId, "productId":productId});    
                                     }
                                 }
                             }
-
-
-                            
                         }
                     }
                     
                 }
                 
-                return totalPrice;
+                return totalCount;
             },
-            getRegProduct(productId,type){
+            getRegProduct(colorId,type){
               
                 if(type==='choosen'){
-                    return element=>element.deliveryProductId===productId;
+                    return element=>element.deliveryProductId===colorId;
                 }
-                if(type==='dbList'){
-                    return element=>element.value===productId;
-                }
-                if(type==='pvh'){
-                    return element=>element.value===productId;
+                else{
+                    return element=>element.id===colorId;
                 }
                 
             }
@@ -1037,10 +1002,15 @@
                 
             },
             productName:function(){
-                return (productId,pType)=>{
+                return (colorId,pType,measureId)=>{
                     if(pType=='pvh'){
-                         if(this.detailProducts.filter(this.getRegProduct(productId,pType)).length>0){
-                             return this.detailProducts.filter(this.getRegProduct(productId,pType))[0].text    
+                         if(this.productColors.filter(this.getRegProduct(colorId,pType)).length>0){
+                             let ml = this.productMeasures.filter(m=> m.id ===measureId);
+                             let measureName=null;
+                             if(ml.length==1){
+                                 measureName=ml[0].measureName;
+                             }
+                             return this.productColors.filter(this.getRegProduct(colorId,pType))[0].colorName + " " +measureName    
                          }
                          else{
                             
@@ -1048,8 +1018,13 @@
                          }
                     }
                     else{
-                        if(this.products.filter(this.getRegProduct(productId,pType)).length>0){
-                            return this.products.filter(this.getRegProduct(productId,pType))[0].text    
+                        if(this.productColors.filter(this.getRegProduct(colorId,pType,measureId)).length>0){
+                            let ml = this.productMeasures.filter(m=> m.id===measureId);
+                            let measureName=null;
+                            if(ml.length==1){
+                                measureName=ml[0].measureName;
+                            }
+                            return this.productColors.filter(this.getRegProduct(colorId,pType,measureId))[0].colorName + " " +measureName     
                         }
                         else{
                             //alert("danda");
