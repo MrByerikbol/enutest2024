@@ -182,13 +182,13 @@
             
         ></b-pagination>
 
-        <b-modal id="productModal" title="Шинэ бараа нэмэх" hide-footer>
+        <b-modal id="productModal" title="Шинэ бараа нэмэх" @hide="onProductModalHide" hide-footer>
             <b-form v-on:submit.prevent="submitProduct">
                   <b-form-row class="mb-3">
 
                       <b-col sm="auto" md="12">
                           <label for="productName">Барааны төрөл</label>
-                          <select class="form-control" @change="catChange" v-model="productForm.catId">
+                          <select class="form-control" v-model="productForm.catId">
                             <option value=0>---сонгох---</option>
                             <option v-for="(p,i) in productCats " :value="p.catId" :key="i">
                               {{p.catName}}
@@ -208,7 +208,7 @@
                           <label for="productName">Барааны хэмжээ</label>
                           <select class="form-control" v-model="productForm.measureId">
                             <option value=0>---сонгох---</option>
-                            <option v-for="(p,i) in productFilteredMeasures " :value="p.id" :key="i">
+                            <option v-for="(p,i) in productMeasures.filter(m=>parseInt(m.catId)==parseInt(productForm.catId)) " :value="p.id" :key="i">
                               {{p.measureName}}
                             </option>
                           </select>
@@ -338,14 +338,20 @@ export default {
       totalCatRows:0,
       showRef : false,
       showPrice : false,
-      isSmall:true ,
-      productFilteredMeasures:[]
+      isSmall:true 
+     
     }
   },
   methods:{
-    catChange(){
-      if(this.productForm.catId>0){
-        this.productFilteredMeasures=this.productMeasures.filter(m=>m.catId===this.productForm.catId);
+    onProductModalHide(){
+      this.productForm={
+        id:0,
+        productName:"",
+        productPrice:0,
+        productOutPrice:0,
+        catId:0,
+        measureId:0 , 
+        colorId : 0
       }
     },
     productRef(){

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card title="Хүргэлтийн жагсаалт" bg-variant="light">
+    <b-card title="Захиалгын жагсаалт" bg-variant="light">
       <b-tabs pills card  v-model="tabIndex"  @input="dateFilter">
         <b-row class="mt-2">
           <b-col lg="3">
@@ -10,11 +10,6 @@
           <b-col lg="3">
             <datepicker format="yyyy-MM-dd" 
              :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Дуусах огноо"></datepicker>
-
-          </b-col>
-          <b-col lg="3" v-if="beginDate!=''">
-            <b-button size="sm"  @click="doFilterByDate">Шүүх</b-button>
-
           </b-col>
         </b-row>
         <b-tab title="Шинэ"
@@ -33,13 +28,17 @@
                   <b-input-group size="sm">
                     <b-form-input
                       v-model="filter"
-                      type="search"
+                      type="input"
                       id="filterInput"
                       placeholder="Хайлт хийх утгаа оруулна уу"
+                      @keyup="filterChange"
+                      @change="filterChange"
                     ></b-form-input>
-                    
+                    <b-button size="sm" class="ml-3"  @click="doSearch"> Шүүх </b-button>
                   </b-input-group>
+                 
                 </b-form-group>
+                
               </b-col>
               
               
@@ -49,56 +48,102 @@
               <b-table 
                 responsive
                 small 
-                ref="newDeliveryTable"
+                ref="newOrderTable"
                 striped hover 
-                :items="newDeliveryProvider" 
+                :items="newOrderProvider" 
                 :fields="fieldsNew"
                 :busy.sync="isBusy"
                 :current-page="currentPage"
                 :per-page="perPage"
                 :table-variant="tableVariant"
-                :filter="filter"
+               
                 selected-variant="active"
+                
                 >
-                <template slot="takeDelivery" slot-scope="row">
-                  <center>
-                    <b-button
-                      size="sm"
-                      v-b-tooltip.hover title="Энэ хүргэлтийг өөртөө авах" 
-                      @click="takeDelivery(row.item.deliveryId)" 
-                      class="text-left mt-1" variant="success">
-                        +
-                    </b-button>
-                  </center>
-                </template>
-                <template slot="productInfo" slot-scope="row">
-                  <!-- {{row.item}} -->
-                  <b-button v-for="(product,index) in row.item.deliveryProducts" 
-                    :key="index" size="sm" class="text-left mr-1 mt-1" variant="primary">
-                      {{product.productName}} = <b-badge variant="light">{{product.productPrice}}₮ x {{product.productCount}} = {{product.totalPrice}}₮</b-badge>
-                  </b-button>
-                  <br>
-                  <b-button size="sm" class="text-left mt-1" variant="danger">
-                      Үүсгэсэн:<b-badge variant="light">{{row.item.createdUserName}}</b-badge><b-badge variant="light">{{row.item.createdDate}}</b-badge>
-                      Хүргэлт:{{row.item.deliveryCost}}₮ Нийт:{{row.item.totalProductPrice + row.item.deliveryCost}}₮ 
-                  </b-button>
-                  
-                </template>
                 <template v-slot:table-busy>
                   <div class="text-center text-info my-2">
                     <b-spinner class="align-middle"></b-spinner>
                     <strong>Ачаалж байна...</strong>
                   </div>
                 </template>
-                <template slot="deliveryActions" slot-scope="row">
-                  <center>
-                    <b-button @click="editDelivery(row.item.deliveryId)" variant="outline-info" class="mr-1" size="sm" v-b-tooltip.hover title="Хувиарлах">
-                      <font-awesome-icon icon="user-secret" />
+                <template v-slot:cell(orderActions)="row">
+                    <b-button @click="row.toggleDetails" 
+                      variant="outline-success" class="mr-1" size="sm"   >
+                      <font-awesome-icon icon="list" title="Лист харах"/>
                     </b-button>
-                    <b-button @click="ignoreDelivery(row.item.deliveryId)" v-b-modal.descriptionModal variant="outline-danger" size="sm" v-b-tooltip.hover title="Цуцлах">
-                      <font-awesome-icon icon="window-close" />
+                    <b-button 
+                     
+                      @click="completeThings('completeOrder',row.item.deliveryId,null)" 
+                      variant="outline-warning" class="mr-1" size="sm" >
+                      <font-awesome-icon icon="check"  title="Захиалага дуусгах"/>
                     </b-button>
-                  </center>
+                    <b-button  
+                      variant="outline-primary" class="mr-1" size="sm" >
+                      <font-awesome-icon icon="pen"  title="Захиалага засах"/>
+                    </b-button>
+                    <b-button variant="outline-danger" class="mr-1" size="sm" >
+                      <font-awesome-icon icon="window-close"  title="Захиалага устгах"/>
+                    </b-button>
+                </template>
+                <template v-slot:row-details="row">
+                  <b-card>
+                    <b-row>
+                      <b-col lg="6">
+                        <h6>Листүүд</h6>
+                      </b-col>
+                    </b-row>
+                    <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
+                      <template v-slot:cell(listActions)="row">
+                          <b-button 
+                            @click="row.toggleDetails"
+                            :disabled="row.item.relDetails.length>0 ? false : true " 
+                            variant="outline-success" class="mr-1" size="sm"   >
+                            <font-awesome-icon icon="list" title="Пвх харах"/>
+                          </b-button>
+                          <b-button 
+                            :disabled="row.item.isDone==1 ? true : false"
+                            @click="completeThings('completeList',row.item.relId,row)" variant="outline-info" class="mr-1" size="sm" >
+                            <font-awesome-icon icon="check" title="Лист дуусгах"/>
+                          </b-button>
+                      </template>
+                      <template v-slot:cell(pvhCount)="row">
+                          {{row.item.relDetails.length}}
+                      </template>
+                      <template v-slot:cell(isDone)="row">
+                        {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                      </template>
+                      <!-- pvh jagaaslt -->
+                      <template v-slot:row-details="row">
+                          <b-card>
+                            <h6>пвх - нууд</h6>
+                            <b-table striped hover :fields="pvhFields" table-variant="danger" 
+                              :items="row.item.relDetails">
+
+                              <template v-slot:cell(isDone)="row">
+                                {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                              </template>
+                              <template v-slot:cell(pvhActions)="row">
+                                <b-button 
+                                  :disabled="row.item.isDone==1 ? true : false"
+                                  @click="completeThings('completePvh',row.item.detailId,row)"  variant="outline-info" class="mr-1" size="sm" >
+                                  <font-awesome-icon icon="check" title="Пвх дуусгах"/>
+                                </b-button>
+                              </template>  
+                            </b-table>
+                            <b-row>
+                              <b-col lg="12" class="text-right py-2">
+                                <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх хаах</b-button>
+                              </b-col>
+                            </b-row>
+                          </b-card>
+                        </template>
+                    </b-table>
+                    <b-row>
+                      <b-col lg="12" class="text-right py-2">
+                        <b-button size="sm" variant="danger" @click="row.toggleDetails">Лист хаах</b-button>
+                      </b-col>
+                    </b-row>
+                  </b-card>
                 </template>
               </b-table>
               <b-pagination
@@ -113,163 +158,281 @@
              </b-row>              
           </b-card-text>
         </b-tab>
-        <b-tab title="Миний хүргэлт">
+        <b-tab title="Хийгдэж байгаа">
           <b-card-text>
-            <b-row>
-              <b-col lg="8">
-                <b-form-group
-                  label="Хайлт"
-                  label-cols-sm="1"
-                  label-align-sm="left"
-                  label-size="sm"
-                  label-for="filterInput"
-                  class="mb-2 mt-3"
-                >
-                  <b-input-group size="sm">
-                    <b-form-input
-                      v-model="filterMine"
-                      type="search"
-                      id="filterInput"
-                      placeholder="Хайлт хийх утгаа оруулна уу"
-                    ></b-form-input>
-                    
-                  </b-input-group>
-                </b-form-group>
-              </b-col>
-              <b-col lg="4" class="pt-3 text-right">
-                <strong>тоо:</strong> {{totalRowsMine}}  
-              </b-col>
+              <b-row>
+                <b-col lg="8">
+                  <b-form-group
+                    label="Хайлт"
+                    label-cols-sm="1"
+                    label-align-sm="left"
+                    label-size="sm"
+                    label-for="filterInput"
+                    class="mb-2 mt-3"
+                  >
+                    <b-input-group size="sm">
+                      <b-form-input
+                        v-model="filter"
+                        type="input"
+                        id="filterInput"
+                        placeholder="Хайлт хийх утгаа оруулна уу"
+                        @keyup="filterChange"
+                        @change="filterChange"
+                      ></b-form-input>
+                      <b-button size="sm" class="ml-3"  @click="doSearch"> Шүүх </b-button>
+                    </b-input-group>
+                  
+                  </b-form-group>
+                  
+                </b-col>
+                
+                
+                <b-col lg="4" class="pt-3 text-right">
+                  <strong>тоо:</strong> {{totalRowsProgress}}  
+                </b-col>
                 <b-table 
                   responsive
                   small 
-                  ref="mineDeliveryTable"
+                  ref="progressOrderTable"
                   striped hover 
-                  :items="mineDeliveryProvider" 
+                  :items="progressOrderProvider" 
                   :fields="fieldsNew"
                   :busy.sync="isBusy"
-                  :current-page="currentPage"
+                  :current-page="currentPageProgress"
                   :per-page="perPage"
                   :table-variant="tableVariant"
-                  :filter="filterMine"
+                
                   selected-variant="active"
-                >
-                  <template slot="takeDelivery" slot-scope="row">
-                    <center>
-                      <b-button
-                        size="sm"
-                        v-b-tooltip.hover title="Хүргэлт баталгаажуулах" 
-                        @click="doneDelivery(row.item.deliveryId)" 
-                        class="text-left mt-1" variant="success">
-                          <font-awesome-icon icon="check" />
-                      </b-button>
-                    </center>  
-                  </template>
-                  <template slot="productInfo" slot-scope="row">
-                    <!-- {{row.item}} -->
-                    <b-button v-for="(product,index) in row.item.deliveryProducts" 
-                      :key="index" size="sm" class="text-left mr-1 mt-1" variant="primary">
-                        {{product.productName}} = <b-badge variant="light">{{product.productPrice}}₮ x {{product.productCount}} = {{product.totalPrice}}₮</b-badge>
-                    </b-button>
-                    <br>
-                    <b-button size="sm" class="text-left mt-1" variant="danger">
-                        Үүсгэсэн:  <b-badge variant="light">{{row.item.createdUserName}}</b-badge><b-badge variant="light">{{row.item.createdDate}}</b-badge>
-                        Хүргэлт:{{row.item.deliveryCost}}₮ Нийт:{{row.item.totalProductPrice + row.item.deliveryCost}}₮ 
-                    </b-button>
-                    <br>
-                    <b-badge variant="light">Хүргэгч: {{row.item.userName}}</b-badge>
-                  </template>
+                  
+                  >
                   <template v-slot:table-busy>
                     <div class="text-center text-info my-2">
                       <b-spinner class="align-middle"></b-spinner>
                       <strong>Ачаалж байна...</strong>
                     </div>
                   </template>
-                  <template slot="deliveryActions" slot-scope="row">
-                    <center>
-                      <b-button @click="editDelivery(row.item.deliveryId)" variant="outline-info" class="mr-1" size="sm" v-b-tooltip.hover title="Хувиарлах">
-                          <font-awesome-icon icon="user-secret" />
-                        </b-button>
-                      <b-button @click="ignoreDelivery(row.item.deliveryId)" variant="outline-danger" size="sm" v-b-tooltip.hover title="Цуцлах">
-                        <font-awesome-icon icon="window-close" />
+                  <template v-slot:cell(orderActions)="row">
+                      <b-button @click="row.toggleDetails" 
+                        variant="outline-success" class="mr-1" size="sm"   >
+                        <font-awesome-icon icon="list" title="Лист харах"/>
                       </b-button>
-                    </center>
+                      <b-button 
+                      
+                        @click="completeThings('completeOrder',row.item.deliveryId,null)" 
+                        variant="outline-warning" class="mr-1" size="sm" >
+                        <font-awesome-icon icon="check"  title="Захиалага дуусгах"/>
+                      </b-button>
+                      <b-button  
+                        variant="outline-primary" class="mr-1" size="sm" >
+                        <font-awesome-icon icon="pen"  title="Захиалага засах"/>
+                      </b-button>
+                      <b-button variant="outline-danger" class="mr-1" size="sm" >
+                        <font-awesome-icon icon="window-close"  title="Захиалага устгах"/>
+                      </b-button>
                   </template>
+                  <template v-slot:row-details="row">
+                    <b-card>
+                      <b-row>
+                        <b-col lg="6">
+                          <h6>Листүүд</h6>
+                        </b-col>
+                      </b-row>
+                      <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
+                        <template v-slot:cell(listActions)="row">
+                            <b-button 
+                              @click="row.toggleDetails"
+                              :disabled="row.item.relDetails.length>0 ? false : true " 
+                              variant="outline-success" class="mr-1" size="sm"   >
+                              <font-awesome-icon icon="list" title="Пвх харах"/>
+                            </b-button>
+                            <b-button 
+                              :disabled="row.item.isDone==1 ? true : false"
+                              @click="completeThings('completeList',row.item.relId,row)" variant="outline-info" class="mr-1" size="sm" >
+                              <font-awesome-icon icon="check" title="Лист дуусгах"/>
+                            </b-button>
+                        </template>
+                        <template v-slot:cell(pvhCount)="row">
+                            {{row.item.relDetails.length}}
+                        </template>
+                        <template v-slot:cell(isDone)="row">
+                          {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                        </template>
+                        <!-- pvh jagaaslt -->
+                        <template v-slot:row-details="row">
+                            <b-card>
+                              <h6>пвх - нууд</h6>
+                              <b-table striped hover :fields="pvhFields" table-variant="danger" 
+                                :items="row.item.relDetails">
+
+                                <template v-slot:cell(isDone)="row">
+                                  {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                                </template>
+                                <template v-slot:cell(pvhActions)="row">
+                                  <b-button 
+                                    :disabled="row.item.isDone==1 ? true : false"
+                                    @click="completeThings('completePvh',row.item.detailId,row)"  variant="outline-info" class="mr-1" size="sm" >
+                                    <font-awesome-icon icon="check" title="Пвх дуусгах"/>
+                                  </b-button>
+                                </template>  
+                              </b-table>
+                              <b-row>
+                                <b-col lg="12" class="text-right py-2">
+                                  <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх хаах</b-button>
+                                </b-col>
+                              </b-row>
+                            </b-card>
+                          </template>
+                      </b-table>
+                      <b-row>
+                      <b-col lg="12" class="text-right py-2">
+                        <b-button size="sm" variant="danger" @click="row.toggleDetails">Лист хаах</b-button>
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </template>
               </b-table>
               <b-pagination
-                  v-model="currentPage"
-                  :total-rows="totalRowsMine"
+                  v-model="currentPageProgress"
+                  :total-rows="totalRowsProgress"
                   :per-page="perPage"
                   align="fill"
                   size="sm"
                   class="my-0"
                   
               ></b-pagination>
-             </b-row>    
+             </b-row>                 
           </b-card-text>
         </b-tab>
-        <b-tab title="Хүргэгдэсэн">
+        <b-tab title="Хийгдэж дууссан">
           <b-card-text>
             <b-row>
-              <b-col lg="8">
-                <b-form-group
-                  label="Хайлт"
-                  label-cols-sm="1"
-                  label-align-sm="left"
-                  label-size="sm"
-                  label-for="filterInput"
-                  class="mb-2 mt-3"
-                >
-                  <b-input-group size="sm">
-                    <b-form-input
-                      v-model="filterDone"
-                      type="search"
-                      id="filterInput"
-                      placeholder="Хайлт хийх утгаа оруулна уу"
-                    ></b-form-input>
-                    
-                  </b-input-group>
-                </b-form-group>
-              </b-col>
-              <b-col lg="4" class="pt-3 text-right">
-                <strong>тоо:</strong> {{totalRowsDone}}  
-              </b-col>
+                <b-col lg="8">
+                  <b-form-group
+                    label="Хайлт"
+                    label-cols-sm="1"
+                    label-align-sm="left"
+                    label-size="sm"
+                    label-for="filterInput"
+                    class="mb-2 mt-3"
+                  >
+                    <b-input-group size="sm">
+                      <b-form-input
+                        v-model="filter"
+                        type="input"
+                        id="filterInput"
+                        placeholder="Хайлт хийх утгаа оруулна уу"
+                        @keyup="filterChange"
+                        @change="filterChange"
+                      ></b-form-input>
+                      <b-button size="sm" class="ml-3"  @click="doSearch"> Шүүх </b-button>
+                    </b-input-group>
+                  
+                  </b-form-group>
+                  
+                </b-col>
+                
+                
+                <b-col lg="4" class="pt-3 text-right">
+                  <strong>тоо:</strong> {{totalRowsDone}}  
+                </b-col>
                 <b-table 
                   responsive
                   small 
-                  ref="doneDeliveryTable"
+                  ref="doneOrderTable"
                   striped hover 
-                  :items="doneDeliveryProvider" 
-                  :fields="fieldsOther"
+                  :items="doneOrderProvider" 
+                  :fields="fieldsNew"
                   :busy.sync="isBusy"
-                  :current-page="currentPage"
+                  :current-page="currentPageDone"
                   :per-page="perPage"
                   :table-variant="tableVariant"
-                  :filter="filterDone"
+                
                   selected-variant="active"
-                >
-                  <template slot="productInfo" slot-scope="row">
-                    <!-- {{row.item}} -->
-                    <b-button v-for="(product,index) in row.item.deliveryProducts" 
-                      :key="index" size="sm" class="text-left mr-1 mt-1" variant="primary">
-                        {{product.productName}} = <b-badge variant="light">{{product.productPrice}}₮ x {{product.productCount}} = {{product.totalPrice}}₮</b-badge>
-                    </b-button>
-                    <br>
-                    <b-button size="sm" class="text-left mt-1" variant="danger">
-                        Үүсгэсэн:  <b-badge variant="light">{{row.item.createdUserName}}</b-badge><b-badge variant="light">{{row.item.createdDate}}</b-badge>
-                        Хүргэлт:{{row.item.deliveryCost}}₮ Нийт:{{row.item.totalProductPrice + row.item.deliveryCost}}₮ 
-                    </b-button>
-                    <br>
-                    <b-badge variant="light">Хүргэгч: {{row.item.userName}}</b-badge>
-                  </template>
+                  
+                  >
                   <template v-slot:table-busy>
                     <div class="text-center text-info my-2">
                       <b-spinner class="align-middle"></b-spinner>
                       <strong>Ачаалж байна...</strong>
                     </div>
                   </template>
+                  <template v-slot:cell(orderActions)="row">
+                      <b-button @click="row.toggleDetails" 
+                        variant="outline-success" class="mr-1" size="sm"   >
+                        <font-awesome-icon icon="list" title="Лист харах"/>
+                      </b-button>
+                    
+                      <b-button  
+                        variant="outline-primary" class="mr-1" size="sm" >
+                        <font-awesome-icon icon="pen"  title="Захиалага засах"/>
+                      </b-button>
+                      <b-button variant="outline-danger" class="mr-1" size="sm" >
+                        <font-awesome-icon icon="window-close"  title="Захиалага устгах"/>
+                      </b-button>
+                  </template>
+                  <template v-slot:row-details="row">
+                    <b-card>
+                      <b-row>
+                        <b-col lg="6">
+                          <h6>Листүүд</h6>
+                        </b-col>
+                      </b-row>
+                      <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
+                        <template v-slot:cell(listActions)="row">
+                            <b-button 
+                              @click="row.toggleDetails"
+                              :disabled="row.item.relDetails.length>0 ? false : true " 
+                              variant="outline-success" class="mr-1" size="sm"   >
+                              <font-awesome-icon icon="list" title="Пвх харах"/>
+                            </b-button>
+                            <b-button 
+                              :disabled="row.item.isDone==1 ? true : false"
+                              @click="completeThings('completeList',row.item.relId,row)" variant="outline-info" class="mr-1" size="sm" >
+                              <font-awesome-icon icon="check" title="Лист дуусгах"/>
+                            </b-button>
+                        </template>
+                        <template v-slot:cell(pvhCount)="row">
+                            {{row.item.relDetails.length}}
+                        </template>
+                        <template v-slot:cell(isDone)="row">
+                          {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                        </template>
+                        <!-- pvh jagaaslt -->
+                        <template v-slot:row-details="row">
+                            <b-card>
+                              <h6>пвх - нууд</h6>
+                              <b-table striped hover :fields="pvhFields" table-variant="danger" 
+                                :items="row.item.relDetails">
+
+                                <template v-slot:cell(isDone)="row">
+                                  {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                                </template>
+                                <template v-slot:cell(pvhActions)="row">
+                                  <b-button 
+                                    :disabled="row.item.isDone==1 ? true : false"
+                                    @click="completeThings('completePvh',row.item.detailId,row)"  variant="outline-info" class="mr-1" size="sm" >
+                                    <font-awesome-icon icon="check" title="Пвх дуусгах"/>
+                                  </b-button>
+                                </template>  
+                              </b-table>
+                              <b-row>
+                                <b-col lg="12" class="text-right py-2">
+                                  <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх хаах</b-button>
+                                </b-col>
+                              </b-row>
+                            </b-card>
+                          </template>
+                      </b-table>
+                      <b-row>
+                      <b-col lg="12" class="text-right py-2">
+                        <b-button size="sm" variant="danger" @click="row.toggleDetails">Лист хаах</b-button>
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </template>
               </b-table>
               <b-pagination
-                  v-model="currentPage"
+                  v-model="currentPageDone"
                   :total-rows="totalRowsDone"
                   :per-page="perPage"
                   align="fill"
@@ -277,106 +440,11 @@
                   class="my-0"
                   
               ></b-pagination>
-             </b-row>   
-          </b-card-text>
-        </b-tab>
-        <b-tab title="Цуцлагдсан">
-          <b-card-text>
-            <b-row>
-              <b-col lg="8">
-                <b-form-group
-                  label="Хайлт"
-                  label-cols-sm="1"
-                  label-align-sm="left"
-                  label-size="sm"
-                  label-for="filterInput"
-                  class="mb-2 mt-3"
-                >
-                  <b-input-group size="sm">
-                    <b-form-input
-                      v-model="filterIgnore"
-                      type="search"
-                      id="filterInput"
-                      placeholder="Хайлт хийх утгаа оруулна уу"
-                    ></b-form-input>
-                    
-                  </b-input-group>
-                </b-form-group>
-              </b-col>
-              <b-col lg="4" class="pt-3 text-right">
-                <strong>тоо:</strong> {{totalRowsIgnore}}  
-              </b-col>
-                <b-table 
-                  responsive
-                  small 
-                  ref="ignoreDeliveryTable"
-                  striped hover 
-                  :items="ignoreDeliveryProvider" 
-                  :fields="fieldsOther"
-                  :busy.sync="isBusy"
-                  :current-page="currentPage"
-                  :per-page="perPage"
-                  :table-variant="tableVariant"
-                  :filter="filterIgnore"
-                  selected-variant="active"
-                >
-                  <template slot="productInfo" slot-scope="row">
-                    <!-- {{row.item}} -->
-                    <b-button v-for="(product,index) in row.item.deliveryProducts" 
-                      :key="index" size="sm" class="text-left mr-1 mt-1" variant="primary">
-                        {{product.productName}} = <b-badge variant="light">{{product.productPrice}}₮ x {{product.productCount}} = {{product.totalPrice}}₮</b-badge>
-                    </b-button>
-                    <br>
-                    <b-button size="sm" class="text-left mt-1" variant="danger">
-                        Үүсгэсэн:  <b-badge variant="light">{{row.item.createdUserName}}</b-badge><b-badge variant="light">{{row.item.createdDate}}</b-badge>
-                        Хүргэлт:{{row.item.deliveryCost}}₮ Нийт:{{row.item.totalProductPrice + row.item.deliveryCost}}₮ 
-                    </b-button>
-                    <br>
-                    <p> <strong>Тайлбар :</strong> {{row.item.description}} </p>
-                    
-                    <b-badge variant="light">Хүргэгч: {{row.item.userName}}</b-badge>
-                  </template>
-                  <template v-slot:table-busy>
-                    <div class="text-center text-info my-2">
-                      <b-spinner class="align-middle"></b-spinner>
-                      <strong>Ачаалж байна...</strong>
-                    </div>
-                  </template>
-              </b-table>
-              <b-pagination
-                  v-model="currentPage"
-                  :total-rows="totalRowsIgnore"
-                  :per-page="perPage"
-                  align="fill"
-                  size="sm"
-                  class="my-0"
-                  
-              ></b-pagination>
-             </b-row>      
+             </b-row>  
           </b-card-text>
         </b-tab>
       </b-tabs>
     </b-card>
-
-     <b-modal id="descriptionModal" title="Цуцалсан тайлбар" hide-footer>
-        <b-form v-on:submit.prevent="ignoreDeliveryFunction">
-              <b-form-row class="mb-3">
-                  <b-col sm="auto" md="12">
-                      <label for="deliveryDescription">Тайлбар</label>
-                      <b-form-textarea
-                          id="deliveryDescription"
-                          v-model="deliveryDescription"
-                          required
-                          placeholder="Та яагаад цуцалж байгаа тайлбар оруулна уу."
-                      ></b-form-textarea>
-                  </b-col>
-              </b-form-row>
-              <b-button type="submit" variant="primary" class="mr-2">Тайлбар оруулах</b-button>
-              <b-button type="reset" variant="danger">Арилгах</b-button>
-          </b-form>    
-      </b-modal>
-
-
   </div>
 </template>
 
@@ -394,40 +462,131 @@ export default {
   },
   data(){
     return {
+      isSmall:true,
+
       fieldsNew: [
-          { 
-            key: 'takeDelivery',
-            label: '',
-            //thStyle: {vertical-align: 'middle'}
-            
+          {
+            key: 'orderNumber',
+            label: 'Дугаар',
+            variant: 'primary'
           },
           {
-            key: 'productInfo',
-            label: 'Барааны мэдээлэл',
-            variant: 'warning'
-           
+            key: 'userInfo',
+            label: 'Клиент',
+            variant: 'danger'
           },
           {
-            key: 'shopName',
-            label: 'Гарах',
+            key: 'totalProductPrice',
+            label: 'Үнэ',
             variant: 'success'
           },
           {
-            key: 'destinationOrg',
-            label: 'Утас',
-            variant: 'info'
+            key: 'listCount',
+            label: 'Лист',
+            variant: 'warning'
           },
           {
-            key: 'destinationOrgAddress',
-            label: 'Хаяг',
-            variant: 'info'
+            key: 'pvhCount',
+            label: 'ПВХ',
+            variant: 'primary'
           },
           {
-            key: 'deliveryActions',
+            key: 'orderDate',
+            label: 'Огноо',
+            variant: 'info'
+          },
+           
+          {
+            key: 'orderActions',
+            label: 'Үйлдэлүүд',
+            align:'center'
+          }
+
+      ],
+      listFields: [
+          {
+            key: 'catName',
+            label: 'Төрөл'
+          },
+          {
+            key: 'colorName',
+            label: 'Өнгө'
+          },
+          {
+            key: 'measureName',
+            label: 'Хэмжээ'
+          },
+          {
+            key: 'productCount',
+            label: 'Тоо'
+          },
+          {
+            key: 'productPrice',
+            label: 'Үнэ'
+          },
+          {
+            key: 'totalPrice',
+            label: 'Нийт'
+          },
+          {
+            key: 'wareHouseName',
+            label: 'Склад'
+          },
+          {
+            key: 'pvhCount',
+            label: 'ПВХ'
+          },
+          {
+            key: 'isDone',
+            label: 'Статус'
+           
+          },
+          {
+            key: 'listActions',
             label: 'Үйлдэлүүд'
           }
       ],
-    
+      pvhFields: [
+          {
+            key: 'catName',
+            label: 'Төрөл'
+          },
+          {
+            key: 'colorName',
+            label: 'Өнгө'
+          },
+          {
+            key: 'measureName',
+            label: 'Хэмжээ'
+          },
+         
+          // {
+          //   key: 'productPrice',
+          //   label: 'Үнэ'
+          // },
+          {
+            key: 'productCount',
+            label: 'Метр'
+          },
+          {
+            key: 'totalPrice',
+            label: 'Нийт'
+          },
+          {
+            key: 'wareHouseName',
+            label: 'Склад'
+          },
+          {
+            key: 'isDone',
+            label: 'Статус'
+           
+          },
+          {
+            key: 'pvhActions',
+            label: 'Үйлдэлүүд'
+          }
+      ],
+
       fieldsOther: [
          
           {
@@ -453,129 +612,102 @@ export default {
           }
       ],
       isBusy:false,
+      isBusyProgress:false,
+      isBusyDone:false,
+
       totalRows:0,
-      totalRowsMine:0,
-      totalRowsIgnore:0,
+      totalRowsProgress:0,
       totalRowsDone:0,
+
       currentPage: 1,
+      currentPageProgress:1,
+      currentPageDone:1,
+
+
       perPage: 20,
       tableVariant:'light',
       filter:"",
-      filterMine:"",
-      filterIgnore:"",
-      filterDone:"",
-      takeDisable:false,
 
       tabIndex:0,
       beginDate :"",
-      endDate: "",
-
-      deliveryDescription:""
-
+      endDate: ""
     }
   },
   methods:{
+    doSearch(){
+      
+      if(this.beginDate || this.filter.length>0){
+        this.refreshTables();
+      }
+      else{
+        this.$bvToast.toast("Хайлтын утгуудаа орлуулна уу!!!", {
+            title: 'Алдаа',
+            autoHideDelay: 5000,
+            variant:"danger"
+        })  
+      }
+    },
+    filterChange(){
+      if(this.filter.length==0){
+        this.refreshTables();
+      }
+    },
+    completeThings(operationType,objectId,row){
+      let warn =confirm("Та үнэхээр итгэлтэй байна уу ?");
+      if(warn){
+        axios.post(apiDomain+'/admin/order/charge_off_order_products',{'operationType':operationType, 'objectId':objectId},{headers:getHeader()})
+        .then(()=>{
+          this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+              title: 'Амжилт',
+              autoHideDelay: 5000,
+              variant:"success"
+          })
+          if(row && row!=null){
+            row.item.isDone=1;
+          }
+          //herev shine zahialgiin ali neg list yumuu pvh g complete hiivel refresh
+          if(this.tabIndex==0){
+            this.refreshTables();
+          }
+          else{
+            if(operationType==='completeOrder'){
+              
+              this.refreshTables();  
+            }
+          }
+            
+        })
+        .catch(error => {
+            //console.log(error.message)
+            this.$bvToast.toast(error.message, {
+                title: 'Алдаа',
+                autoHideDelay: 5000,
+                variant:"danger"
+            })
+        }) 
+
+      } 
+    },
     clearBegin(){
       this.beginDate="";
-      this.doFilterByDate();
+      this.endDate=""
+      this.refreshTables();
     },
     clearEnd(){
       this.endDate="";
-      this.doFilterByDate();
     },
 
     dateFilter(index){
       this.tabIndex=index;
       this.beginDate="";
       this.endDate="";
-
+      this.filter="";
+      this.refreshTables();
     },
-    doFilterByDate(){
-      
-      if(this.tabIndex==0){
-        this.$refs.newDeliveryTable.refresh();
-      }
-      if(this.tabIndex==1){
-         this.$refs.mineDeliveryTable.refresh();
-      }
-      if(this.tabIndex==2){
-         this.$refs.doneDeliveryTable.refresh();
-      }
-      if(this.tabIndex==3){
-         this.$refs.ignoreDeliveryTable.refresh();  
-      }
-    },
-    takeDelivery(deliveryId){
-      let warn = confirm("Та энэ хүргэлийг авхад итгэлтэй байна уу ?");
-      if(warn){
-        let result = this.hasRole("DELIVERY");
-        if(result){
-          axios.post(apiDomain+'/admin/delivery/takedelivery/',{delId:deliveryId},{headers:getHeader()})
-          .then(response=>{
-              //alert(response.data);
-              let alertMsg = "Үйлдэл амжилттай хийгдлээ.";
-              this.$bvToast.toast(alertMsg, {
-                title: 'Алдаа',
-                autoHideDelay: 5000
-              })
-              this.refreshTables();
-          
-          })
-          .catch(error => {
-              //console.log(error.message)
-              this.$bvToast.toast(error.message, {
-                  title: 'Алдаа',
-                  autoHideDelay: 5000
-              })
-          })   
-        }
-        else{
-          this.$bvToast.toast("Зөвхөн хүргэгчид энэ үйлдэлийг хийх боломжтой", {
-              title: 'Алдааны мэдээлэл',
-              autoHideDelay: 5000
-          })  
-        }
-     
-      }
-      
-    },
-    ignoreDelivery(delId){
-      this.deliveryId = delId;
-      this.$bvModal.show('descriptionModal');
-    },
-    ignoreDeliveryFunction(){
-      
-      
-      if(this.deliveryId>0 && this.deliveryDescription.trim().length>0){
-         let warn = confirm("Та итгэлтэй байна уу ?");
-         if(warn){
-          let result = this.hasRole("ADMIN");
-          let result1 = this.hasRole("MANAGER");
-          let result2 = this.hasRole("OPERATOR");
-          if(result || result1 || result2){
-
-            if(this.deliveryDescription!="")
-              this.changeStatus('ignore',this.deliveryId);
-          }
-          else{
-            this.$bvToast.toast("Та энэ үйлдлийг хийх эрхгүй байна.", {
-                title: 'Алдааны мэдээлэл',
-                autoHideDelay: 5000
-            })    
-          }
-        }
-        this.$bvModal.hide('descriptionModal')
-      }
-      else{
-        this.$bvToast.toast("Та тайлбар заавал оруулна уу.", {
-            title: 'Алдааны мэдээлэл',
-            autoHideDelay: 5000
-        })    
-      }
-     
-      
-    },
-    doneDelivery(delId){
+    
+    
+    
+    completeOrder(delId){
       //alert(delId);
       let warn = confirm("Та итгэлтэй байна уу ?");
       if(warn){
@@ -599,20 +731,16 @@ export default {
         'setDeliveryFormObject',
     ]),
 
-    editDelivery(pdeliveryId){
-      //daraan margalgui hgeerei
-
-      //  this.setDeliveryRefs(1);
-      // this.setDeliveryRefs(2);
-      // this.setDeliveryRefs(4);
-
-      let reqData = {deliveryId:pdeliveryId};
-      this.setDeliveryFormObject(reqData);
-      this.$router.push({name:'NewDelivery'});
+    editOrder(pdeliveryId){
+      //let reqData = {deliveryId:pdeliveryId};
+      alert("something will happen ");
+      // this.setDeliveryFormObject(reqData);
+      // this.$router.push({name:'NewDelivery'});
     },
 
-    newDeliveryProvider(ctx){
-        ctx.delType="new";
+    newOrderProvider(ctx){
+        ctx.orderType="new";
+        ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
         }
@@ -627,22 +755,26 @@ export default {
         }
       
         this.isBusy = false
-        let promise = axios.post(apiDomain+'/admin/delivery/newdeliverylist',ctx,{headers:getHeader()});
+        let promise = axios.post(apiDomain+'/admin/order/orderlist',ctx,{headers:getHeader()});
         return promise.then((response) => {
           const result = response.data;
           this.isBusy = false
-          this.totalRows=result.totalRows;
-          //alert(JSON.stringify(result));
-          //console.log(result);
-
-          return(result.deliveryies)
+          this.totalRows=result.gridData.recordCount;
+          return(result.gridData.items)
         }).catch(error => {
+          this.$bvToast.toast(error.message, {
+              title: 'Алдааны мэдээлэл',
+              autoHideDelay: 5000,
+              variant:"danger"
+          })  
           this.isBusy = false
           return []
         })
     },
-    mineDeliveryProvider(ctx){
-        ctx.delType="mine"
+    progressOrderProvider(ctx){
+        ctx.orderType="progress";
+
+        ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
         }
@@ -655,24 +787,29 @@ export default {
         else{
           ctx.endDate="";
         }
-        //alert("yes");
-        this.isBusy = false
-        let promise = axios.post(apiDomain+'/admin/delivery/newdeliverylist',ctx,{headers:getHeader()});
+      
+        this.isBusyProgress = false
+        let promise = axios.post(apiDomain+'/admin/order/orderlist',ctx,{headers:getHeader()});
         return promise.then((response) => {
           const result = response.data;
-          this.isBusy = false
-          this.totalRowsMine=result.totalRows;
-          //alert(JSON.stringify(result));
-          //console.log(result);
-
-          return(result.deliveryies)
+          this.isBusyProgress = false
+          this.totalRowsProgress=result.gridData.recordCount;
+          return(result.gridData.items)
         }).catch(error => {
-          this.isBusy = false
+          this.$bvToast.toast(error.message, {
+              title: 'Алдааны мэдээлэл',
+              autoHideDelay: 5000,
+              variant:"danger"
+          })  
+          this.isBusyProgress = false
           return []
         })
     },
-    doneDeliveryProvider(ctx){
-        ctx.delType="done"
+
+    doneOrderProvider(ctx){
+        ctx.orderType="done";
+
+        ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
         }
@@ -685,52 +822,26 @@ export default {
         else{
           ctx.endDate="";
         }
-        //alert("yes");
-        this.isBusy = false
-        let promise = axios.post(apiDomain+'/admin/delivery/newdeliverylist',ctx,{headers:getHeader()});
+      
+        this.isBusyDone = false
+        let promise = axios.post(apiDomain+'/admin/order/orderlist',ctx,{headers:getHeader()});
         return promise.then((response) => {
           const result = response.data;
-          this.isBusy = false
-          this.totalRowsDone=result.totalRows;
-          //alert(JSON.stringify(result));
-          //console.log(result);
-
-          return(result.deliveryies)
+          this.isBusyDone = false;
+          this.totalRowsDone=result.gridData.recordCount;
+          return(result.gridData.items)
         }).catch(error => {
-          this.isBusy = false
+          this.$bvToast.toast(error.message, {
+              title: 'Алдааны мэдээлэл',
+              autoHideDelay: 5000,
+              variant:"danger"
+          })  
+          this.isBusyDone = false
           return []
         })
     },
-    ignoreDeliveryProvider(ctx){
-        ctx.delType="ignore"
-        if(this.beginDate!=""){
-           ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
-        }
-        else{
-          ctx.beginDate="";
-        }
-        if(this.endDate!=""){
-           ctx.endDate=moment(this.endDate).format('YYYY-MM-DD')
-        }
-        else{
-          ctx.endDate="";
-        }
-        //alert("yes");
-        this.isBusy = false
-        let promise = axios.post(apiDomain+'/admin/delivery/newdeliverylist',ctx,{headers:getHeader()});
-        return promise.then((response) => {
-          const result = response.data;
-          this.isBusy = false
-          this.totalRowsIgnore=result.totalRows;
-          //alert(JSON.stringify(result));
-          //console.log(result);
 
-          return(result.deliveryies)
-        }).catch(error => {
-          this.isBusy = false
-          return []
-        })
-    },
+
     hasRole(roleName){
       let roleNames = this.loginedUser.roles;
      
@@ -802,12 +913,16 @@ export default {
        
     },
     refreshTables(){
-      this.$refs.ignoreDeliveryTable.refresh();
-      this.$refs.doneDeliveryTable.refresh();
-      this.$refs.mineDeliveryTable.refresh();
-      this.$refs.newDeliveryTable.refresh();
-      
-    },
+      if(this.tabIndex==0){
+        this.$refs.newOrderTable.refresh();
+      }
+      if(this.tabIndex==1){
+        this.$refs.progressOrderTable.refresh();
+      }
+      if(this.tabIndex==2){
+        this.$refs.doneOrderTable.refresh();
+      }
+    }
     
     
   },

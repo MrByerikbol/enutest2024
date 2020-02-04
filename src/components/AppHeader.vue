@@ -9,7 +9,7 @@
       <b-navbar-nav>
 
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') " href="javascript:void(0)" @click="newDelivery">
-          Шинэ лист
+          Шинэ захиалга
         </b-nav-item>
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') || hasRole('DELIVERY')" href="/#/deliveries">Захиалгууд</b-nav-item>
 
@@ -17,7 +17,7 @@
           || hasRole('MANAGER')" href="javascript:void(0)" @click="doCalculation1">Тооцоо</b-nav-item>
           
         <b-nav-item v-if="hasRole('ADMIN')" href="/#/users">Хэрэглэгчид</b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN')" href="/#/shops">Дэлгүүрүүд</b-nav-item>
+       
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/products">Бараанууд</b-nav-item>
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/warehouse">Агуулах</b-nav-item>
         
@@ -179,10 +179,12 @@ export default {
     }
   },
   created(){
+    
     this.setDeliveryRefs(1);
     this.setDeliveryRefs(2);
-    //this.setDeliveryRefs(4);
-    //this.setDeliveryRefs(8);
+
+    this.setDeliveryRefs(9);
+    this.setDeliveryRefs(10);
     
     this.getLoginedUser();
   },

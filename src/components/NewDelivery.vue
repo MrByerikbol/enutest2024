@@ -264,9 +264,10 @@
                                     <select 
                                         class="d-block small-font" style="width:100% !important;"
                                         :id="'wareHouse'+r+27"
+                                        @change="pvhWareHouseChange(index,r)"
                                         :disabled="c.measureId &&
                                                 c.measureId>0 ? false : true"
-                                        v-model="c.wareHouseId">
+                                        v-model=c.wareHouseId>
                                         <option value=0>--сонгох--</option>
                                         <option v-for="(w,wx) in wareHouses" :key="wx" :value="w.wareHouseId">
                                             {{w.wareHouseName}}
@@ -315,8 +316,7 @@
                                                 class="d-block small-font" style="width:100% !important;"
                                                 @change="filterWorkPrices(index,r)"
 
-                                                :disabled="c.productCount>0 &&
-                                                        c.productPrice>0 ? false : true"
+                                                :disabled="c.productCount==0 || c.wareHouseId==0 ? true : false"
                                                 v-model="c.isDirect">
                                                 <option value=-1>--сонгох--</option>        
                                                 <option value=1>
@@ -428,7 +428,7 @@
                             <b-button type="submit" 
                                 v-if="totalPriceOfOrder>0 && choosenProducts.length>0
                                     && deliveryObject.userId>0
-                                    && mainOrderFormChecker && loanResult" 
+                                    && mainOrderFormChecker " 
                                 variant="primary" class="mr-2">Листийн захиалага үүсгэх</b-button>
 
                                 <b-button type="reset" variant="danger">Арилгах</b-button>
@@ -469,6 +469,15 @@
             }
         },
         methods: {
+            pvhWareHouseChange(index,r){
+                
+                let currentRelDetail = this.choosenProducts[index].relDetails[r];
+                let isDirect = currentRelDetail.isDirect;
+                
+                currentRelDetail.isDirect=currentRelDetail.wareHouseId==0 ? -1 : isDirect;
+                
+
+            },
             getRefs(type){
                 axios.get(apiDomain+'/admin/delivery/refs/'+type,{headers:getHeader()})
                     .then(response=>{
@@ -582,7 +591,9 @@
                 this.deleteFromPremateurePvh();
             },
             filterWorkPrices(index,r){
-                this.pvhTotalCalculation(this.choosenProducts[index].relDetails[r]);
+                this.choosenProducts[index].relDetails[r].workPriceId=0;
+                //this.pvhTotalCalculation(this.choosenProducts[index].relDetails[r]);
+                this.setWorkPrice(index,r);
             },
             setWorkPrice(index,r){
                 let foundWorkPrice = 0;
@@ -629,6 +640,8 @@
             },
              
             pvhTotalCalculation(c){
+                c.totalPrice=0;
+
                 c.totalPrice=(c.productCount*c.productPrice) + (c.workPrice*c.productCount);
 
             },
@@ -727,10 +740,7 @@
             onSubmit(evt) {
                 evt.preventDefault()
                 if(this.choosenProducts.length>0){
-                   
                     let looped = null;
-
-
                     for(let l=0;l<this.choosenProducts.length;l++){
                         let choosed=this.choosenProducts[l];
                         if(choosed.deliveryProductId==null 
@@ -739,8 +749,6 @@
                             looped='error';    
                             break;
                         }
-                        
-                        
                     }
                     if(looped==='error'){
                         this.$bvToast.toast('Та барааны бүх талбаруудыг бөглөнө үү', {
@@ -990,6 +998,9 @@
                                 !detailList.totalPrice || parseInt(detailList.totalPrice)==0 
                                 || !detailList.wareHouseId || parseInt(detailList.wareHouseId)==0 ){
                                     return false;
+                            }
+                            if(detailList.isDirect!=-1 && detailList.workPriceId==0){
+                                return false;
                             }
                         }
                     }    

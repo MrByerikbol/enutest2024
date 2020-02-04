@@ -26,9 +26,9 @@ Vue.use(VBScrollspyPlugin)
 
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faWindowClose,faUserSecret,faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faWindowClose,faUserSecret,faCheck, faList, faPen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faUserSecret,faWindowClose,faCheck)
+library.add(faUserSecret,faWindowClose,faCheck,faList,faPen)
  
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 import VueMoment from 'vue-moment'
