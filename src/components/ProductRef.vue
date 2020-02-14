@@ -296,9 +296,7 @@ export default {
                     let rData = response.data;
                     this.colorForm.refId=rData.refId;
                     this.colorForm.refName =  rData.refName;
-                    this.
                     this.colorForm.retType='color';
-
                     this.$bvModal.show('productColorModal');
                     
                 })

@@ -353,6 +353,11 @@
                             <span class="sr-only">Not selected</span>
                         </template>
                     </template>
+                    <template v-slot:cell(future)="row">
+                       <span class="text-danger text-center d-block">
+                          {{row.item.future=='future' ? 'захиалаггүй' : row.item.future}} 
+                        </span>
+                    </template>   
                     <template v-slot:table-busy>
                         <div class="text-center text-info my-2">
                             <b-spinner class="align-middle"></b-spinner>
@@ -448,6 +453,11 @@ export default {
               key:'productCount',
               label:'Тоо'
           },
+          {
+              key:'future',
+              label:'Үлдэх'
+          },
+          
           {
               key:'lastChargeDate',
               label:'Cүүлийн таталт'

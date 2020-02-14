@@ -2,7 +2,10 @@
     <b-row>
        <b-col lg="12">
         <h3>
-          <span class="bd-content-title">Шинэ захиалага бүртгэх</span>
+          <span class="bd-content-title">
+              Шинэ захиалага бүртгэх
+              <!-- {{deliveryFormObject}} -->
+          </span>
         </h3>
        </b-col>
         <b-col  sm="auto" xs="auto" lg="12" md="12">
@@ -51,6 +54,7 @@
                                     @change="findProduct(index)"
                                     v-model="choosenProducts[index].catId"
                                      class="d-block small-font" style="width:100% !important;"
+                                     :disabled="p.isDone==1 ? true : false"
                                 >
                                 <option value=0 >-- сонгох --</option>
                                 <option  v-for="(option,catIndex)
@@ -65,7 +69,8 @@
                             </label>
                             <select
                                    @change="findProduct(index)"
-                                    :disabled="choosenProducts[index].catId &&
+                                    :disabled="p.isDone==1 ? true : 
+                                        choosenProducts[index].catId &&
                                         choosenProducts[index].catId>0 ? false : true"
                                     v-model="choosenProducts[index].colorId"
                                     class="d-block small-font" style="width:100% !important;"
@@ -83,7 +88,7 @@
                             </label>
                             <select
                                    @change="findProduct(index)"
-                                    :disabled="choosenProducts[index].colorId &&
+                                    :disabled="p.isDone==1 ? true : choosenProducts[index].colorId &&
                                         choosenProducts[index].colorId>0 ? false : true"
                                     class="d-block xs-font" style="width:100% !important; height:25px;"
                                     v-model="choosenProducts[index].measureId"
@@ -102,7 +107,7 @@
                             <select
                                 class="d-block small-font" style="width:100% !important;"
                                 :id="'wareHouse'+index"
-                                :disabled="choosenProducts[index].measureId &&
+                                :disabled="p.isDone==1 ? true : choosenProducts[index].measureId &&
                                         choosenProducts[index].measureId>0 ? false : true"
                                 v-model="choosenProducts[index].wareHouseId">
                                 
@@ -139,7 +144,7 @@
                                 min="0"
                                 @change="totalCalculation(index)"
                                 required
-                                :disabled="choosenProducts[index].wareHouseId &&
+                                :disabled="p.isDone==1 ? true : choosenProducts[index].wareHouseId &&
                                            choosenProducts[index].wareHouseId>0 && choosenProducts[index].deliveryProductId>0 ? false : true"
                             />
 
@@ -167,7 +172,7 @@
                                           <small>ПВХ</small>
                                       </label>
                                       <input 
-                                        :disabled="choosenProducts[index].productCount>0 
+                                        :disabled="p.isDone==1 ? true : choosenProducts[index].productCount>0 
                                             && choosenProducts[index].productPrice>0 ? false : true"
 
                                         type="checkbox" 
@@ -196,16 +201,91 @@
                                         </span>
                                     </strong>
                                  </b-col>
-                                 <b-col lg="7" class="text-right pt-2">
-                                     <b-button type="button" size="sm" class="mt-4" @click="removeProduct(index)" variant="danger">лист -</b-button>    
+                                 <b-col lg="7"  class="text-right pt-2">
+                                     <b-button v-if="p.isDone==0" type="button" size="sm" class="mt-4" @click="removeProduct(index)" variant="danger">лист -</b-button>    
                                  </b-col>
                              </b-form-row>
                              
                         </b-col>
+                        <b-col lg="12" >
+                            <b-form-row class="mt-2">
+                                
+                                <b-col lg="10" class="text-right">
+                                    <b-form-row>
+                                         <b-col lg="8" class="text-right pr-4 pt-1">
+                                            <span class="text-info pr-2">
+                                                Ажлын нийт хөлс: 
+                                                    <strong>
+                                                        {{currentListTotalWorkPrice(index)}}
+                                                    </strong>
+                                            </span>
+                                        </b-col>
+                                        <b-col lg="2" class="text-right pr-4 pt-1">
+                                            <span class="text-info pr-2">
+                                                Ажлын тоо : <strong>{{choosenProducts[index].listWorks.length}}</strong>
+                                            </span>
+                                        </b-col>
+                                        <b-col lg="2">
+                                            <b-button @click="addListWork(index)" size="sm">ажил + </b-button>
+                                        </b-col>
+                                    </b-form-row>
+                                </b-col>
+                            </b-form-row>
+                            <hr>
+                            <b-form-row class="mt-1"
+                                v-for="(work,workIndex) in choosenProducts[index].listWorks" 
+                                                    :key="workIndex">
+                                
+                                <b-col sm="auto"  md="6" lg="6">
+                                    <label class="w-100 text-primary text-right" style="margin-bottom:0 !important;">
+                                        <small>Ажлын төрөл</small>
+                                    </label>
+                                    <select
+                                            @change="calculateWorkPrice(index,workIndex)"
+                                            v-model="work.listWorkPriceId"
+                                            class="d-block small-font float-right text-primary"
+                                            style="height:28px !important;"
+                                        >
+                                        <option value=0>-- зүсэлтийн ажил сонгох --</option>
+                                        <option  v-for="(option,listWorkIndex)
+                                            in listWorkPrices.filter(w=>Number(w.catId)===Number(choosenProducts[index].catId))" v-bind:value=option.id :key="listWorkIndex">
+                                            {{ option.workName}}
+                                        </option>
+                                    </select>
+                                </b-col>
+                                <b-col sm="auto"  md="1" lg="1">
+                                    <label class="text-left text-primary" :for="'pvh'+index" style="margin-bottom:0 !important;">
+                                        <small>Ажлын тоо</small>
+                                    </label>
+                                    <input type="number"
+                                     @change="calculateWorkPrice(index,workIndex)"
+                                    :disabled="choosenProducts[index].listWorks[workIndex].listWorkPriceId==0" 
+                                    class="w-100 small-font text-primary"
+                                     v-model="work.workCount"/>
+                                </b-col>
+                                <b-col sm="auto"  md="1" lg="1">
+                                    <label class="text-left  text-primary" :for="'pvh'+index" style="margin-bottom:0 !important;">
+                                        <small>Хөлс</small>
+                                    </label>
+                                    <input 
+                                    type="number" 
+                                    class="w-100 small-font text-primary" 
+                                    disabled 
+                                    v-model="work.totalWorkPrice">
+                                </b-col>
+                                <b-col class="text-right" lg="2" sm="auto" md="2">
+                                   <b-button size="sm" variant="warning" @click="removeListWork(index,workIndex)" class="mt-4">ажил -</b-button>
+                                </b-col>
+                            </b-form-row>
+                        </b-col>
+                        <b-col lg="12" v-if="choosenProducts[index].listWorks.length>0">
+                            <hr>
+                        </b-col>
                         <b-col lg="10" v-if="choosenProducts[index].hasRelDetail">
+                            
                             <b-form-row class="mt-3">
                                 <b-col lg="6" class="pl-3">
-                                   <span class="text-info"> ПВХ :  <strong>
+                                   <span class="text-info"> ПВХ : <strong>
                                        {{choosenProducts[index].relDetails.length}}</strong></span>
                                 </b-col>
                                 <b-col lg="6" class="text-right pb-3">
@@ -213,6 +293,7 @@
                                 </b-col>
                             </b-form-row>
                         </b-col>
+
                         <b-col lg="12" v-if="choosenProducts[index].hasRelDetail">
 
                             <b-form-row 
@@ -227,7 +308,7 @@
                                         @change="findPvh(index,r)"
                                         v-model="c.colorId"
                                         class="d-block small-font"
-
+                                        :disabled="c.isDone==1 ? true : false"
                                         style="width:100% !important;"
                                     >
                                         <option value=0>-- сонгох --</option>
@@ -244,7 +325,7 @@
                                     </label>
                                     <select
                                         @change="findPvh(index,r)"
-                                            :disabled="c.colorId &&
+                                            :disabled="c.isDone==1 ? true : c.colorId &&
                                                 c.colorId>0 ? false : true"
                                             class="d-block small-font" style="width:100% !important;"
                                             v-model="c.measureId"
@@ -265,7 +346,7 @@
                                         class="d-block small-font" style="width:100% !important;"
                                         :id="'wareHouse'+r+27"
                                         @change="pvhWareHouseChange(index,r)"
-                                        :disabled="c.measureId &&
+                                        :disabled="c.isDone==1 ? true : c.measureId &&
                                                 c.measureId>0 ? false : true"
                                         v-model=c.wareHouseId>
                                         <option value=0>--сонгох--</option>
@@ -275,20 +356,6 @@
                                         
                                     ></select>
                                 </b-col>
-                                <!-- <b-col sm="auto" md="1" lg="1">
-                                    <label class="mr-sm-2" for="productPrice">
-                                        <small>Үнэ</small>
-                                    </label>
-                                    <input
-                                        class="d-block small-font" style="width:100% !important;height : 25px !important;"
-                                        id="productPrice"
-                                        v-model="c.productPrice"
-                                        type="number"
-                                        disabled
-                                        required
-                                        
-                                        >
-                                </b-col> -->
                                 <b-col sm="auto"  md="1" lg="1">
                                     <label class="mr-sm-2" for="productCount">
                                         <small>Тоо</small>
@@ -301,7 +368,7 @@
                                         min="0"
                                         @change="pvhTotalCalculation(c)"
                                         required
-                                        :disabled="c.wareHouseId &&
+                                        :disabled="c.isDone==1 ? true : c.wareHouseId &&
                                                 c.wareHouseId>0 && c.productId>0 ? false : true"
                                     />
 
@@ -316,9 +383,9 @@
                                                 class="d-block small-font" style="width:100% !important;"
                                                 @change="filterWorkPrices(index,r)"
 
-                                                :disabled="c.productCount==0 || c.wareHouseId==0 ? true : false"
+                                                :disabled="c.isDone==1 ? true : c.productCount==0 || c.wareHouseId==0 ? true : false"
                                                 v-model="c.isDirect">
-                                                <option value=-1>--сонгох--</option>        
+                                                  
                                                 <option value=1>
                                                     Прямой
                                                 </option>
@@ -334,7 +401,7 @@
                                             <select
                                                 @change="setWorkPrice(index,r)"
                                                 class="d-block small-font" style="width:100% !important;"
-                                                :disabled="c.isDirect==-1  ? true : false"
+                                                :disabled="c.isDone==1 ? true : c.isDirect==-1  ? true : false"
                                                 v-model="c.workPriceId">
                                                 <option value=0>--сонгох--</option>        
                                                 <option v-for="(w,wi) in workPrices.filter(w => parseInt(w.workTypeId)==parseInt(c.isDirect))"  :key="wi" :value=w.id>
@@ -372,7 +439,7 @@
                                     </strong>
                                  </b-col>
                                  <b-col lg="1" class="mt-3 pt-3 text-right">
-                                     <button type="button" @click="removePvh(index,r)" class="btn btn-sm btn-warning">пвх -</button>
+                                     <button v-if="c.isDone==0" type="button" @click="removePvh(index,r)" class="btn btn-sm btn-warning">пвх -</button>
                                  </b-col>
                                  
                             </b-form-row>
@@ -461,14 +528,27 @@
                 },
 
                 prematureList : [],
-                prematurePvh:[],
-                productColors : [],
-                productMeasures : [],
-                workPrices:[],
-                productCats:[]
+                prematurePvh:[]
+                
             }
         },
         methods: {
+           
+            //zuseltiin ajil ustgah
+            removeListWork(index,workIndex){
+                this.choosenProducts[index].listWorks.splice(workIndex,1);
+            },
+            //zuseltiin ajil nemeh
+            addListWork(index){
+                this.choosenProducts[index].listWorks.push(
+                    {
+                        'workId':0,
+                        'relId':0,
+                        'listWorkPriceId':0,
+                        'workCount':0,
+                        'totalWorkPrice':0
+                    });
+            },
             pvhWareHouseChange(index,r){
                 
                 let currentRelDetail = this.choosenProducts[index].relDetails[r];
@@ -478,27 +558,7 @@
                 
 
             },
-            getRefs(type){
-                axios.get(apiDomain+'/admin/delivery/refs/'+type,{headers:getHeader()})
-                    .then(response=>{
-                        if(type==7){
-                            this.productCats=response.data;
-                        }
-                        if(type==11){
-                            this.productColors=response.data;
-                        }
-                        if(type==12){
-                            this.productMeasures=response.data;
-                        }
-                        if(type==13){
-                            this.workPrices=response.data;
-                        }
-                    })
-                    .catch(error => {
-                        alert(error.message);
-                    }
-                ) 
-            },
+           
             findProduct(index){
                 let checker=this.choosenProducts[index];
                
@@ -633,8 +693,6 @@
                     this.choosenProducts[index].hasRelDetail=false;
 
                 }
-                
-
                 this.deleteFromPremateurePvh();
 
             },
@@ -648,32 +706,76 @@
             hasRelDetail(index){
                 //alert("has pvh "+this.choosenProducts[index].hasRelDetail);
                 let hasRelDetail = this.choosenProducts[index].hasRelDetail;
-                
+                //alert(hasRelDetail);
                 if(hasRelDetail){
-                   
+                    if(this.choosenProducts[index].relDetails.length>0){
+                        return ;
+                    }
 
                     this.choosenProducts[index].relDetails.push(
                         {  
                           catId:0,   
                           colorId:0,
                           measureId:0,
-                          isDirect:-1,
+                          isDirect:1,
                           workPriceId :0,
                           workPrice:0,
-
                           detailId:0,
                           productId:0,
                           productPrice:0,
                           productCount:1,
                           totalPrice:0,
                           relId:0,
-                          wareHouseId:0
-                        });
+                          wareHouseId:0,
+                          isDone:0
+                        }
+                    );
                 }
                 else{
-                     this.choosenProducts[index].relDetails=[];
+                     if(this.deliveryObject.deliveryId && Number(this.deliveryObject.deliveryId)>0){
+                         if(this.choosenProducts[index].relDetails.length>0){
+                            let pvhWarn = confirm("Та энэ листийн бүх пвх устгана гэдэгт итгэлтэй байна уу ?");
+                            if(pvhWarn){
+                                let lastPvhWarn = confirm("Та үнэхээр итгэлтэй байна уу ?");
+                                if(lastPvhWarn){
+                                    let delIndexes = [];
+                                    let listPvhs = this.choosenProducts[index].relDetails;  
+                                    //alert(JSON.stringify(listPvhs));
+                                    for (let m = 0;m<listPvhs.length;m++){
+                                        if(Number(listPvhs[m].detailId)>0)
+                                            delIndexes.push({'detailId':listPvhs[m].detailId});    
+                                    }
+                                    
+                                    if(delIndexes.length>0){
+                                        let delJSON = new Object();
+                                        delJSON.delIndexes = delIndexes;
+                                        axios.post(apiDomain+'/admin/order/deletepvh',
+                                            delJSON,{headers:getHeader()})
+                                        .then(()=>{
+                                            //alert(response.data);
+                                            this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                                title: 'Амжилт',
+                                                autoHideDelay: 5000
+                                            });
+                                            this.choosenProducts[index].relDetails=[];
+                                        })
+                                        .catch(error => {
+                                            //console.log(error.message)
+                                            this.$bvToast.toast(error.message, {
+                                                title: 'Алдааны мэдээлэл',
+                                                autoHideDelay: 5000
+                                            })
+                                        })     
+                                    }
+                                    
+                                }
+                            }
+                         }
+                     }
+                     else{
+                         this.choosenProducts[index].relDetails=[];
+                     }
                 }
-               
             },
             addPvh(index){
                  this.choosenProducts[index].relDetails.push(
@@ -691,7 +793,8 @@
                           productCount:1,
                           totalPrice:0,
                           relId:0,
-                          wareHouseId:0
+                          wareHouseId:0,
+                          isDone:0
                         });
             },
             removeProduct(index){
@@ -708,19 +811,6 @@
                  this.deleteFromPremateureList();
             },
             addProductField(){
-                 if(this.productCats.length==0){
-                    this.getRefs(7);
-                }
-                if(this.productColors.length==0){
-                    this.getRefs(11);
-                }
-                if(this.productMeasures.length==0){
-                    this.getRefs(12);
-                }
-                if(this.workPrices.length==0){
-                    this.getRefs(13);
-                }
-
                 this.choosenProducts.push(
                     {
                         catId:0,
@@ -733,7 +823,9 @@
                         productCount:0,
                         totalPrice:0,
                         relId:0,
-                        relDetails:[]
+                        relDetails:[],
+                        listWorks:[],
+                        isDone:0
                     }
                 );
             },
@@ -942,12 +1034,54 @@
         },
         
         computed: {
+            
             ...mapState([
                 'users',
                 'deliveryFormObject',
-                'wareHouses'
+                'wareHouses',
+                'productCats',
+                'productMeasures',
+                'productColors',
+                'workPrices',
+                'listWorkPrices'
             ]),
+            calculateWorkPrice : function(){
+                let vm = this;
+                return (index,workIndex)=>{
+                    let currentList = vm.choosenProducts[index];
+                    let currentWork = currentList.listWorks[workIndex];
+                    if(currentWork.listWorkPriceId==0){
+                        currentWork.workCount=0;
+                        currentWork.totalWorkPrice=0;
+                        return ;
+                    }
+                    if(currentWork.workCount>0){
+                        let workPrice = 
+                            this.listWorkPrices.filter(w=>w.id==currentWork.listWorkPriceId)[0].workPrice;
+                        currentWork.totalWorkPrice = workPrice*currentWork.workCount;
+                    }
+                    else{
+                        currentWork.totalWorkPrice=0;
+                    }
+                }
+            },
             ...mapGetters(['getWareHouseProductBalance']),
+            currentListTotalWorkPrice(){
+                return (index)=>{
+                    let currentList=this.choosenProducts[index];
+                    let currentListWorks = currentList.listWorks;
+                    if(currentListWorks && currentListWorks.length>0){
+                        let totalWorkPrice = 0;
+                        for (let w =0;w< currentListWorks.length;w++){
+                            totalWorkPrice= totalWorkPrice + Number(currentListWorks[w].totalWorkPrice);
+                        }
+                        return totalWorkPrice;
+                    } 
+                    else{
+                        return 0;
+                    }
+                }
+            },
             deliveryObject:{
                 get:function(){
                     this.choosenProducts=[]; 
@@ -955,7 +1089,7 @@
                         this.choosenProducts=this.deliveryFormObject.deliveryProducts;
                     }
                     
-                    //alert(JSON.stringify(this.deliveryFormObject));
+                    
                     return this.deliveryFormObject 
                 }        
             },
@@ -964,11 +1098,18 @@
                 for (let m =0 ;m<this.choosenProducts.length;m++){
                     totalPrice=totalPrice+this.choosenProducts[m].totalPrice;
                     let detailProducts=this.choosenProducts[m].relDetails;
+                    let listWorks = this.choosenProducts[m].listWorks;
                     if(detailProducts){
                         for(let k = 0;k<detailProducts.length;k++){
                             totalPrice=totalPrice+detailProducts[k].totalPrice;
                         }
                     }
+                    if(listWorks){
+                        for(let w = 0;w<listWorks.length;w++){
+                            totalPrice=totalPrice+Number(listWorks[w].totalWorkPrice);
+                        }
+                    }
+
                     
                 }
                 
@@ -1000,6 +1141,12 @@
                                     return false;
                             }
                             if(detailList.isDirect!=-1 && detailList.workPriceId==0){
+                                return false;
+                            }
+                        }
+                        let listWorks = list.listWorks;
+                        for(let h = 0;h<listWorks.length;h++){
+                            if(listWorks[h].totalWorkPrice===0){
                                 return false;
                             }
                         }

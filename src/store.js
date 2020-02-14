@@ -13,7 +13,13 @@ export default new Vuex.Store({
     deliveryFormObject:{},
     loginedUser:{},
     wareHouses:[],
-    wareHouseProducts:[]
+    wareHouseProducts:[],
+
+    productCats:[],
+    productMeasures:[],
+    productColors:[],
+    workPricesm:[],
+    listWorkPrices:[]
   },
   getters: {
     
@@ -40,7 +46,6 @@ export default new Vuex.Store({
       axios.post(apiDomain+'/admin/order/neworder',reqData,{headers:getHeader()})
       .then(response => {
         //alert(JSON.stringify(response.data));
-
         state.deliveryFormObject=response.data;
       }).catch(error=>{
           //console.log(error);
@@ -68,6 +73,21 @@ export default new Vuex.Store({
               if(refType==10){
                 //alert(JSON.stringify(response.data));
                 state.wareHouseProducts=response.data;
+              }
+              if(refType==7){
+                state.productCats=response.data;
+              }
+              if(refType==11){
+                  state.productColors=response.data;
+              }
+              if(refType==12){
+                  state.productMeasures=response.data;
+              }
+              if(refType==13){
+                  state.workPrices=response.data;
+              }
+              if(refType==14){
+                  state.listWorkPrices=response.data;
               }
           })
           .catch(error => {

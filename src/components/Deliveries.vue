@@ -28,8 +28,8 @@
                   <b-input-group size="sm">
                     <b-form-input
                       v-model="filter"
-                      type="input"
-                      id="filterInput"
+                     
+                      id="filterInput1"
                       placeholder="Хайлт хийх утгаа оруулна уу"
                       @keyup="filterChange"
                       @change="filterChange"
@@ -78,7 +78,7 @@
                       <font-awesome-icon icon="check"  title="Захиалага дуусгах"/>
                     </b-button>
                     <b-button  
-                      variant="outline-primary" class="mr-1" size="sm" >
+                      variant="outline-primary" @click="editOrder(row.item.deliveryId)" class="mr-1" size="sm" >
                       <font-awesome-icon icon="pen"  title="Захиалага засах"/>
                     </b-button>
                     <b-button variant="outline-danger" class="mr-1" size="sm" >
@@ -173,8 +173,8 @@
                     <b-input-group size="sm">
                       <b-form-input
                         v-model="filter"
-                        type="input"
-                        id="filterInput"
+                       
+                        id="filterInput2"
                         placeholder="Хайлт хийх утгаа оруулна уу"
                         @keyup="filterChange"
                         @change="filterChange"
@@ -224,11 +224,9 @@
                       </b-button>
                       <b-button  
                         variant="outline-primary" class="mr-1" size="sm" >
-                        <font-awesome-icon icon="pen"  title="Захиалага засах"/>
+                        <font-awesome-icon icon="pen" @click="editOrder(row.item.deliveryId)" title="Захиалага засах"/>
                       </b-button>
-                      <b-button variant="outline-danger" class="mr-1" size="sm" >
-                        <font-awesome-icon icon="window-close"  title="Захиалага устгах"/>
-                      </b-button>
+                     
                   </template>
                   <template v-slot:row-details="row">
                     <b-card>
@@ -318,7 +316,7 @@
                     <b-input-group size="sm">
                       <b-form-input
                         v-model="filter"
-                        type="input"
+                       
                         id="filterInput"
                         placeholder="Хайлт хийх утгаа оруулна уу"
                         @keyup="filterChange"
@@ -362,13 +360,7 @@
                         <font-awesome-icon icon="list" title="Лист харах"/>
                       </b-button>
                     
-                      <b-button  
-                        variant="outline-primary" class="mr-1" size="sm" >
-                        <font-awesome-icon icon="pen"  title="Захиалага засах"/>
-                      </b-button>
-                      <b-button variant="outline-danger" class="mr-1" size="sm" >
-                        <font-awesome-icon icon="window-close"  title="Захиалага устгах"/>
-                      </b-button>
+                     
                   </template>
                   <template v-slot:row-details="row">
                     <b-card>
@@ -634,6 +626,7 @@ export default {
     }
   },
   methods:{
+    
     doSearch(){
       
       if(this.beginDate || this.filter.length>0){
@@ -729,13 +722,20 @@ export default {
     },
     ...mapActions([
         'setDeliveryFormObject',
+        'setDeliveryRefs'
     ]),
 
     editOrder(pdeliveryId){
-      //let reqData = {deliveryId:pdeliveryId};
-      alert("something will happen ");
-      // this.setDeliveryFormObject(reqData);
-      // this.$router.push({name:'NewDelivery'});
+      this.setDeliveryRefs(7);
+      this.setDeliveryRefs(11);
+      this.setDeliveryRefs(12);
+      this.setDeliveryRefs(13);
+      this.setDeliveryRefs(14);
+
+      let reqData = {deliveryId:pdeliveryId};
+      //alert("something will happen ");
+      this.setDeliveryFormObject(reqData);
+      this.$router.push({name:'NewDelivery'});
     },
 
     newOrderProvider(ctx){

@@ -110,7 +110,8 @@
             <b-button variant="danger" v-if="selectedRows.length>0" size="sm" class="mr-2" @click="deleteRecord">Устгах</b-button>
             
             <b-button style="float:right;" variant="primary" size="sm" class="mr-2" @click="productRef">Барааны лавлах сангууд</b-button>
-            <b-button style="float:right;" variant="info" size="sm" class="mr-2" @click="priceRef">Ажлын хөлс</b-button>
+            <b-button style="float:right;" variant="info" size="sm" class="mr-2" @click="priceRef">Наалтын хөлс</b-button>
+            <b-button style="float:right;" variant="danger" size="sm" class="mr-2" @click="listWorkPriceRef">Зүсэлт хөлс</b-button>
         </b-col>
         <b-row>
           <b-col lg="6">
@@ -243,6 +244,7 @@
 
           <ProductRef v-if="showRef" :parentRefs="getRefs"></ProductRef>
           <WorkPriceRef v-if="showPrice"></WorkPriceRef>
+          <ListWorkPriceRef v-if="showListWorkPriceRef" :productCats="productCats"></ListWorkPriceRef>
       </b-col>
       
     </b-row>
@@ -254,6 +256,7 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import ProductRef from './ProductRef';
 import WorkPriceRef from './WorkPriceRef';
+import ListWorkPriceRef from './ListWorkPriceRef';
 export default {
 
   name: 'Products',
@@ -338,6 +341,8 @@ export default {
       totalCatRows:0,
       showRef : false,
       showPrice : false,
+      showListWorkPriceRef:false,
+
       isSmall:true 
      
     }
@@ -362,6 +367,11 @@ export default {
       
       this.showPrice=true;
       this.$bvModal.show("workPriceRefModal");
+    },
+    listWorkPriceRef(){
+      
+      this.showListWorkPriceRef=true;
+      this.$bvModal.show("ListWorkPriceRefModal");
     },
     catChange1(){
       this.$refs.productTable.refresh();
@@ -618,7 +628,8 @@ export default {
   },
   components:{
     ProductRef,
-    WorkPriceRef
+    WorkPriceRef,
+    ListWorkPriceRef
   }
   
 }
