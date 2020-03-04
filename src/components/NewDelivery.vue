@@ -1,12 +1,20 @@
 <template>
     <b-row>
-       <b-col lg="12">
+       <b-col lg="6">
         <h3>
           <span class="bd-content-title">
               Шинэ захиалага бүртгэх
               <!-- {{deliveryFormObject}} -->
           </span>
         </h3>
+       </b-col>
+      
+       <b-col lg="6">
+            <b-button 
+                block variant="outline-primary" @click="showPrivatePvhModal" class="my-2">
+
+                Кусок пвх
+            </b-button>
        </b-col>
         <b-col  sm="auto" xs="auto" lg="12" md="12">
             
@@ -202,7 +210,8 @@
                                     </strong>
                                  </b-col>
                                  <b-col lg="7"  class="text-right pt-2">
-                                     <b-button v-if="p.isDone==0" type="button" size="sm" class="mt-4" @click="removeProduct(index)" variant="danger">лист -</b-button>    
+                                     <b-button v-if="p.isDone==0" type="button" size="sm" class="mt-4" 
+                                        @click="removeProduct(index)" variant="danger">лист -</b-button>    
                                  </b-col>
                              </b-form-row>
                              
@@ -505,7 +514,8 @@
                 </b-form>
                 
             </b-card>
-       
+
+            <PrivatePvh v-if="showPrivatePvh"></PrivatePvh>
         </b-col>
     </b-row>    
 </template>
@@ -513,11 +523,16 @@
     import axios from 'axios';
     import {apiDomain,getHeader} from "../config/config";
     import {mapState ,mapGetters} from 'vuex';
+
+    import PrivatePvh from './PrivatePvh';
     export default{
         name:'NewDelivery',
-
-         data() {
+        components:{
+            PrivatePvh
+        },
+        data() {
             return {
+                showPrivatePvh:false,
                 choosenProducts:[],
                 loanResult : true,
                 loanDbResult : {},
@@ -533,9 +548,44 @@
             }
         },
         methods: {
-           
+            showPrivatePvhModal(){
+                this.showPrivatePvh=true;
+                this.$bvModal.show("privatePvhModal");
+            },
             //zuseltiin ajil ustgah
             removeListWork(index,workIndex){
+                let workId = this.choosenProducts[index].listWorks[workIndex].workId;
+                if(workId!=null && Number(workId)>0){
+                    let warn = confirm("Та итгэлтэй байна уу ?");
+                    let dbWarn = confirm("Та үнэхээр итгэлтэй байна уу ?");
+                    if(warn && dbWarn){
+                        let delIndexes = [];
+                        delIndexes.push({"workId":workId});
+                        //listiin zuseltend hiigdeh ajluudiig ustgah
+                        if(delIndexes.length>0){
+                            let delJSON = new Object();
+                            delJSON.delIndexes = delIndexes;
+                            axios.post(apiDomain+'/admin/order/deletelistwork',
+                                delJSON,{headers:getHeader()})
+                            .then(()=>{
+                                //alert(response.data);
+                                this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                    title: 'Амжилт',
+                                    autoHideDelay: 5000,
+                                    variant:"success"
+                                });
+                                
+                            })
+                            .catch(error => {
+                                //console.log(error.message)
+                                this.$bvToast.toast(error.message, {
+                                    title: 'Алдааны мэдээлэл',
+                                    autoHideDelay: 5000
+                                })
+                            })     
+                        }
+                    }
+                }
                 this.choosenProducts[index].listWorks.splice(workIndex,1);
             },
             //zuseltiin ajil nemeh
@@ -549,14 +599,10 @@
                         'totalWorkPrice':0
                     });
             },
-            pvhWareHouseChange(index,r){
-                
+            pvhWareHouseChange(index,r){ 
                 let currentRelDetail = this.choosenProducts[index].relDetails[r];
                 let isDirect = currentRelDetail.isDirect;
-                
                 currentRelDetail.isDirect=currentRelDetail.wareHouseId==0 ? -1 : isDirect;
-                
-
             },
            
             findProduct(index){
@@ -686,6 +732,39 @@
             },
             
             removePvh(index,r){
+                let warn = confirm("Та итгэлтэй байна уу ?");
+                let dbWarn = confirm("Та үнэхээр итгэлтэй байна уу ?");
+                if(warn && dbWarn){
+                    let delIndexes = [];
+                    let detailId = this.choosenProducts[index].relDetails[r].detailId;
+                    if(detailId && detailId!=null && Number(detailId)>0){
+                        delIndexes.push({'detailId':detailId});    
+                        if(delIndexes.length>0){
+                            let delJSON = new Object();
+                            delJSON.delIndexes = delIndexes;
+                            axios.post(apiDomain+'/admin/order/deletepvh',
+                                delJSON,{headers:getHeader()})
+                            .then(()=>{
+                                //alert(response.data);
+                                this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                    title: 'Амжилт',
+                                    autoHideDelay: 5000,
+                                    variant:"success"
+                                });
+                                
+                            })
+                            .catch(error => {
+                                //console.log(error.message)
+                                this.$bvToast.toast(error.message, {
+                                    title: 'Алдааны мэдээлэл',
+                                    autoHideDelay: 5000
+                                })
+                            })     
+                        }
+                    }
+                }
+                
+                
                 let delIndex = parseInt(r);
                 this.choosenProducts[index].relDetails.splice(delIndex,1);
                 let leftPvh = this.choosenProducts[index].relDetails.length;
@@ -699,9 +778,7 @@
              
             pvhTotalCalculation(c){
                 c.totalPrice=0;
-
                 c.totalPrice=(c.productCount*c.productPrice) + (c.workPrice*c.productCount);
-
             },
             hasRelDetail(index){
                 //alert("has pvh "+this.choosenProducts[index].hasRelDetail);
@@ -738,36 +815,7 @@
                             if(pvhWarn){
                                 let lastPvhWarn = confirm("Та үнэхээр итгэлтэй байна уу ?");
                                 if(lastPvhWarn){
-                                    let delIndexes = [];
-                                    let listPvhs = this.choosenProducts[index].relDetails;  
-                                    //alert(JSON.stringify(listPvhs));
-                                    for (let m = 0;m<listPvhs.length;m++){
-                                        if(Number(listPvhs[m].detailId)>0)
-                                            delIndexes.push({'detailId':listPvhs[m].detailId});    
-                                    }
-                                    
-                                    if(delIndexes.length>0){
-                                        let delJSON = new Object();
-                                        delJSON.delIndexes = delIndexes;
-                                        axios.post(apiDomain+'/admin/order/deletepvh',
-                                            delJSON,{headers:getHeader()})
-                                        .then(()=>{
-                                            //alert(response.data);
-                                            this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
-                                                title: 'Амжилт',
-                                                autoHideDelay: 5000
-                                            });
-                                            this.choosenProducts[index].relDetails=[];
-                                        })
-                                        .catch(error => {
-                                            //console.log(error.message)
-                                            this.$bvToast.toast(error.message, {
-                                                title: 'Алдааны мэдээлэл',
-                                                autoHideDelay: 5000
-                                            })
-                                        })     
-                                    }
-                                    
+                                    this.deleteAllPvhOfGivenList(index);      
                                 }
                             }
                          }
@@ -776,6 +824,39 @@
                          this.choosenProducts[index].relDetails=[];
                      }
                 }
+            },
+            deleteAllPvhOfGivenList(index){
+                let delIndexes = [];
+                let listPvhs = this.choosenProducts[index].relDetails;  
+                //alert(JSON.stringify(listPvhs));
+                for (let m = 0;m<listPvhs.length;m++){
+                    if(Number(listPvhs[m].detailId)>0)
+                        delIndexes.push({'detailId':listPvhs[m].detailId});    
+                }
+                
+                if(delIndexes.length>0){
+                    let delJSON = new Object();
+                    delJSON.delIndexes = delIndexes;
+                    axios.post(apiDomain+'/admin/order/deletepvh',
+                        delJSON,{headers:getHeader()})
+                    .then(()=>{
+                        //alert(response.data);
+                        this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                            title: 'Амжилт',
+                            autoHideDelay: 5000,
+                            variant:"success"
+                        });
+                        this.choosenProducts[index].relDetails=[];
+                    })
+                    .catch(error => {
+                        //console.log(error.message)
+                        this.$bvToast.toast(error.message, {
+                            title: 'Алдааны мэдээлэл',
+                            autoHideDelay: 5000
+                        })
+                    })     
+                }
+                                 
             },
             addPvh(index){
                  this.choosenProducts[index].relDetails.push(
@@ -798,6 +879,39 @@
                         });
             },
             removeProduct(index){
+                let relId = this.choosenProducts[index].relId;
+
+                if(relId!=null && Number(relId)>0){
+                    let warn = confirm("Та итгэлтэй байна уу ?");
+                    let dbWarn = confirm("Та үнэхээр итгэлтэй байна уу ?");
+                    if(warn && dbWarn){
+                        let delIndexes = [];
+                        delIndexes.push({"listId":relId});
+                        // tuhain listend aguulagdah pvh nuud db cascade eer ustana
+                        if(delIndexes.length>0){
+                            let delJSON = new Object();
+                            delJSON.delIndexes = delIndexes;
+                            axios.post(apiDomain+'/admin/order/deletelist',
+                                delJSON,{headers:getHeader()})
+                            .then(()=>{
+                                //alert(response.data);
+                                this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                    title: 'Амжилт',
+                                    autoHideDelay: 5000,
+                                    variant:"success"
+                                });
+                                //this.choosenProducts[index].relDetails=[];
+                            })
+                            .catch(error => {
+                                //console.log(error.message)
+                                this.$bvToast.toast(error.message, {
+                                    title: 'Алдааны мэдээлэл',
+                                    autoHideDelay: 5000
+                                })
+                            })     
+                        }
+                    }
+                }
                 this.choosenProducts.splice(index,1);
                 if(this.choosenProducts.length==0){
                     this.deliveryFormObject.isLoan=false;
@@ -807,7 +921,6 @@
                 
 
                  this.deleteFromPremateurePvh();
-
                  this.deleteFromPremateureList();
             },
             addProductField(){
@@ -1205,4 +1318,6 @@
         font-size:80%;
         font-weight: 400 
    }
+
+
 </style>

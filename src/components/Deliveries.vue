@@ -119,13 +119,14 @@
                             <b-table striped hover :fields="pvhFields" table-variant="danger" 
                               :items="row.item.relDetails">
 
-                              <template v-slot:cell(isDone)="row">
-                                {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                              <template v-slot:cell(isDone)="pvh">
+                                {{pvh.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
                               </template>
-                              <template v-slot:cell(pvhActions)="row">
+                              <template v-slot:cell(pvhActions)="pvh">
                                 <b-button 
-                                  :disabled="row.item.isDone==1 ? true : false"
-                                  @click="completeThings('completePvh',row.item.detailId,row)"  variant="outline-info" class="mr-1" size="sm" >
+                                  :disabled="row.item.isDone==0 ? true 
+                                    : pvh.item.isDone==1 ? true : false"
+                                  @click="completeThings('completePvh',pvh.item.detailId,pvh)"  variant="outline-info" class="mr-1" size="sm" >
                                   <font-awesome-icon icon="check" title="Пвх дуусгах"/>
                                 </b-button>
                               </template>  
@@ -262,13 +263,13 @@
                               <b-table striped hover :fields="pvhFields" table-variant="danger" 
                                 :items="row.item.relDetails">
 
-                                <template v-slot:cell(isDone)="row">
-                                  {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                                <template v-slot:cell(isDone)="pvh">
+                                  {{pvh.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
                                 </template>
-                                <template v-slot:cell(pvhActions)="row">
+                                <template v-slot:cell(pvhActions)="pvh">
                                   <b-button 
-                                    :disabled="row.item.isDone==1 ? true : false"
-                                    @click="completeThings('completePvh',row.item.detailId,row)"  variant="outline-info" class="mr-1" size="sm" >
+                                    :disabled="row.item.isDone==0 ? true : pvh.item.isDone==1 ? true : false"
+                                    @click="completeThings('completePvh',pvh.item.detailId,row)"  variant="outline-info" class="mr-1" size="sm" >
                                     <font-awesome-icon icon="check" title="Пвх дуусгах"/>
                                   </b-button>
                                 </template>  
@@ -355,11 +356,12 @@
                     </div>
                   </template>
                   <template v-slot:cell(orderActions)="row">
-                      <b-button @click="row.toggleDetails" 
-                        variant="outline-success" class="mr-1" size="sm"   >
-                        <font-awesome-icon icon="list" title="Лист харах"/>
-                      </b-button>
-                    
+                      <center>
+                        <b-button @click="row.toggleDetails" 
+                          variant="outline-success" class="mr-1" size="sm"   >
+                          <font-awesome-icon icon="list" title="Лист харах"/>
+                        </b-button>
+                      </center>
                      
                   </template>
                   <template v-slot:row-details="row">
@@ -370,18 +372,15 @@
                         </b-col>
                       </b-row>
                       <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
-                        <template v-slot:cell(listActions)="row">
-                            <b-button 
-                              @click="row.toggleDetails"
-                              :disabled="row.item.relDetails.length>0 ? false : true " 
-                              variant="outline-success" class="mr-1" size="sm"   >
-                              <font-awesome-icon icon="list" title="Пвх харах"/>
-                            </b-button>
-                            <b-button 
-                              :disabled="row.item.isDone==1 ? true : false"
-                              @click="completeThings('completeList',row.item.relId,row)" variant="outline-info" class="mr-1" size="sm" >
-                              <font-awesome-icon icon="check" title="Лист дуусгах"/>
-                            </b-button>
+                         <template v-slot:cell(listActions)="row">
+                            <center>
+                              <b-button 
+                                @click="row.toggleDetails"
+                                :disabled="row.item.relDetails.length>0 ? false : true " 
+                                variant="outline-warning" class="mr-1" size="sm"   >
+                                <font-awesome-icon icon="list" title="Пвх харах"/>
+                              </b-button>
+                            </center>
                         </template>
                         <template v-slot:cell(pvhCount)="row">
                             {{row.item.relDetails.length}}
@@ -389,23 +388,18 @@
                         <template v-slot:cell(isDone)="row">
                           {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
                         </template>
+                       
                         <!-- pvh jagaaslt -->
                         <template v-slot:row-details="row">
                             <b-card>
                               <h6>пвх - нууд</h6>
-                              <b-table striped hover :fields="pvhFields" table-variant="danger" 
+                              <b-table striped hover :fields="pvhFieldsDone" table-variant="danger" 
                                 :items="row.item.relDetails">
 
                                 <template v-slot:cell(isDone)="row">
                                   {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
                                 </template>
-                                <template v-slot:cell(pvhActions)="row">
-                                  <b-button 
-                                    :disabled="row.item.isDone==1 ? true : false"
-                                    @click="completeThings('completePvh',row.item.detailId,row)"  variant="outline-info" class="mr-1" size="sm" >
-                                    <font-awesome-icon icon="check" title="Пвх дуусгах"/>
-                                  </b-button>
-                                </template>  
+                               
                               </b-table>
                               <b-row>
                                 <b-col lg="12" class="text-right py-2">
@@ -538,6 +532,7 @@ export default {
             label: 'Үйлдэлүүд'
           }
       ],
+     
       pvhFields: [
           {
             key: 'catName',
@@ -552,10 +547,7 @@ export default {
             label: 'Хэмжээ'
           },
          
-          // {
-          //   key: 'productPrice',
-          //   label: 'Үнэ'
-          // },
+         
           {
             key: 'productCount',
             label: 'Метр'
@@ -578,31 +570,40 @@ export default {
             label: 'Үйлдэлүүд'
           }
       ],
-
-      fieldsOther: [
+      pvhFieldsDone: [
+          {
+            key: 'catName',
+            label: 'Төрөл'
+          },
+          {
+            key: 'colorName',
+            label: 'Өнгө'
+          },
+          {
+            key: 'measureName',
+            label: 'Хэмжээ'
+          },
+         
          
           {
-            key: 'productInfo',
-            label: 'Барааны мэдээлэл',
-            variant: 'warning'
+            key: 'productCount',
+            label: 'Метр'
+          },
+          {
+            key: 'totalPrice',
+            label: 'Нийт'
+          },
+          {
+            key: 'wareHouseName',
+            label: 'Склад'
+          },
+          {
+            key: 'isDone',
+            label: 'Статус'
            
-          },
-          {
-            key: 'shopName',
-            label: 'Гарах',
-            variant: 'success'
-          },
-          {
-            key: 'destinationOrg',
-            label: 'Утас',
-            variant: 'info'
-          },
-          {
-            key: 'destinationOrgAddress',
-            label: 'Хаяг',
-            variant: 'info'
           }
       ],
+     
       isBusy:false,
       isBusyProgress:false,
       isBusyDone:false,
@@ -649,7 +650,7 @@ export default {
       let warn =confirm("Та үнэхээр итгэлтэй байна уу ?");
       if(warn){
         axios.post(apiDomain+'/admin/order/charge_off_order_products',{'operationType':operationType, 'objectId':objectId},{headers:getHeader()})
-        .then(()=>{
+        .then(response=>{
           this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
               title: 'Амжилт',
               autoHideDelay: 5000,
@@ -663,7 +664,7 @@ export default {
             this.refreshTables();
           }
           else{
-            if(operationType==='completeOrder'){
+            if(operationType==='completeOrder' || response.data==='complete'){
               
               this.refreshTables();  
             }

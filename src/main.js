@@ -33,7 +33,11 @@ library.add(faUserSecret,faWindowClose,faCheck,faList,faPen)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
- 
+
+import {IconsPlugin } from 'bootstrap-vue'
+
+Vue.use(IconsPlugin)
+
 Vue.use(VueMoment, {
     moment,
 })

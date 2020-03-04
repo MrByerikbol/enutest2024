@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import axios from 'axios';
 Vue.use(Vuex);
 import {apiDomain,getHeader} from "./config/config";
-import { state } from 'fs';
+
 export default new Vuex.Store({
   state: {
     shops:[],
@@ -11,6 +11,7 @@ export default new Vuex.Store({
     products:[],
     detailProducts:[],
     deliveryFormObject:{},
+    kusokFormObject:{},
     loginedUser:{},
     wareHouses:[],
     wareHouseProducts:[],
@@ -26,7 +27,7 @@ export default new Vuex.Store({
     getDeliveryFormObject(state){
       return state.deliveryObject;
     },
-    getWareHouseProductBalance(state,choosenProducts){
+    getWareHouseProductBalance(state){
       // alert(wareHouseId + " " +productId);
       return (wareHouseId,productId)=>{
         for (let i = 0;i<state.wareHouseProducts.length;i++){
@@ -42,12 +43,22 @@ export default new Vuex.Store({
   
   },
   mutations: {
+    
+    SET_KUSOK_FORM_OBJECT(state,reqData){
+      axios.post(apiDomain+'/admin/order/newpvhkusok',reqData,{headers:getHeader()})
+      .then(response => {
+        //alert(JSON.stringify(response.data));
+        state.kusokFormObject=response.data;  
+      }).catch(()=>{
+          //console.log(error);
+      }) 
+    },
     SET_DELIVERY_FORM_OBJECT(state,reqData){
       axios.post(apiDomain+'/admin/order/neworder',reqData,{headers:getHeader()})
       .then(response => {
         //alert(JSON.stringify(response.data));
         state.deliveryFormObject=response.data;
-      }).catch(error=>{
+      }).catch(()=>{
           //console.log(error);
       }) 
     },
@@ -90,9 +101,9 @@ export default new Vuex.Store({
                   state.listWorkPrices=response.data;
               }
           })
-          .catch(error => {
+          .catch(() => {
               //console.log(error.message)
-              //alert("server dr aldaa uuslee");
+              
           }
       ) 
     },
@@ -120,6 +131,9 @@ export default new Vuex.Store({
     },
     setDeliveryFormObject:(context,reqData)=>{
       context.commit("SET_DELIVERY_FORM_OBJECT",reqData);
+    },
+    setKusokFormObject:(context,reqData)=>{
+      context.commit("SET_KUSOK_FORM_OBJECT",reqData);
     },
     setLoginedUser(context){
       //alert("it shoild be call the state");
