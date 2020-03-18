@@ -238,7 +238,7 @@
                     </b-form>
                 </b-col> 
                 <b-col lg="12">
-                    <PvhKusokList ref="kusokList" :editPvhKusok="editPvhKusok"></PvhKusokList>
+                    <PvhKusokList ref="kusokList" :editPvhKusokP="editPvhKusok"></PvhKusokList>
                 </b-col>
             </b-row>
          </b-modal>

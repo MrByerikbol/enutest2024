@@ -165,7 +165,7 @@ export default {
     components:{
         Datepicker
     },
-    props:["editPvhKusok"],
+    props:["editPvhKusokP"],
     name:"PvhKusokList",
     data(){
         return {
@@ -261,7 +261,7 @@ export default {
             let detailId=item.detailId;
             let doneCount=item.doneCount;
 
-            let checker = Number(item.productCount)-Number(item.doneCount);
+            let checker = Number(item.productCount)-Number(doneCount);
             let doingCount = Number(item.doingCount);
             if(doingCount==0){
                 this.$bvToast.toast("Та наасан тоогоо оруулна уу !!!", {
@@ -359,7 +359,7 @@ export default {
             );
         },
         editPvhKusok(kusokId){
-            this.editPvhKusok(kusokId);
+            this.editPvhKusokP(kusokId);
         },
         filterChange(){
             if(this.filter.length==0){

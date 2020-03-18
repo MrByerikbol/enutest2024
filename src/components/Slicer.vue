@@ -1,0 +1,517 @@
+<template>
+     <b-row>
+        <b-col lg="12">
+            <hr>    
+        </b-col>
+        <b-col lg="12">
+            
+            <b-row class="mt-2">
+                <b-col lg="4">
+                    <datepicker format="yyyy-MM-dd"
+                    :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Эхлэх огноо"></datepicker>
+                </b-col>
+                <b-col lg="4">
+                    <datepicker 
+                        format="yyyy-MM-dd" 
+                    :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Дуусах огноо"></datepicker>
+                </b-col>
+                <b-col lg="4">
+                    <select v-model="dStatus" @change="tableRefresher" class="d-block w-100 small-font" style="height:29px !important;">
+                        <option value=0>--Ажил авах--</option>
+                        <option value=1>--Миний ажлууд--</option>
+                        <option value=-1>--Миний хүлээгдэж байгаа--</option>
+                        <option value=2>--Миний хийсэн--</option>
+                    </select>
+                </b-col>
+
+            </b-row>    
+        </b-col> 
+        <b-col lg="8">
+        <b-form-group
+            label="Хайлт"
+            label-cols-sm="1"
+            label-align-sm="left"
+            label-size="sm"
+            label-for="filterInput"
+            class="mb-2 mt-3"
+            >
+            <b-input-group size="sm">
+                <b-form-input
+                v-model="filter"
+                @keyup="filterChange"
+                @change="filterChange"
+                id="filterInput"
+                placeholder="Хайлт хийх утгаа оруулна уу"
+               
+                ></b-form-input>
+                <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
+                      @click="doSearch"> 
+                    Шүүх 
+                </b-button>
+            </b-input-group>
+            </b-form-group>
+        </b-col>
+    
+        <b-col lg="4" class="pt-3 text-right">
+            <strong>тоо:</strong> {{totalRows}}  
+        </b-col>
+        <b-table 
+            
+            small 
+            ref="workTable"
+            striped hover 
+            :items="workProvider" 
+            :fields="fields"
+            :busy.sync="isBusy"
+            :current-page="currentPage"
+            :per-page="perPage"
+            :table-variant="tableVariant"
+            selected-variant="active"
+            @row-dblclicked="item=>$set(item, '_showDetails', !item._showDetails)"
+            >
+            <template v-slot:table-busy>
+            <div class="text-center text-info my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Ачаалж байна...</strong>
+            </div>
+            </template>
+            <template v-slot:cell(workInfo)="del">
+                <b-list-group>
+                    <b-list-group-item v-if="loading">
+                        <Loading/>
+                    </b-list-group-item>
+                    <b-list-group-item v-if="!loading">
+                    
+                        <b-button variant="outline-primary"  class="mb-2" size="sm">
+                            {{del.item.orderNumber +'-'+ del.item.userInfo}}
+                            <b-badge variant="warning" class="ml-2 mt-1">
+                                {{del.item.listCount}}
+                            </b-badge>
+                            <b-badge variant="warning" class="ml-2 mt-1 float-right">
+                                {{del.item.orderDate}}
+                            </b-badge>
+                            <br v-if="dStatus==Number(-1)">
+                            <b-badge v-if="dStatus==Number(-1)">
+                                {{del.item.waitingReason}}
+                            </b-badge>
+                        </b-button>
+
+                        <b-button
+                            @click="changeWaitingStatus(del.item.deliveryId)"
+                            variant="outline-warning" size="sm" class="mb-2 ml-2">
+                            {{dStatus=='-1' ? 'Зүсэх' : 'Хүлээлгэх'}}
+                        </b-button>
+                        <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3"
+                             v-for="(work,workIndex) in del.item.deliveryProducts" :key="workIndex">
+
+                            <div class="float-left mb-1">
+                                <b-button size="sm" @dblclick="getDelWork(work.relId,'one')"  variant="outline-success">
+
+                                    <b-badge>
+                                        {{work.catName+'-'+work.colorName+'-'+work.measureName}}
+                                    </b-badge>
+                                    <b-badge  class="ml-1">
+                                        {{'Тоо : '+work.productCount}}
+                                    </b-badge>
+                                    <b-badge  class="ml-1">
+                                        {{'Зүссэн : '+work.doneCount}}
+                                    </b-badge>
+                                    <br v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0">
+                                    <b-badge 
+                                        v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0"
+                                        variant="danger" class="ml-2 mt-1 float-right">
+                                        {{'Миний баталагдаагүй зүсэлт : '+ work.myUnconfirmedCount}}
+                                    </b-badge>
+                                </b-button>
+                               
+                            </div>
+
+                            <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
+                                <input type="number"
+                                    :max="Number(work.productCount)-Number(work.doneCount)"
+                                    v-model=work.doingCount>
+                                <b-dropdown size="sm" class="ml-2" right
+                                     id="dropdown-text"   variant="danger" text="Зүсэх">
+                                    <b-dropdown-item-button v-if="work.doingCount>0 
+                                         && work.doingCount <= (Number(work.productCount)-Number(work.doneCount))"
+                                         @click="doneWork(work)">
+                                        Зүсэх
+                                    </b-dropdown-item-button>
+                                    <b-dropdown-divider v-if="work.myConfirmations 
+                                        && work.myConfirmations.length>0"></b-dropdown-divider>
+                                    <b-dropdown-text 
+                                        v-if="work.myConfirmations 
+                                            && work.myConfirmations.length>0" class="text-danger" >
+                                        Миний батлах 
+                                    </b-dropdown-text>
+                                     <b-dropdown-item-button   v-for="(confirmation,conIndex) in
+                                        work.myConfirmations" :key="conIndex" @click="confirmDoneCount(confirmation.confirmId)">
+
+                                        {{confirmation.relUserInfo +":"+confirmation.doneCount}}
+                                     </b-dropdown-item-button>
+
+                                    <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
+                                    <b-dropdown-text v-if="work.myJudges && work.myJudges.length>0" class="text-warning">
+                                        Намайг батлах
+                                    </b-dropdown-text>
+                                    <b-dropdown-item-button disabled v-for="(judge,jIndex) in
+                                     work.myJudges" :key="jIndex">
+                                        {{judge.relUserInfo}}
+                                     </b-dropdown-item-button>
+                                </b-dropdown>
+                            </div>
+                            <div style="clear:left;" class="w-100 pl-3">
+                                <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                    v-for="(user,userIndex) in work.listUsers" :key="userIndex">
+                                    {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                                </b-badge>
+                            </div>
+                        </div>
+                        <b-badge variant="danger">
+                            {{del.item.delStatus==0 
+                                ? 'Шинэ' : del.item.delStatus=='1' ? 'Зүсэгдэж байна' : 'Зүсэгдсэн'}}
+                        </b-badge>
+                    </b-list-group-item>  
+                </b-list-group>
+            </template>
+        </b-table>
+        <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="fill"
+            size="sm"
+            class="my-0"
+        ></b-pagination>
+
+        <b-modal id="waitingModal"
+             title="Тайлбар оруулах" 
+             no-close-on-backdrop
+             lazy
+             @hide="resetWform"
+            
+             hide-footer>
+            <b-form v-on:submit.prevent="submitWaiting">
+                  <b-form-row class="mb-3">
+                      <b-col sm="auto" md="12">
+                          <label for="productName">Тайлбар</label>
+                          <textarea required v-model="wForm.waitingReason" class="form-control"></textarea>
+                      </b-col>
+                  </b-form-row>
+                  <b-button size="sm" type="submit" variant="primary" class="mr-2">Хүлээлгэх</b-button>
+                  <b-button size="sm" type="reset" variant="danger">Арилгах</b-button>
+              </b-form>    
+          </b-modal>
+    </b-row>  
+</template>
+<script>
+import axios from 'axios';
+import {apiDomain,getHeader} from "../config/config";
+import Datepicker from 'vuejs-datepicker';
+import Loading from './Loading';
+
+
+const moment = require('moment')
+require('moment/locale/es')
+export default {
+   
+    name :"Slicer",
+    components:{
+        Datepicker,
+        Loading
+    },
+    data(){
+        return {
+            loading:false,
+            isSmall:true,
+            fields: [
+                {
+                    key: 'workInfo',
+                    label: 'Ажлын мэдээлэл'
+                }
+            ],
+            isBusy:false,
+            totalRows:0,
+            currentPage: 1,
+            perPage: 20,
+            tableVariant:'light',
+            filter:"",
+            beginDate :"",
+            endDate: "",
+            
+            dStatus:0,
+            wForm:{
+                deliveryId:-1,
+                isWait:-1,
+                waitingReason:""
+            }
+        }
+    },
+    methods:{
+        postWaitingStatus(){
+            let warn = confirm("Та итгэлтэй байна уу ?");
+            if(this.wForm.deliveryId>0 &&
+                this.wForm.isWait!=-1 &&
+                warn){
+               
+                axios.post(apiDomain+'/admin/work/slicer/changewaitingstatus',{
+                    'deliveryId':this.wForm.deliveryId,
+                    'isWait':this.wForm.isWait,
+                    'waitingReason':this.wForm.waitingReason
+
+                },{headers:getHeader()})
+                .then((response)=>{
+                    this.loading=false;
+                    let rText = response.data;
+                   
+                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let variant =rText =='success' ? 'success' : 'danger';
+
+                    if(rText=='success'){
+                        this.tableRefresher();  
+                    }
+                            
+
+                    this.$bvModal.hide("waitingModal");
+                    this.showToast(msg,variant);
+                })
+                .catch(error => {
+                    //console.log(error.message)
+                    this.showToast(error.message,"danger");
+                });     
+            }
+         
+        },
+        changeWaitingStatus(deliveryId){
+            this.wForm.deliveryId=deliveryId;
+            if(this.dStatus==0 || this.dStatus==1){
+                this.wForm.isWait=1;
+                this.$bvModal.show("waitingModal");
+                
+            }
+            if(this.dStatus==-1){
+                this.wForm.isWait=0;
+                this.postWaitingStatus();
+                
+            }
+        },
+        resetWform(){
+            this.wForm={
+                deliveryId:-1,
+                isWait:-1,
+                waitingReason:""
+            }
+        },
+        submitWaiting(evt){
+            evt.preventDefault();
+
+            this.postWaitingStatus();
+        },
+        confirmDoneCount(confirmId){
+            this.loading=true;
+            let warn = confirm("Итгэйлтэй байна уу ?");
+            if(warn){
+                axios.post(apiDomain+'/admin/work/slicer/confirmdonecount',{
+                    'confirmId':confirmId,
+                },{headers:getHeader()})
+                .then((response)=>{
+                    this.loading=false;
+                    let rText = response.data;
+                   
+                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let variant =rText =='success' ? 'success' : 'danger';
+
+                    if(rText=='success')
+                            this.tableRefresher();
+                    this.showToast(msg,variant);
+                })
+                .catch(error => {
+                    //console.log(error.message)
+                    this.$bvToast.toast(error.message, {
+                        title: 'Алдааны мэдээлэл',
+                        autoHideDelay: 5000,
+                        variant:"danger"
+                    })
+                });
+            }
+            
+        },
+        doneWork(work){
+            
+            if(!work.doingCount || Number(work.doingCount)==0){
+                this.showToast("Та зүссэх тоогоо оруулна уу.","danger");
+                work.doingCoun=0;
+                return ;
+                
+            }
+            if(work.myJudges || work.myConfirmations) {
+                if(work.myJudges && work.myJudges.length>0){
+                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    return ;
+                }
+                if(work.myConfirmations && work.myConfirmations.length>0){
+                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    return ;
+                    
+                }
+            }
+            if(Number(work.doingCount)>Number(work.productCount)-Number(work.doneCount)){
+                this.showToast("Та буруу тоо оруулсан байна","danger");
+                work.doingCoun=0;
+                return ;
+            }
+            if(work.doingCount && Number(work.doingCount)>0){
+                //donecounttologined
+                this.loading=true;
+                axios.post(apiDomain+'/admin/work/slicer/donecounttologined',{
+                    'doneCount':work.doingCount,
+                    'delProductId':work.relId
+
+                },{headers:getHeader()})
+                .then((response)=>{
+                    this.loading=false;
+                    let rText = response.data;
+                    //alert(rText);
+                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let variant =rText =='success' ? 'success' : 'danger';
+
+                    if(rText=='success')
+                            this.tableRefresher();
+                    this.showToast(msg,variant);
+                })
+                .catch(error => {
+                    //console.log(error.message)
+                    this.showToast(error.message,"danger");
+                });
+            }
+        },
+        getDelWork(itemId,type){
+            if(this.dStatus>0){
+                return;
+            }
+            this.loading=true;
+            axios.post(apiDomain+'/admin/work/slicer/getlist',{
+                'itemId':itemId,
+                'type':type
+            },{headers:getHeader()})
+            .then((response)=>{
+               this.loading=false;
+               let rText = response.data;
+               let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : " Та баталгаажуулаагүй "
+                    +" зүсэлтүүд эсвэл танд баталгаа хийлгээгүй зүсэлтүүд байна !!!";
+               let variant =rText =='success' ? 'success' : 'danger';
+
+               if(rText=='success'){
+                    this.tableRefresher();
+               }
+               else{
+                   this.showToast(msg,variant);
+               }
+               //this.showToast(msg,variant);
+            })
+            .catch(error => {
+                //console.log(error.message)
+                this.$bvToast.toast(error.message, {
+                    title: 'Алдааны мэдээлэл',
+                    autoHideDelay: 5000,
+                    variant:"danger"
+                })
+            });
+        },
+        getOrder(deliveryId){
+            alert(deliveryId);
+        },
+        showToast(msg,variant){
+            this.$bvToast.toast(
+                msg,
+                {
+                    title:"Мэдээлэл",
+                    variant:variant,
+                    toaster:'b-toaster-bottom-left'
+                }
+            );
+        },
+        filterChange(){
+            if(this.filter.length==0){
+                this.tableRefresher(1);
+            }
+        },
+        clearBegin(){
+            this.beginDate="";
+            this.endDate=""
+            this.tableRefresher(1);
+        },
+        clearEnd(){
+            this.endDate="";
+        },
+        doSearch(){
+            this.tableRefresher(1);
+        },
+        tableRefresher(p){
+            if(p==0){this.dStatus=0}
+
+            this.$refs.workTable.refresh();
+        },
+        //shine ajluudiin jagsaalt      
+        workProvider(ctx){
+            ctx.filter=this.filter;
+            ctx.delStatus=this.dStatus;
+
+            if(this.beginDate!=""){
+                ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
+            }
+            else{
+                ctx.beginDate="";
+            }
+            if(this.endDate!=""){
+                ctx.endDate=moment(this.endDate).format('YYYY-MM-DD')
+            }
+            else{
+                ctx.endDate="";
+            }
+      
+            this.isBusy = false
+            let promise = axios.post(apiDomain+'/admin/work/slicer/newworklist',ctx,{headers:getHeader()});
+            return promise.then((response) => {
+                const result = response.data;
+                this.isBusy = false
+                this.totalRows=result.gridData.recordCount;
+                
+                result.gridData.items.forEach(function(obj){ 
+                    if(Number(obj.kusokStatus) == 0){
+                        obj._rowVariant = "light";
+                    }
+                    if(Number(obj.kusokStatus) == 1){
+                        obj._rowVariant = "warning";
+                    }
+                    if(Number(obj.kusokStatus) == 2){
+                        obj._rowVariant = "danger";
+                    }
+                });
+                //alert(JSON.stringify(result.gridData.items));
+                return result.gridData.items;
+            }).catch(error => {
+                this.$bvToast.toast(error.message, {
+                    title: 'Алдааны мэдээлэл',
+                    autoHideDelay: 5000,
+                    variant:"danger"
+                })  
+                this.isBusy = false
+                return []
+            })
+        }
+        
+    }
+}
+</script>
+
+<style>
+    .small-font{
+        font-size:90%;
+        font-weight: 400 
+   }
+   .xs-font{
+        font-size:80%;
+        font-weight: 400 
+   }
+</style>

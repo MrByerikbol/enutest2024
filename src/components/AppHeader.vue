@@ -28,10 +28,7 @@
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-form>
-          <b-form-input size="sm" class="mr-sm-2" placeholder="Хайх үгээ оруулна уу"></b-form-input>
-          <b-button size="sm" class="my-2 my-sm-0" type="submit">хайх</b-button>
-        </b-nav-form>
+       
 
         <!-- <b-nav-item-dropdown text="Lang" right>
           <b-dropdown-item href="#">EN</b-dropdown-item>
@@ -44,7 +41,7 @@
           <template slot="button-content">
             <em @click="getStatistic">Статистик</em>
           </template>
-          <b-dropdown-item href="javascript:void(0)">
+          <b-dropdown-item  href="javascript:void(0)">
               Нийт : 
               <strong style="float:right;" v-if="statisticData!=null">
                 {{statisticData.totalDeliveryCount}}
@@ -75,7 +72,8 @@
         </b-nav-item-dropdown>
         <b-nav-item-dropdown right>
           <!-- Using 'button-content' slot -->
-          <template slot="button-content"><em>Хэрэглэгч</em></template>
+          <template slot="button-content"><em>{{loginedUser.firstName}}</em></template>
+          <b-dropdown-item href="/#/slicer">Ажил</b-dropdown-item>
           <b-dropdown-item href="javascript:void(0)">Нууц үг солих</b-dropdown-item>
           <b-dropdown-item href="javascript:void(0)" @click="logOut">Системээс гарах</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -98,6 +96,7 @@ export default {
   },
   
   methods:{
+   
     getStatistic(){
       this.statisticData=null;
        axios.get(apiDomain+'/admin/getstatistic',{headers:getHeader()})
