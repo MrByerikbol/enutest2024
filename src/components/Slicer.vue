@@ -128,6 +128,7 @@
 
                             <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
                                 <input type="number"
+                                    
                                     :max="Number(work.productCount)-Number(work.doneCount)"
                                     v-model=work.doingCount>
                                 <b-dropdown size="sm" class="ml-2" right
@@ -166,6 +167,11 @@
                                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                                 </b-badge>
                             </div>
+
+                            <DelListWork :listWorks="work.listWorks" 
+                            :dStatus="dStatus" 
+                            :showToast="showToast"
+                            :tableRefresher="tableRefresher"></DelListWork>
                         </div>
                         <b-badge variant="danger">
                             {{del.item.delStatus==0 
@@ -209,16 +215,17 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import Loading from './Loading';
+import DelListWork from './DelListWork';
 
 
 const moment = require('moment')
 require('moment/locale/es')
 export default {
-   
     name :"Slicer",
     components:{
         Datepicker,
-        Loading
+        Loading,
+        DelListWork
     },
     data(){
         return {
