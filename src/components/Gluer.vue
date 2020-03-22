@@ -141,6 +141,8 @@
                             <DelPvh
                                 v-if="work.relDetails 
                                         && work.relDetails.length>0" 
+
+                                        
                                 :relDetails="work.relDetails" 
                                 :dStatus="dStatus" 
                                 :showToast="showToast"
