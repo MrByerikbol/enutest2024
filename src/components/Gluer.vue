@@ -84,7 +84,6 @@
                             {{del.item.orderNumber +'-'+ del.item.userInfo}}
                             <b-badge variant="warning" class="ml-2 mt-1">
                                 {{del.item.listCount}}
-                               
                             </b-badge>
                             <b-badge variant="warning" class="ml-2 mt-1 float-right">
                                 {{del.item.orderDate}}
@@ -104,7 +103,7 @@
                              v-for="(work,workIndex) in del.item.deliveryProducts" :key="workIndex">
 
                             <div class="float-left mb-1">
-                                <b-button size="sm" @dblclick="getDelWork(work.relId,'one')"  variant="outline-success">
+                                <b-button size="sm"  variant="outline-success">
 
                                     <b-badge>
                                         {{work.catName+'-'+work.colorName+'-'+work.measureName}}
@@ -125,61 +124,35 @@
                                
                             </div>
 
-                            <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
-                                <input type="number"
-                                    style="width:60px"
-                                    :max="Number(work.productCount)-Number(work.doneCount)"
-                                    v-model=work.doingCount>
-                                <b-dropdown size="sm" class="ml-2" right
-                                     id="dropdown-text"   variant="danger" text="Зүсэх">
-                                    <b-dropdown-item-button v-if="work.doingCount>0 
-                                         && work.doingCount <= (Number(work.productCount)-Number(work.doneCount))"
-                                         @click="doneWork(work)">
-                                        Зүсэх
-                                    </b-dropdown-item-button>
-                                    <b-dropdown-divider v-if="work.myConfirmations 
-                                        && work.myConfirmations.length>0"></b-dropdown-divider>
-                                    <b-dropdown-text 
-                                        v-if="work.myConfirmations 
-                                            && work.myConfirmations.length>0" class="text-danger" >
-                                        Миний батлах 
-                                    </b-dropdown-text>
-                                     <b-dropdown-item-button   v-for="(confirmation,conIndex) in
-                                        work.myConfirmations" :key="conIndex" @click="confirmDoneCount(confirmation.confirmId)">
-
-                                        {{confirmation.relUserInfo +":"+confirmation.doneCount}}
-                                     </b-dropdown-item-button>
-
-                                    <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
-                                    <b-dropdown-text v-if="work.myJudges && work.myJudges.length>0" class="text-warning">
-                                        Намайг батлах
-                                    </b-dropdown-text>
-                                    <b-dropdown-item-button disabled v-for="(judge,jIndex) in
-                                     work.myJudges" :key="jIndex">
-                                        {{judge.relUserInfo}}
-                                     </b-dropdown-item-button>
-                                </b-dropdown>
-                            </div>
+                            
                             <div style="clear:left;" class="w-100 pl-3">
                                 <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
                                     v-for="(user,userIndex) in work.listUsers" :key="userIndex">
                                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                                 </b-badge>
                             </div>
-
                             <DelListWork v-if="work.listWorks 
-                                && work.listWorks.length>0" :listWorks="work.listWorks" 
-                            :dStatus="dStatus" 
-                            :isPvh="false"
-                            :showToast="showToast"
-                            :tableRefresher="tableRefresher"></DelListWork>
+                                        && work.listWorks.length>0" :listWorks="work.listWorks" 
+                                :dStatus="dStatus" 
+                                :isPvh="true"
+                                :showToast="showToast"
+                                :tableRefresher="tableRefresher"></DelListWork>
+                            
+                            <DelPvh
+                                v-if="work.relDetails 
+                                        && work.relDetails.length>0" 
+                                :relDetails="work.relDetails" 
+                                :dStatus="dStatus" 
+                                :showToast="showToast"
+                                :tableRefresher="tableRefresher"></DelPvh>
                         </div>
+                        <hr/>
                         <b-badge variant="danger">
                             {{del.item.listStatus==0 
                                 ? 'Шинэ' : del.item.listStatus=='1' ? 'Зүсэгдэж байна' : 'Зүсэгдсэн'}}
-                        </b-badge>
+                         </b-badge>
 
-                         <b-badge variant="warning" class="ml-1">
+                          <b-badge variant="warning" class="ml-1">
                             {{del.item.pvhStatus==0 
                                 ? 'Наагдаагүй' : del.item.pvhStatus==1 ? 'Наагдаж байна' : 'Наагдсан'}}
                          </b-badge>
@@ -222,16 +195,18 @@ import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import Loading from './Loading';
 import DelListWork from './DelListWork';
+import DelPvh from './DelPvh';
 
 
 const moment = require('moment')
 require('moment/locale/es')
 export default {
-    name :"Slicer",
+    name :"Gluer",
     components:{
         Datepicker,
         Loading,
-        DelListWork
+        DelListWork,
+        DelPvh
     },
     data(){
         return {
@@ -327,17 +302,16 @@ export default {
                 axios.post(apiDomain+'/admin/work/slicer/confirmdonecount',{
                     'confirmId':confirmId,
                 },{headers:getHeader()})
-                .then(()=>{
+                .then((response)=>{
                     this.loading=false;
-                    //let rText = response.data;
+                    let rText = response.data;
                    
-                    // let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
-                    // let variant =rText =='success' ? 'success' : 'danger';
-            
-                    // if(rText=='success')
-                    //         this.tableRefresher();
-                    // this.showToast(msg,variant);
-                    this.tableRefresher();
+                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let variant =rText =='success' ? 'success' : 'danger';
+
+                    if(rText=='success')
+                            this.tableRefresher();
+                    this.showToast(msg,variant);
                 })
                 .catch(error => {
                     //console.log(error.message)
@@ -485,7 +459,7 @@ export default {
             }
       
             this.isBusy = false
-            let promise = axios.post(apiDomain+'/admin/work/slicer/newworklist',ctx,{headers:getHeader()});
+            let promise = axios.post(apiDomain+'/admin/work/gluer/newworklist',ctx,{headers:getHeader()});
             return promise.then((response) => {
                 const result = response.data;
                 this.isBusy = false

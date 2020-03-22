@@ -1,65 +1,62 @@
 <template>
      <b-row>
-        <h6 class="pl-4">Хийгдэх нэмэлт ажлууд</h6>
-        <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3"
-                v-for="(work,workIndex) in listWorks" :key="workIndex">
+        <h6 class="pl-4">Наах ПВХ-нууд</h6>
+        <div style="clear:left;" class="mb-1 w-100 d-inline-block pl-3"
+                v-for="(detail,detailIndex) in relDetails" :key="detailIndex">
                
             <div class="float-left mb-1 pl-4">
                 <Loading v-if="loading"/>
-                <b-button size="sm" v-if="!loading" @dblclick="getListWork(work.workId)" variant="outline-warning">
+                <b-button size="sm" v-if="!loading" 
+                    @dblclick="getPvh(detail.detailId)" variant="outline-danger">
 
                     <b-badge>
-                        {{work.workName}}
+                        {{detail.colorName +' '+detail.measureName}}
                     </b-badge>
                     <b-badge  class="ml-1">
-                        {{'Ажлын тоо : '+work.workCount}}
+                        {{'Ажлын тоо : '+detail.productCount}}
                     </b-badge>
                     <b-badge  class="ml-1" >
-                        {{'Хийсэн : '+work.doneWorkCount}}
+                        {{'Хийсэн : '+detail.doneCount}}
                     </b-badge>
 
-                    <br v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0">
+                    <br v-if="detail.myUnconfirmedCount && detail.myUnconfirmedCount>0">
                     <b-badge 
-                        v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0"
-                        variant="danger" class="ml-2 mt-1 float-right">
-                        {{'Миний баталагдаагүй ажил : '+ work.myUnconfirmedCount}}
+                        v-if="detail.myUnconfirmedCount && detail.myUnconfirmedCount>0"
+                        variant="success" class="ml-2 mt-1 float-right">
+                        {{'Миний баталагдаагүй наалт : '+ detail.myUnconfirmedCount}}
                     </b-badge>
                 </b-button>
                 
             </div>
 
-            <div v-if="dStatus==1 && !isPvh" class="float-left ml-1 margin-bottom-sm">
-                <input type="number"
-                    style="width:60px"
-                    :max="Number(work.workCount)-Number(work.doneWorkCount)"
-                    v-model=work.doingCount>
+            <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
+               
                 <b-dropdown size="sm" class="ml-2" right
-                        id="dropdown-text"   variant="warning" text="Хийх">
-                    <b-dropdown-item-button v-if="work.doingCount>0 
-                            && work.doingCount <= (Number(work.workCount)-Number(work.doneWorkCount))"
-                            @click="doneWork(work)">
-                        Хийх
+                        id="dropdown-text"   variant="danger" text="Пвх наах">
+                    <b-dropdown-item-button v-if="Number(detail.productCount)-Number(detail.doneCount)>0"
+                            @click="donePvh(detail)">
+                        Наах
                     </b-dropdown-item-button>
 
-                    <b-dropdown-divider v-if="work.myConfirmations 
-                        && work.myConfirmations.length>0"></b-dropdown-divider>
+                    <b-dropdown-divider v-if="detail.myConfirmations 
+                        && detail.myConfirmations.length>0"></b-dropdown-divider>
                     <b-dropdown-text 
-                        v-if="work.myConfirmations 
-                            && work.myConfirmations.length>0" class="text-danger" >
+                        v-if="detail.myConfirmations 
+                            && detail.myConfirmations.length>0" class="text-danger" >
                         Миний батлах 
                     </b-dropdown-text>
                         <b-dropdown-item-button   v-for="(confirmation,conIndex) in
-                            work.myConfirmations" :key="conIndex" 
+                            detail.myConfirmations" :key="conIndex" 
                             @click="confirmDoneCount(confirmation.confirmId)">
                             {{confirmation.relUserInfo +": "+confirmation.doneCount}}
                         </b-dropdown-item-button>
 
-                    <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
-                    <b-dropdown-text v-if="work.myJudges && work.myJudges.length>0" class="text-warning">
+                    <b-dropdown-divider v-if="detail.myJudges && detail.myJudges.length>0"></b-dropdown-divider>
+                    <b-dropdown-text v-if="detail.myJudges && detail.myJudges.length>0" class="text-warning">
                         Намайг батлах
                     </b-dropdown-text>
                     <b-dropdown-item-button disabled v-for="(judge,jIndex) in
-                        work.myJudges" :key="jIndex">
+                        detail.myJudges" :key="jIndex">
                         {{judge.relUserInfo}}
                         </b-dropdown-item-button>
                 </b-dropdown>
@@ -67,7 +64,7 @@
             <div style="clear:left;" class="w-100 pl-5">
                 <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " 
                     class="ml-1" style="cursor:pointer;" 
-                    v-for="(user,userIndex) in work.listUsers" :key="userIndex">
+                    v-for="(user,userIndex) in detail.listUsers" :key="userIndex">
                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                 </b-badge>
             </div>
@@ -82,8 +79,8 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
 export default {
-    name :"DelListWork",
-    props:['listWorks','dStatus','tableRefresher','showToast','isPvh'],
+    name :"DelPvh",
+    props:['relDetails','dStatus','tableRefresher','showToast'],
     components:{
         Loading
     },
@@ -93,12 +90,12 @@ export default {
         }
     },
     methods:{
-        confirmDoneCount(workConfirmId){
+        confirmDoneCount(pvhConfirmId){
             this.loading=true;
             let warn = confirm("Итгэйлтэй байна уу ?");
             if(warn){
-                axios.post(apiDomain+'/admin/work/worker/confirmdonecount',{
-                    'workConfirmId':workConfirmId,
+                axios.post(apiDomain+'/admin/work/gluer/confirmdonecount',{
+                    'pvhConfirmId':pvhConfirmId,
                     
                 },{headers:getHeader()})
                 .then((response)=>{
@@ -123,36 +120,31 @@ export default {
             }
             
         },
-        doneWork(work){
+        donePvh(detail){
             
-            if(!work.doingCount || Number(work.doingCount)==0){
+            if(!detail.productCount || Number(detail.productCount)==0){
                 this.showToast("Та зүссэх тоогоо оруулна уу.","danger");
-                work.doingCoun=0;
                 return ;
                 
             }
-            if(work.myJudges || work.myConfirmations) {
-                if(work.myJudges && work.myJudges.length>0){
+            if(detail.myJudges || detail.myConfirmations) {
+                if(detail.myJudges && detail.myJudges.length>0){
                     this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
                     return ;
                 }
-                if(work.myConfirmations && work.myConfirmations.length>0){
+                if(detail.myConfirmations && detail.myConfirmations.length>0){
                     this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
                     return ;
                     
                 }
             }
-            if(Number(work.doingCount)>Number(work.workCount)-Number(work.doneWorkCount)){
-                this.showToast("Та буруу тоо оруулсан байна","danger");
-                work.doingCount=0;
-                return ;
-            }
-            if(work.doingCount && Number(work.doingCount)>0){
+          
+            if(detail.productCount && Number(detail.productCount )>0){
                 //donecounttologined
                 this.loading=true;
-                axios.post(apiDomain+'/admin/work/worker/donecounttologined',{
-                    'doneWorkCount':work.doingCount,
-                    'workId':work.workId
+                axios.post(apiDomain+'/admin/work/gluer/donecounttologined',{
+                    'donePvhCount':detail.productCount,
+                    'detailId':detail.detailId
 
                 },{headers:getHeader()})
                 .then((response)=>{
@@ -172,19 +164,19 @@ export default {
                 });
             }
         },
-        getListWork(workId){
+        getPvh(detailId){
             if(this.dStatus>0){
                 return;
             }
             this.loading=true;
-            axios.post(apiDomain+'/admin/work/worker/getlistwork',{
-                'workId':workId
+            axios.post(apiDomain+'/admin/work/gluer/getpvhwork',{
+                'detailId':detailId
             },{headers:getHeader()})
             .then((response)=>{
                this.loading=false;
                let rText = response.data;
                let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : " Та баталгаажуулаагүй "
-                    +" хйисэн ажлууд эсвэл танд баталгаа хийлгээгүй ажлууд байна !!!";
+                    +" наалтууд эсвэл танд баталгаа наалтууд байна !!!";
                let variant =rText =='success' ? 'success' : 'danger';
 
                if(rText=='success'){
