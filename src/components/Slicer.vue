@@ -84,7 +84,6 @@
                             {{del.item.orderNumber +'-'+ del.item.userInfo}}
                             <b-badge variant="warning" class="ml-2 mt-1">
                                 {{del.item.listCount}}
-                               
                             </b-badge>
                             <b-badge variant="warning" class="ml-2 mt-1 float-right">
                                 {{del.item.orderDate}}

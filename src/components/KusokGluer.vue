@@ -18,7 +18,7 @@
                     <select v-model="dStatus" @change="tableRefresher" class="d-block w-100 small-font" style="height:29px !important;">
                         <option value=0>--Ажил авах--</option>
                         <option value=1>--Миний ажлууд--</option>
-                        <option value=-1>--Миний хүлээгдэж байгаа--</option>
+                      
                         <option value=2>--Миний хийсэн--</option>
                     </select>
                 </b-col>
@@ -79,93 +79,23 @@
                         <Loading/>
                     </b-list-group-item>
                     <b-list-group-item v-if="!loading">
-                    
                         <b-button variant="outline-primary"  class="mb-2" size="sm">
-                           {{del.item}}
+                            {{del.item.orderNumber+'-'+del.item.orderUser.firstName+'-('+del.item.orderUser.phoneNumber+')'}}
+                            <b-badge variant="warning" class="ml-2 mt-1">
+                                {{del.item.relDetails.length}}
+                            </b-badge>
+                            <b-badge variant="warning" class="ml-2 mt-1 float-right">
+                                {{del.item.createdDate}}
+                            </b-badge>
                         </b-button>
-                        <!-- <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3"
-                             v-for="(work,workIndex) in del.item.deliveryProducts" :key="workIndex">
-
-                            <div class="float-left mb-1">
-                                <b-button size="sm" @dblclick="getDelWork(work.relId,'one')"  variant="outline-success">
-
-                                    <b-badge>
-                                        {{work.catName+'-'+work.colorName+'-'+work.measureName}}
-                                    </b-badge>
-                                    <b-badge  class="ml-1">
-                                        {{'Тоо : '+work.productCount}}
-                                    </b-badge>
-                                    <b-badge  class="ml-1">
-                                        {{'Зүссэн : '+work.doneCount}}
-                                    </b-badge>
-                                    <br v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0">
-                                    <b-badge 
-                                        v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0"
-                                        variant="danger" class="ml-2 mt-1 float-right">
-                                        {{'Миний баталагдаагүй зүсэлт : '+ work.myUnconfirmedCount}}
-                                    </b-badge>
-                                </b-button>
-                               
-                            </div>
-
-                            <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
-                                <input type="number"
-                                    style="width:60px"
-                                    :max="Number(work.productCount)-Number(work.doneCount)"
-                                    v-model=work.doingCount>
-                                <b-dropdown size="sm" class="ml-2" right
-                                     id="dropdown-text"   variant="danger" text="Зүсэх">
-                                    <b-dropdown-item-button v-if="work.doingCount>0 
-                                         && work.doingCount <= (Number(work.productCount)-Number(work.doneCount))"
-                                         @click="doneWork(work)">
-                                        Зүсэх
-                                    </b-dropdown-item-button>
-                                    <b-dropdown-divider v-if="work.myConfirmations 
-                                        && work.myConfirmations.length>0"></b-dropdown-divider>
-                                    <b-dropdown-text 
-                                        v-if="work.myConfirmations 
-                                            && work.myConfirmations.length>0" class="text-danger" >
-                                        Миний батлах 
-                                    </b-dropdown-text>
-                                     <b-dropdown-item-button   v-for="(confirmation,conIndex) in
-                                        work.myConfirmations" :key="conIndex" @click="confirmDoneCount(confirmation.confirmId)">
-
-                                        {{confirmation.relUserInfo +":"+confirmation.doneCount}}
-                                     </b-dropdown-item-button>
-
-                                    <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
-                                    <b-dropdown-text v-if="work.myJudges && work.myJudges.length>0" class="text-warning">
-                                        Намайг батлах
-                                    </b-dropdown-text>
-                                    <b-dropdown-item-button disabled v-for="(judge,jIndex) in
-                                     work.myJudges" :key="jIndex">
-                                        {{judge.relUserInfo}}
-                                     </b-dropdown-item-button>
-                                </b-dropdown>
-                            </div>
-                            <div style="clear:left;" class="w-100 pl-3">
-                                <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
-                                    v-for="(user,userIndex) in work.listUsers" :key="userIndex">
-                                    {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
-                                </b-badge>
-                            </div>
-
-                            <DelListWork v-if="work.listWorks 
-                                && work.listWorks.length>0" :listWorks="work.listWorks" 
-                            :dStatus="dStatus" 
-                            :isPvh="false"
-                            :showToast="showToast"
-                            :tableRefresher="tableRefresher"></DelListWork>
-                        </div> -->
-                        <!-- <b-badge variant="danger">
-                            {{del.item.listStatus==0 
-                                ? 'Шинэ' : del.item.listStatus=='1' ? 'Зүсэгдэж байна' : 'Зүсэгдсэн'}}
+                        <DelPvh :relDetails="del.item.relDetails" :dStatus="dStatus" 
+                            :tableRefresher="tableRefresher" :showToast="showToast"/>
+                        <b-badge variant="danger">
+                            {{del.item.kusokStatus==0 
+                                ? 'Шинэ' : del.item.kusokStatus=='1' ? 'Наагдаж байна' : 'Наагдсан'}}
                         </b-badge>
 
-                         <b-badge variant="warning" class="ml-1">
-                            {{del.item.pvhStatus==0 
-                                ? 'Наагдаагүй' : del.item.pvhStatus==1 ? 'Наагдаж байна' : 'Наагдсан'}}
-                         </b-badge> -->
+                       
                     </b-list-group-item>  
                 </b-list-group>
             </template>
@@ -179,24 +109,7 @@
             class="my-0"
         ></b-pagination>
 
-        <b-modal id="waitingModal"
-             title="Тайлбар оруулах" 
-             no-close-on-backdrop
-             lazy
-             @hide="resetWform"
-            
-             hide-footer>
-            <b-form v-on:submit.prevent="submitWaiting">
-                  <b-form-row class="mb-3">
-                      <b-col sm="auto" md="12">
-                          <label for="productName">Тайлбар</label>
-                          <textarea required v-model="wForm.waitingReason" class="form-control"></textarea>
-                      </b-col>
-                  </b-form-row>
-                  <b-button size="sm" type="submit" variant="primary" class="mr-2">Хүлээлгэх</b-button>
-                  <b-button size="sm" type="reset" variant="danger">Арилгах</b-button>
-              </b-form>    
-          </b-modal>
+    
     </b-row>  
 </template>
 <script>
@@ -204,7 +117,7 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import Loading from './Loading';
-import DelListWork from './DelListWork';
+import DelPvh from './DelPvh';
 
 
 const moment = require('moment')
@@ -215,7 +128,7 @@ export default {
     components:{
         Datepicker,
         Loading,
-        DelListWork
+        DelPvh
     },
     data(){
         return {
@@ -224,7 +137,7 @@ export default {
             fields: [
                 {
                     key: 'workInfo',
-                    label: 'Ажлын мэдээлэл'
+                    label: 'Кусок пвх мэдээлэл'
                 }
             ],
             isBusy:false,
@@ -279,9 +192,9 @@ export default {
         },
         //shine ajluudiin jagsaalt      
         workProvider(ctx){
-            alert("ene bol busgui chinii zurag ");
+            
             ctx.filter=this.filter;
-            ctx.delStatus=this.dStatus;
+            ctx.dStatus=this.dStatus;
 
             if(this.beginDate!=""){
                 ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
@@ -328,9 +241,6 @@ export default {
             })
         }
         
-    },
-    created(){
-        alert("wht the fuck is happen");
     }
 }
 </script>

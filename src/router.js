@@ -100,7 +100,7 @@ export default new Router({
                 {
                     path: '/kusokgluer',
                     name: 'KusokGluer',
-                    component: Gluer,
+                    component: KusokGluer,
                     meta:{requiresAuth:true}
                 }
                 

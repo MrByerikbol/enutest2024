@@ -75,7 +75,7 @@
           <template slot="button-content"><em>{{loginedUser.firstName}}</em></template>
           <b-dropdown-item href="/#/slicer">Зүсэлт</b-dropdown-item>
           <b-dropdown-item href="/#/gluer">Наалт</b-dropdown-item>
-          <b-dropdown-item href="/#/kusokgluer">Кусок</b-dropdown-item>
+          <b-dropdown-item href="/#/kusokgluer">Кусок Наалт</b-dropdown-item>
           <b-dropdown-item href="javascript:void(0)">Нууц үг солих</b-dropdown-item>
           <b-dropdown-item href="javascript:void(0)" @click="logOut">Системээс гарах</b-dropdown-item>
         </b-nav-item-dropdown>
