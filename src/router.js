@@ -15,6 +15,7 @@ import DeliveryWareHouse from '@/components/DeliveryWareHouse';
 import DeliveryReport from '@/components/DeliveryReport';
 import Slicer from '@/components/Slicer';
 import Gluer from '@/components/Gluer';
+import KusokGluer from '@/components/KusokGluer';
 Vue.use(Router);
 export default new Router({
    
@@ -93,6 +94,12 @@ export default new Router({
                 {
                     path: '/gluer',
                     name: 'Gluer',
+                    component: Gluer,
+                    meta:{requiresAuth:true}
+                },
+                {
+                    path: '/kusokgluer',
+                    name: 'KusokGluer',
                     component: Gluer,
                     meta:{requiresAuth:true}
                 }
