@@ -41,8 +41,10 @@
                             <b-badge variant="warning" class="ml-2 mt-1 float-right">
                                 {{del.item.orderDate}}
                             </b-badge>
-                            <br v-if="dStatus==Number(-1)">
-                            <b-badge v-if="dStatus==Number(-1)">
+                            <br 
+                            v-if="del.item.waitingReason && del.item.waitingReason!=null && del.item.waitingReason!=''">
+                            <b-badge
+                            v-if="del.item.waitingReason && del.item.waitingReason!=null && del.item.waitingReason!=''">
                                 {{del.item.waitingReason}}
                             </b-badge>
                         </b-button>
@@ -73,41 +75,7 @@
                                
                             </div>
 
-                            <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
-                                <input type="number"
-                                    style="width:60px"
-                                    :max="Number(work.productCount)-Number(work.doneCount)"
-                                    v-model=work.doingCount>
-                                <b-dropdown size="sm" class="ml-2" right
-                                     id="dropdown-text"   variant="danger" text="Зүсэх">
-                                    <b-dropdown-item-button v-if="work.doingCount>0 
-                                         && work.doingCount <= (Number(work.productCount)-Number(work.doneCount))"
-                                         @click="doneWork(work)">
-                                        Зүсэх
-                                    </b-dropdown-item-button>
-                                    <b-dropdown-divider v-if="work.myConfirmations 
-                                        && work.myConfirmations.length>0"></b-dropdown-divider>
-                                    <b-dropdown-text 
-                                        v-if="work.myConfirmations 
-                                            && work.myConfirmations.length>0" class="text-danger" >
-                                        Миний батлах 
-                                    </b-dropdown-text>
-                                     <b-dropdown-item-button   v-for="(confirmation,conIndex) in
-                                        work.myConfirmations" :key="conIndex" @click="confirmDoneCount(confirmation.confirmId)">
-
-                                        {{confirmation.relUserInfo +":"+confirmation.doneCount}}
-                                     </b-dropdown-item-button>
-
-                                    <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
-                                    <b-dropdown-text v-if="work.myJudges && work.myJudges.length>0" class="text-warning">
-                                        Намайг батлах
-                                    </b-dropdown-text>
-                                    <b-dropdown-item-button disabled v-for="(judge,jIndex) in
-                                     work.myJudges" :key="jIndex">
-                                        {{judge.relUserInfo}}
-                                     </b-dropdown-item-button>
-                                </b-dropdown>
-                            </div>
+                            
                             <div style="clear:left;" class="w-100 pl-3">
                                 <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
                                     v-for="(user,userIndex) in work.listUsers" :key="userIndex">
@@ -121,10 +89,17 @@
                             :isPvh="false"
                             :showToast="showToast"
                             :tableRefresher="tableRefresher"></DelListWork>
+
+                            <!-- 'listUsers','userId','salary' -->
+                            <SlicerSalaryPeriod
+                                :listUsers="work.listUsers"
+                                :userId="userId"
+                            />
+
                         </div>
                         <b-badge variant="danger">
                             {{del.item.listStatus==0 
-                                ? 'Шинэ' : del.item.listStatus=='1' ? 'Зүсэгдэж байна' : 'Зүсэгдсэн'}}
+                                ? 'Зүсэгдээгүй' : del.item.listStatus=='1' ? 'Зүсэгдэж байна' : 'Зүсэгдсэн'}}
                         </b-badge>
 
                          <b-badge variant="warning" class="ml-1">
@@ -150,12 +125,14 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
 import DelListWork from './DelListWork';
+import SlicerSalaryPeriod from './SlicerSalaryPeriod';
 export default {
     name :"SlicerCalculation",
-    props:['userId','beginDate','endDate','filter'],
+    props:['userId','userInfo','beginDate','endDate','filter'],
     components:{
         Loading,
-        DelListWork
+        DelListWork,
+        SlicerSalaryPeriod
     },
     data(){
         return {
