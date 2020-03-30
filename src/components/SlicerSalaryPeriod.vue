@@ -1,13 +1,16 @@
 <template>
-     <b-row class="pt-3 pl-4">
-        <div class="w-100 pb-2" >{{foundUser.relUserInfo}} зүссэн 
-            <strong>{{foundUser.confirmedDoneCount}}</strong> листийн задаргаа
-            <div>
-                Нэгж зүсэлтийн үнэлгээ <input type="number" v-model="foundUser.unitCalculationCost">   
+     <b-row  :class=" !isList ? 'pl-5 pr-4' : 'pl-4 pr-2'">
+        <div class="w-100 pb-2 text-danger pt-2" >{{foundUser.relUserInfo}} {{isList ? 'зүссэн' : 'хийсэн'}} 
+            <strong>{{foundUser.confirmedDoneCount}}</strong> 
+            {{isList ? 'листийн' : 'нэмэлт ажлын'}} 
+             задаргаа
+
+            <div class="mt-2 text-secondary">
+                Нэгж {{isList ? 'зүсэлтийн' : 'нэмэлт ажлын'}} үнэлгээ <input type="number" v-model="foundUser.unitCalculationCost">   
 
             </div>    
         </div>
-        <div class="w-100 mb-2 p-1 small-font" style="clear:left; border:1px dashed #6c757d"
+        <div class="mb-2 p-1 small-font w-100" :class=" !isList ? 'border-success' : 'border-secondary'" style="clear:left; border:1px dashed #6c757d"
              v-for="(workConfirm,confirmIndex) in workConfirms" :key="confirmIndex">
                 <div class="w-100">
                     Огноо : <strong>{{workConfirm.createdDate}}</strong>    
@@ -41,7 +44,7 @@
 
 export default {
     name :"SlicerSalaryPeriod",
-    props:['listUsers','userId'],
+    props:['listUsers','userId','isList'],
     
     data(){
         return {
@@ -58,8 +61,26 @@ export default {
                     break;
                 }
             }
+            //alert(JSON.stringify(foundUser.anyWorkConfirms));
             this.workConfirms=foundUser.anyWorkConfirms;
             this.foundUser=foundUser;
+        },
+        testFunction(){
+            alert("yes boy");
+        },
+        calculateSalary(){
+           
+            let salarySum = 
+            this.workConfirms
+            .reduce(
+                (sum,currentSalary) => 
+                sum + 
+                Number(this.foundUser.unitCalculationCost/(currentSalary.workPeriods.length+1))
+                *currentSalary.confirmedCount,
+            0);
+
+            return salarySum;
+           
         }
     },
     created(){

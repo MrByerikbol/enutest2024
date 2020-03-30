@@ -41,12 +41,6 @@
                             <b-badge variant="warning" class="ml-2 mt-1 float-right">
                                 {{del.item.orderDate}}
                             </b-badge>
-                            <br 
-                            v-if="del.item.waitingReason && del.item.waitingReason!=null && del.item.waitingReason!=''">
-                            <b-badge
-                            v-if="del.item.waitingReason && del.item.waitingReason!=null && del.item.waitingReason!=''">
-                                {{del.item.waitingReason}}
-                            </b-badge>
                         </b-button>
 
                         
@@ -65,12 +59,6 @@
                                     <b-badge  class="ml-1">
                                         {{'Зүссэн : '+work.doneCount}}
                                     </b-badge>
-                                    <br v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0">
-                                    <b-badge 
-                                        v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0"
-                                        variant="danger" class="ml-2 mt-1 float-right">
-                                        {{'Миний баталагдаагүй зүсэлт : '+ work.myUnconfirmedCount}}
-                                    </b-badge>
                                 </b-button>
                                
                             </div>
@@ -82,19 +70,22 @@
                                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                                 </b-badge>
                             </div>
-
-                            <DelListWork v-if="work.listWorks 
-                                && work.listWorks.length>0" :listWorks="work.listWorks" 
-                            :dStatus="dStatus" 
-                            :isPvh="false"
-                            :showToast="showToast"
-                            :tableRefresher="tableRefresher"></DelListWork>
-
                             <!-- 'listUsers','userId','salary' -->
                             <SlicerSalaryPeriod
                                 :listUsers="work.listUsers"
                                 :userId="userId"
+                                :isList="true"
+                               
                             />
+                            <DelListWork v-if="work.listWorks 
+                                && work.listWorks.length>0" :listWorks="work.listWorks" 
+                            :dStatus="2" 
+                            :isPvh="false"
+                            :showToast="showToast"
+                            :tableRefresher="tableRefresher"
+                            :userId="userId"
+                            ref="workSalary"
+                            ></DelListWork>
 
                         </div>
                         <b-badge variant="danger">
@@ -106,6 +97,15 @@
                             {{del.item.pvhStatus==0 
                                 ? 'Наагдаагүй' : del.item.pvhStatus==1 ? 'Наагдаж байна' : 'Наагдсан'}}
                          </b-badge>
+
+                         <b-badge variant="info" class="ml-1" v-if="del.item.isWaiting==1">
+                             Хүлээгдэж байгаа
+                         </b-badge>
+                         <br v-if="del.item.isWaiting==1">
+                         <div class="w-100 pt-2 small-font" v-if="del.item.isWaiting==1">
+                             <strong> Хүлээлгийн шалтгаан: </strong>
+                             <em>{{del.item.waitingReason}}</em>
+                         </div>
                     </b-list-group-item>  
                 </b-list-group>
             </template>
@@ -122,10 +122,12 @@
 </template>
 <script>
 import axios from 'axios';
+
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
 import DelListWork from './DelListWork';
 import SlicerSalaryPeriod from './SlicerSalaryPeriod';
+import {EventBus} from '@/EventBus.js';
 export default {
     name :"SlicerCalculation",
     props:['userId','userInfo','beginDate','endDate','filter'],
@@ -136,6 +138,7 @@ export default {
     },
     data(){
         return {
+           
             loading:false,
             isSmall:true,
             fields: [
@@ -152,6 +155,18 @@ export default {
         }
     },
     methods:{
+        getSlicerSalary(){
+            //alert("i am going to calculate all of them");
+            let salaryObj = new Object();
+            
+            //let listSalary = this.bus.$emit('calculateSalary');
+
+            //let workSalary = this.$refs.workSalary.getWorkSalary();
+            //salaryObj.listSalary=listSalary;
+            //salaryObj.workSalary=workSalary;
+            //return salaryObj;
+            return 5;
+        },
         showToast(msg,variant){
             this.$bvToast.toast(
                 msg,
@@ -204,6 +219,11 @@ export default {
                 });
             }
         }
+    },
+    created(){
+        var vm = this;
+        EventBus.$on("slicerTableRefresher", ()=> vm.tableRefresher());
+        EventBus.$on("getSlicerSalary", ()=> vm.getSlicerSalary());
     }
 }
 </script>

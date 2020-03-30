@@ -71,7 +71,13 @@
                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                 </b-badge>
             </div>
-
+            <!-- 'listUsers','userId','salary' -->
+            <SlicerSalaryPeriod v-if="userId"
+                :listUsers="work.listUsers"
+                :userId="userId"
+                :isList="false"
+                
+            />
         </div>
       
        
@@ -81,11 +87,13 @@
 import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
+import SlicerSalaryPeriod from './SlicerSalaryPeriod';
 export default {
     name :"DelListWork",
-    props:['listWorks','dStatus','tableRefresher','showToast','isPvh'],
+    props:['listWorks','dStatus','tableRefresher','showToast','isPvh','userId'],
     components:{
-        Loading
+        Loading,
+        SlicerSalaryPeriod
     },
     data(){
         return {
@@ -93,6 +101,9 @@ export default {
         }
     },
     methods:{
+        getWorkSalary(){
+            return this.$refs.salaryPeriod.calculateSalary();
+        },
         confirmDoneCount(workConfirmId){
             this.loading=true;
             let warn = confirm("Итгэйлтэй байна уу ?");

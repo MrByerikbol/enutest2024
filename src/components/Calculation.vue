@@ -35,8 +35,11 @@
               :userId="userId" 
               :beginDate="beginDate" 
               :endDate="endDate"
-              ref="slicerCalc" 
+           
+
               :filter="''" />
+
+              <b-button class="mt-4" @click="getSlicerSalary" block variant="outline-success" >Цалин бодох</b-button>
           </b-col>
         </b-row>
       </b-col>
@@ -53,6 +56,8 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import SlicerCalculation from './SlicerCalculation';
+import {EventBus} from '@/EventBus.js';
+
 const moment = require('moment')
 require('moment/locale/es')
 export default {
@@ -72,11 +77,17 @@ export default {
       userId:0,
       dUsers:[],
       isSlicer:false
-     
+    
     }
     
   },
   methods:{
+    getSlicerSalary(){
+      
+      let f =EventBus.$emit('getSlicerSalary');
+      //let calculatedSalary = this.bus.$emit('getSlicerSalary');
+      
+    },
     doFilter(){
       this.beginDate=moment(this.cBeginDate).format('YYYY-MM-DD');
       this.endDate=moment(this.cEndDate).format('YYYY-MM-DD');
@@ -84,7 +95,7 @@ export default {
       if(Number(this.userId)>0 &
          this.beginDate!="" && this.endDate!=""){
            this.isSlicer=true;
-           this.$refs.slicerCalc.tableRefresher();
+           EventBus.$emit('slicerTableRefresher');
          }
     },
     getDusers(){
