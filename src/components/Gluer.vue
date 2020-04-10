@@ -54,7 +54,6 @@
             <strong>тоо:</strong> {{totalRows}}  
         </b-col>
         <b-table 
-            
             small 
             ref="workTable"
             striped hover 
@@ -64,9 +63,8 @@
             :current-page="currentPage"
             :per-page="perPage"
             :table-variant="tableVariant"
-            selected-variant="active"
-            @row-dblclicked="item=>$set(item, '_showDetails', !item._showDetails)"
-            >
+            selected-variant="active"    
+        >
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
                 <b-spinner class="align-middle"></b-spinner>
@@ -132,7 +130,8 @@
                                 </b-badge>
                             </div>
                             <DelListWork v-if="work.listWorks 
-                                        && work.listWorks.length>0" :listWorks="work.listWorks" 
+                                        && work.listWorks.length>0"
+                                        :listWorks="work.listWorks" 
                                 :dStatus="dStatus" 
                                 :isPvh="true"
                                 :showToast="showToast"

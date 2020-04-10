@@ -10,7 +10,7 @@
                     @dblclick="getPvh(detail.detailId)" variant="outline-danger">
 
                     <b-badge>
-                        {{detail.colorName +' '+detail.measureName}}
+                        {{detail.colorName +' '+detail.measureName}} {{detail.detailId}}
                     </b-badge>
                     <b-badge  class="ml-1">
                         {{'Ажлын тоо : '+detail.productCount}}
@@ -68,7 +68,14 @@
                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                 </b-badge>
             </div>
-
+            <!-- 'listUsers','userId','salary' -->
+            <GluerSalaryPeriod 
+                v-if="userId"
+                :listUsers="detail.listUsers"
+                :userId="userId"
+                :detailId="detail.detailId"
+                :calcSalary="calcSalary"
+            />
         </div>
       
        
@@ -78,11 +85,13 @@
 import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
+import GluerSalaryPeriod from './GluerSalaryPeriod';
 export default {
     name :"DelPvh",
-    props:['relDetails','dStatus','tableRefresher','showToast'],
+    props:['relDetails','dStatus','tableRefresher','showToast','userId','calcSalary'],
     components:{
-        Loading
+        Loading,
+        GluerSalaryPeriod
     },
     data(){
         return {

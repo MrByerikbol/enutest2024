@@ -76,7 +76,8 @@
                 :listUsers="work.listUsers"
                 :userId="userId"
                 :isList="false"
-                
+                :workId="work.workId"
+                :calcSalary="calcSalary"
             />
         </div>
       
@@ -90,7 +91,9 @@ import Loading from './Loading';
 import SlicerSalaryPeriod from './SlicerSalaryPeriod';
 export default {
     name :"DelListWork",
-    props:['listWorks','dStatus','tableRefresher','showToast','isPvh','userId'],
+    props:['listWorks','dStatus',
+        'tableRefresher','showToast',
+            'isPvh','userId','deliveryIndex','listIndex','calcSalary'],
     components:{
         Loading,
         SlicerSalaryPeriod
@@ -101,9 +104,7 @@ export default {
         }
     },
     methods:{
-        getWorkSalary(){
-            return this.$refs.salaryPeriod.calculateSalary();
-        },
+      
         confirmDoneCount(workConfirmId){
             this.loading=true;
             let warn = confirm("Итгэйлтэй байна уу ?");

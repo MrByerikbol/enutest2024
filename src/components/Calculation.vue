@@ -2,16 +2,15 @@
     <b-row>
       <b-col lg="8">
         <b-row>
-          <h3>
-            <span class="bd-content-title">Тооцооны модул</span>
-          </h3>
+          <h4>
+            <span class="bd-content-title">{{userPosition=='GLUER' + ` хийсэн ажил` ? 'Наагчын' : 'Зүсэгчийн' + ` хийсэн ажил`}}</span>
+          </h4>
         </b-row>
 
         <b-row>
           <b-col lg="12" class="mb-3">
-            <select v-model="userId">
+            <select @change="setPosition" v-model="userId">
               <option value="0">--сонго--</option>
-
               <option v-for="(dUser,index) in dUsers" :value="dUser.userId" :key="index">
                 {{dUser.firstName}} - {{dUser.phoneNumber}} - {{dUser.position=='GLUER' ? 'Наагч' : 'Зүсэгч'}}
               </option>
@@ -31,22 +30,41 @@
             <b-button v-if="cBeginDate!='' && cEndDate!='' && userId>0" size="sm" @click="doFilter">Шүүх</b-button>
           </b-col>
           <b-col lg="12">
-            <SlicerCalculation v-if="isSlicer"
+            <SlicerCalculation 
+              v-if="userPosition=='SLICER'"
               :userId="userId" 
               :beginDate="beginDate" 
               :endDate="endDate"
-           
-
               :filter="''" />
 
-              <b-button class="mt-4" @click="getSlicerSalary" block variant="outline-success" >Цалин бодох</b-button>
+            <GluerCalculation v-if="userPosition=='GLUER'"
+              :userId="userId" 
+              :beginDate="beginDate" 
+              :endDate="endDate"
+              :filter="''" />
           </b-col>
         </b-row>
       </b-col>
 
 
       <b-col lg="4" >
-        tootsoo hiij hadaglah heseg   
+        <b-row>
+          <h4>
+            <span class="bd-content-title">
+              {{userPosition=='GLUER' ? 'Наагчын ' + `цалингийн задаргаа` : 'Зүсэгчийн ' + `цалингийн задаргаа`}}
+            </span>
+          </h4>
+        </b-row>
+        <b-row>
+          <SalaryForm v-if="userPosition=='SLICER'"
+            :clistSalarySum="listSalarySum" 
+            :cworkSalarySum="workSalarySum"
+          />
+
+          <GluerSalaryForm v-if="userPosition=='GLUER'"
+            :cgluerSalarySum="gluerSalarySum" 
+          />
+        </b-row>
       </b-col>
     </b-row>
 </template>
@@ -56,6 +74,9 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import SlicerCalculation from './SlicerCalculation';
+import GluerCalculation from './GluerCalculation';
+import SalaryForm from './SalaryForm';
+import GluerSalaryForm from './GluerSalaryForm';
 import {EventBus} from '@/EventBus.js';
 
 const moment = require('moment')
@@ -65,7 +86,10 @@ export default {
   name: 'Calculation',
   components:{
     Datepicker,
-    SlicerCalculation
+    SlicerCalculation,
+    GluerCalculation,
+    SalaryForm,
+    GluerSalaryForm
   },
   data(){
     return {
@@ -76,16 +100,43 @@ export default {
       endDate : "",
       userId:0,
       dUsers:[],
-      isSlicer:false
-    
-    }
-    
-  },
-  methods:{
-    getSlicerSalary(){
+      userPosition:"",
       
-      let f =EventBus.$emit('getSlicerSalary');
-      //let calculatedSalary = this.bus.$emit('getSlicerSalary');
+      slicerSalary : [],
+      listSalarySum:0,
+      workSalarySum:0,
+
+      gluerSalary:[],
+      gluerSalarySum:0
+      
+    }
+  },
+ 
+  methods:{
+    setPosition(){
+      let selectedUser = this.dUsers.filter(u=>Number(u.userId)==Number(this.userId));
+      this.userPosition=selectedUser.length==1 
+        ? selectedUser[0].position 
+        : "";
+      //alert("this may super "+this.userPosition);
+    },
+    
+    calculateSlicerSalary(){
+      this.listSalarySum=
+        this.slicerSalary
+        .filter(l=>l.salaryName==='listSalary')
+        .reduce((listSalarySum,list)=>listSalarySum+Number(list.salary),0);
+
+      this.workSalarySum=
+        this.slicerSalary
+        .filter(l=>l.salaryName==='workSalary')
+        .reduce((listSalarySum,list)=>listSalarySum+Number(list.salary),0);
+    },
+    calculateGluerSalary(){
+      this.gluerSalarySum=
+        this.gluerSalary
+        .reduce((gluerSalarySum,list)=>gluerSalarySum+Number(list.salary),0);
+
       
     },
     doFilter(){
@@ -94,7 +145,8 @@ export default {
 
       if(Number(this.userId)>0 &
          this.beginDate!="" && this.endDate!=""){
-           this.isSlicer=true;
+           this.setPosition();
+
            EventBus.$emit('slicerTableRefresher');
          }
     },
@@ -114,6 +166,17 @@ export default {
   },
   created(){
     this.getDusers();
-  }
+  },
+  mounted(){
+    let c = this;
+    EventBus.$on("listSalaryInformation", (data)=>{
+      c.slicerSalary = data;
+      c.calculateSlicerSalary();
+    });
+    EventBus.$on("gluerSalaryInformation", (data)=>{
+      c.gluerSalary = data;
+      c.calculateGluerSalary();
+    });
+  },
 }
 </script>

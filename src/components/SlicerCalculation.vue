@@ -18,7 +18,7 @@
             :per-page="perPage"
             :table-variant="tableVariant"
             selected-variant="active"
-            @row-dblclicked="item=>$set(item, '_showDetails', !item._showDetails)"
+           
             >
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
@@ -34,6 +34,7 @@
                     <b-list-group-item v-if="!loading">
                     
                         <b-button variant="outline-primary"  class="mb-2" size="sm">
+                           
                             {{del.item.orderNumber +'-'+ del.item.userInfo}}
                             <b-badge variant="warning" class="ml-2 mt-1">
                                 {{del.item.listCount}}
@@ -75,16 +76,20 @@
                                 :listUsers="work.listUsers"
                                 :userId="userId"
                                 :isList="true"
-                               
+                                :isPvh="false"
+                                :relId="work.relId"
+                                :calcSalary="calculateSalary"
                             />
                             <DelListWork v-if="work.listWorks 
-                                && work.listWorks.length>0" :listWorks="work.listWorks" 
-                            :dStatus="2" 
-                            :isPvh="false"
-                            :showToast="showToast"
-                            :tableRefresher="tableRefresher"
-                            :userId="userId"
-                            ref="workSalary"
+                                && work.listWorks.length>0" 
+                                
+                                :listWorks="work.listWorks" 
+                                :dStatus="2" 
+                                :isPvh="false"
+                                :showToast="showToast"
+                                :tableRefresher="tableRefresher"
+                                :userId="userId"
+                                :calcSalary="calculateSalary"
                             ></DelListWork>
 
                         </div>
@@ -142,6 +147,7 @@ export default {
             loading:false,
             isSmall:true,
             fields: [
+                
                 {
                     key: 'workInfo',
                     label: 'Ажлын мэдээлэл'
@@ -150,23 +156,64 @@ export default {
             isBusy:false,
             totalRows:0,
             currentPage: 1,
-            perPage: 20,
-            tableVariant:'light'
+            perPage: 1000,
+            tableVariant:'light',
+            salaryInformation:[]
         }
     },
     methods:{
-        getSlicerSalary(){
-            //alert("i am going to calculate all of them");
-            let salaryObj = new Object();
-            
-            //let listSalary = this.bus.$emit('calculateSalary');
+        calculateSalary(itemId,salarySum,type){
+            let foundIndex = this.checkSalaryInformation(itemId,type);
+            //console.info("osilaisha barligi bolip atir goi "+foundIndex);
+            if(type==0){//herev list baival
+               //console.log(`this is the list salary ${itemId} ${salarySum}`);
+               if(Number(foundIndex)==-1){
+                   this.salaryInformation.push({'salaryName':'listSalary', 'salary' : salarySum,'relId':itemId});
+               }
+               else{
+                   this.salaryInformation[foundIndex].salary=salarySum;
+               }
+               
+            }
+            if(type==1){//herev nemelt ajil baival
+                //console.log(`this is the work salary ${itemId} ${salarySum}`);
+                if(Number(foundIndex)==-1){
+                    this.salaryInformation.push({'salaryName':'workSalary','salary' : salarySum,'workId':itemId});
+                }
+                else{
+                   this.salaryInformation[foundIndex].salary=salarySum;
+                }
+                
+            }
 
-            //let workSalary = this.$refs.workSalary.getWorkSalary();
-            //salaryObj.listSalary=listSalary;
-            //salaryObj.workSalary=workSalary;
-            //return salaryObj;
-            return 5;
+            EventBus.$emit("listSalaryInformation",this.salaryInformation);
+            
         },
+        checkSalaryInformation (itemId,type){
+            if(type==0){//list zuselt
+                let theResult = -1;
+                this.salaryInformation.filter((s,index)=>{
+                    if(Number(s.relId)==Number(itemId))
+                        theResult=index;
+                });        
+                if (theResult!=-1){
+                    return theResult;
+                }
+            } 
+            if(type==1){//nemelt ajil
+                let theResult = -1;
+                this.salaryInformation.filter((s,index)=>{
+                    if(Number(s.workId)==Number(itemId))
+                        theResult=index;
+                });
+                if(theResult!=-1){
+                    return theResult;
+                } 
+            }   
+
+            return -1;
+        },  
+        
         showToast(msg,variant){
             this.$bvToast.toast(
                 msg,
@@ -178,7 +225,8 @@ export default {
             );
         },
         tableRefresher(){
-            this.$refs.workTable.refresh();
+            if(this.$refs.workTable)
+                this.$refs.workTable.refresh();
         },
         //hiise ajliin jagsaalt 
         workProvider(ctx){
@@ -188,6 +236,7 @@ export default {
             ctx.endDate = this.endDate;
 
             if(Number(this.userId)>0 && this.beginDate!="" && this.endDate!=""){
+               
                 this.isBusy = false
                 let promise = axios.post(apiDomain+'/admin/calculation/worklist',ctx,{headers:getHeader()});
                 return promise.then((response) => {
@@ -195,7 +244,7 @@ export default {
                     this.isBusy = false
                     this.totalRows=result.gridData.recordCount;
                     
-                    result.gridData.items.forEach(function(obj){ 
+                    result.gridData.items.forEach((obj)=>{ 
                         if(Number(obj.kusokStatus) == 0){
                             obj._rowVariant = "light";
                         }
@@ -206,7 +255,7 @@ export default {
                             obj._rowVariant = "danger";
                         }
                     });
-                    //alert(JSON.stringify(result.gridData.items));
+                    this.salaryInformation = [];
                     return result.gridData.items;
                 }).catch(error => {
                     this.$bvToast.toast(error.message, {
@@ -223,7 +272,6 @@ export default {
     created(){
         var vm = this;
         EventBus.$on("slicerTableRefresher", ()=> vm.tableRefresher());
-        EventBus.$on("getSlicerSalary", ()=> vm.getSlicerSalary());
     }
 }
 </script>
