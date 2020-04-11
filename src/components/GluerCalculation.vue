@@ -152,13 +152,17 @@ export default {
         }
     },
     methods:{
-        calculateSalary(detailId,salarySum){
+        calculateSalary(detailId,salarySum,unitCalculationCost){
             
             let foundIndex = this.checkSalaryInformation(detailId);
             //console.info("osilaisha barligi bolip atir goi "+foundIndex);
             if(Number(foundIndex)==-1){
                 this.salaryInformation.push({
-                    'salary' : salarySum,'detailId':detailId});
+                    'salary' : salarySum,
+                    'itemId':detailId,
+                    'salaryType':2,
+                    
+                    'unitCalculationCost':unitCalculationCost});
             }
             else{
                 this.salaryInformation[foundIndex].salary=salarySum;
@@ -169,7 +173,7 @@ export default {
         checkSalaryInformation (detailId){
             let theResult = -1;
             this.salaryInformation.filter((s,index)=>{
-                if(Number(s.detailId)==Number(detailId))
+                if(Number(s.itemId)==Number(detailId))
                     theResult=index;
             });        
             if (theResult!=-1){

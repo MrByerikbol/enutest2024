@@ -78,7 +78,7 @@ export default {
                 Number(this.foundUser.unitCalculationCost/(currentSalary.workPeriods.length+1))
                 *currentSalary.confirmedCount,
             0);
-            this.calcSalary(this.detailId,salarySum);
+            this.calcSalary(this.detailId,salarySum,this.founUser.unitCalculationCost);
            
         }
        

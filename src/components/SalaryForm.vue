@@ -17,11 +17,11 @@
             <strong><em>Бодогдсон торгууль:</em></strong> {{slicerSalaryForm.taxSalary}}
         </b-col>
         <b-col lg="12" v-if="workSalarySum>0 || listSalarySum>0">
-        
-        <strong><em>Бодогдсон нийт цалин:</em></strong> 
-            {{(workSalarySum+listSalarySum+Number(slicerSalaryForm.bonusSalary))
+            <strong><em>Бодогдсон нийт цалин:</em></strong> 
+            {{(Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary))
             -Number(slicerSalaryForm.taxSalary)}}
         </b-col>
+       
     </b-row>
     <b-col lg="12" v-if="workSalarySum>0 || listSalarySum>0" class="text-danger">
     
@@ -31,27 +31,16 @@
         <b-col lg="12">
         <strong>Авсан цалин=</strong>
             {{
-            Number(slicerSalaryForm.byCard)
-            +Number(slicerSalaryForm.byCash)
+                (Number(slicerSalaryForm.byCard)
+                +Number(slicerSalaryForm.byCash))-Number(slicerSalaryForm.taxSalary)
             
             }}
         </b-col>
         <b-col lg="12">
         <strong><em>Үлдэгдэл цалин=</em></strong>
             {{
-            
-                (
-                Number(workSalarySum)
-                +Number(listSalarySum)
-                +Number(slicerSalaryForm.bonusSalary)
-                )
-                -
-                (
-                Number(slicerSalaryForm.byCard)
-                +Number(slicerSalaryForm.byCash)
-                +Number(slicerSalaryForm.taxSalary)
-                
-                )
+                (Number(workSalarySum)+Number(listSalarySum))
+                -(Number(slicerSalaryForm.byCard)+Number(slicerSalaryForm.byCash))
             }}
         </b-col>
     </b-col>
@@ -78,7 +67,8 @@
                 <b-col sm="auto" lg="12">
                     <label for="byCard">Картаар</label>
                     <b-form-input
-                        :max="Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary)"
+                        :max="(Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary))
+                            -Number(slicerSalaryForm.taxSalary)"
                         id="byCard"
                         v-model="slicerSalaryForm.byCard"
                         type="number"
@@ -89,8 +79,8 @@
                     <label for="byCash">Бэлнээр</label>
                     <b-form-input
                         id="byCash"
-                        :max="Number(workSalarySum)+Number(listSalarySum)
-                        +Number(slicerSalaryForm.bonusSalary)-Number(slicerSalaryForm.byCard)"
+                        :max="(Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary))
+                            -Number(slicerSalaryForm.taxSalary)"
                         v-model="slicerSalaryForm.byCash"
                         type="number"
                         placeholder="Бэлнээр"

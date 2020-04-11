@@ -164,54 +164,35 @@ export default {
     methods:{
         calculateSalary(itemId,salarySum,type){
             let foundIndex = this.checkSalaryInformation(itemId,type);
-            //console.info("osilaisha barligi bolip atir goi "+foundIndex);
-            if(type==0){//herev list baival
-               //console.log(`this is the list salary ${itemId} ${salarySum}`);
-               if(Number(foundIndex)==-1){
-                   this.salaryInformation.push({'salaryName':'listSalary', 'salary' : salarySum,'relId':itemId});
-               }
-               else{
-                   this.salaryInformation[foundIndex].salary=salarySum;
-               }
+            //console.log(`this is the list salary ${itemId} ${salarySum}`);
+            if(Number(foundIndex)==-1){
+                this.salaryInformation.push(
+                    {
+                        'itemId':itemId,
+                        'salary' : salarySum,
+                        'salaryType':type
+                    });
+            }
+            else{
+                this.salaryInformation[foundIndex].salary=salarySum;
+            }
                
-            }
-            if(type==1){//herev nemelt ajil baival
-                //console.log(`this is the work salary ${itemId} ${salarySum}`);
-                if(Number(foundIndex)==-1){
-                    this.salaryInformation.push({'salaryName':'workSalary','salary' : salarySum,'workId':itemId});
-                }
-                else{
-                   this.salaryInformation[foundIndex].salary=salarySum;
-                }
-                
-            }
+           
 
             EventBus.$emit("listSalaryInformation",this.salaryInformation);
             
         },
         checkSalaryInformation (itemId,type){
-            if(type==0){//list zuselt
-                let theResult = -1;
-                this.salaryInformation.filter((s,index)=>{
-                    if(Number(s.relId)==Number(itemId))
-                        theResult=index;
-                });        
-                if (theResult!=-1){
-                    return theResult;
-                }
-            } 
-            if(type==1){//nemelt ajil
-                let theResult = -1;
-                this.salaryInformation.filter((s,index)=>{
-                    if(Number(s.workId)==Number(itemId))
-                        theResult=index;
-                });
-                if(theResult!=-1){
-                    return theResult;
-                } 
-            }   
-
-            return -1;
+          
+            let theResult = -1;
+            this.salaryInformation.filter((s,index)=>{
+                if(Number(s.itemId)==Number(itemId) && Number(s.salaryType)==Number(type))
+                    theResult=index;
+            });        
+            if (theResult!=-1){
+                return theResult;
+            }
+            return theResult;
         },  
         
         showToast(msg,variant){

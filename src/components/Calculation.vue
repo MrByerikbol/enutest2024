@@ -124,12 +124,12 @@ export default {
     calculateSlicerSalary(){
       this.listSalarySum=
         this.slicerSalary
-        .filter(l=>l.salaryName==='listSalary')
+        .filter(l=>Number(l.salaryType)==0)
         .reduce((listSalarySum,list)=>listSalarySum+Number(list.salary),0);
 
       this.workSalarySum=
         this.slicerSalary
-        .filter(l=>l.salaryName==='workSalary')
+        .filter(l=>Number(l.salaryType)==1)
         .reduce((listSalarySum,list)=>listSalarySum+Number(list.salary),0);
     },
     calculateGluerSalary(){

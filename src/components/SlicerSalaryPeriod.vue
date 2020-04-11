@@ -86,10 +86,10 @@ export default {
             
             if(this.isList){
                 //console.info(`${this.deliveryIndex} ${this.listIndex} ${this.workIndex} `);
-                this.calcSalary(this.relId,salarySum,0);
+                this.calcSalary(this.relId,salarySum,0,this.founUser.unitCalculationCost);
             }
             if(!this.isList){
-                this.calcSalary(this.workId,salarySum,1);
+                this.calcSalary(this.workId,salarySum,1,this.founUser.unitCalculationCost);
             }        
         }
        
