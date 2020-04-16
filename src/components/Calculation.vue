@@ -59,10 +59,18 @@
           <SalaryForm v-if="userPosition=='SLICER'"
             :clistSalarySum="listSalarySum" 
             :cworkSalarySum="workSalarySum"
+            :slicerSalary="slicerSalary"
+            :beginDate="beginDate"
+            :endDate="endDate"
+            :userId="userId"
           />
 
           <GluerSalaryForm v-if="userPosition=='GLUER'"
             :cgluerSalarySum="gluerSalarySum" 
+            :gluerSalary="gluerSalary"
+            :beginDate="beginDate"
+            :endDate="endDate"
+            :userId="userId"
           />
         </b-row>
       </b-col>
@@ -122,6 +130,7 @@ export default {
     },
     
     calculateSlicerSalary(){
+     
       this.listSalarySum=
         this.slicerSalary
         .filter(l=>Number(l.salaryType)==0)
@@ -131,6 +140,8 @@ export default {
         this.slicerSalary
         .filter(l=>Number(l.salaryType)==1)
         .reduce((listSalarySum,list)=>listSalarySum+Number(list.salary),0);
+
+        //alert(JSON.stringify(this.slicerSalary));
     },
     calculateGluerSalary(){
       this.gluerSalarySum=

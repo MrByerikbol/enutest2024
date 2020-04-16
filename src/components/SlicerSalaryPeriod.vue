@@ -82,14 +82,12 @@ export default {
                 Number(this.foundUser.unitCalculationCost/(currentSalary.workPeriods.length+1))
                 *currentSalary.confirmedCount,
             0);    
-        
-            
             if(this.isList){
                 //console.info(`${this.deliveryIndex} ${this.listIndex} ${this.workIndex} `);
-                this.calcSalary(this.relId,salarySum,0,this.founUser.unitCalculationCost);
+                this.calcSalary(this.relId,salarySum,0);
             }
             if(!this.isList){
-                this.calcSalary(this.workId,salarySum,1,this.founUser.unitCalculationCost);
+                this.calcSalary(this.workId,salarySum,1);
             }        
         }
        

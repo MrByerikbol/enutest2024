@@ -26,7 +26,9 @@
     <b-col lg="12" v-if="workSalarySum>0 || listSalarySum>0" class="text-danger">
     
         <h5 class="text-center">
-        <span class="bd-content-title">Цалин өгөх</span>
+            <span class="bd-content-title">
+                Цалин өгөх
+            </span>
         </h5> 
         <b-col lg="12">
         <strong>Авсан цалин=</strong>
@@ -107,28 +109,35 @@
                 
                 </b-form-row>
                 <b-button
-                    v-if="slicerSalaryForm.byCash >0 || slicerSalaryForm.byCard>0"
+                    v-if="!isSalaryPosted
+                     && (slicerSalaryForm.byCash >0 || slicerSalaryForm.byCard>0)"
                     type="submit" class="mt-3" block variant="outline-success">
                     Цалингийн тооцоо хийх
                 </b-button>
+                <Loading v-if="isSalaryPosted" />
             </b-form>
         </b-col>
     </b-col>   
 </template>
 
 <script>
+import axios from 'axios';
+import {apiDomain,getHeader} from "../config/config";
+import Loading from './Loading';
 export default {
     name:"SalaryForm",
+    components:{
+        Loading
+    },
     props:[
         'clistSalarySum',
-        'cworkSalarySum'
+        'cworkSalarySum',
+        'slicerSalary',
+        'beginDate',
+        'endDate', 
+        'userId'  
        
     ],
-    methods:{
-        postSlicerSalaryCalculation(){
-            alert("we will do something super");
-        }
-    },
     data(){
       return {
         slicerSalaryForm:{
@@ -137,10 +146,33 @@ export default {
           taxSalary :0,
           taxDescription:"",
           byCard : 0,
-          byCash:0
+          byCash:0,
+          isSalaryPosted:false
         }
       }
     },
+    methods:{
+        postSlicerSalaryCalculation(){
+            let warn = confirm("Та итгэлтэй байна уу ?");
+            if(warn && this.slicerSalary.length>0){
+                this.isSalaryPosted=true;
+                this.slicerSalaryForm.salaryDetails=this.slicerSalary;
+                this.slicerSalaryForm.calcBeginDate=this.beginDate;
+                this.slicerSalaryForm.calcEndDate=this.endDate;
+                this.slicerSalaryForm.userId = this.userId;
+
+                axios.post(apiDomain+'/admin/calculation/postsalary',this.slicerSalaryForm,{headers:getHeader()})
+                .then(()=>{
+                    this.isSalaryPosted=false;
+                })
+                .catch(error =>{
+                    this.isSalaryPosted=false;
+                    alert(error.message);
+                });
+            }
+        }
+    },
+    
     computed:{
       listSalarySum:function(){
         return this.clistSalarySum;

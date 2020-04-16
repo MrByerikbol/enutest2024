@@ -39,14 +39,11 @@
             
                 (
                     Number(gluerSalarySum)
-                    +Number(gluerSalaryForm.bonusSalary)
                 )
                 -
                 (
                     Number(gluerSalaryForm.byCard)
                     +Number(gluerSalaryForm.byCash)
-                    +Number(gluerSalaryForm.taxSalary)
-                
                 )
             }}
         </b-col>
@@ -54,23 +51,7 @@
     <b-col lg="12"  v-if="gluerSalarySum>0" >
         <b-form v-on:submit.prevent="postGluerSalaryCalculation">
             <b-form-row>
-                <b-col sm="auto" lg="12">
-                    <label for="bonusSalary">Бонус цалин</label>
-                    <b-form-input
-                        id="bonusSalary"
-                        v-model="gluerSalaryForm.bonusSalary"
-                        type="number"
-                        placeholder="Бонус"
-                    ></b-form-input>
-                </b-col>
-                <b-col sm="auto" lg="12">
-                    <label for="bonusDescription">Бонус шалтгаан</label>
-                    <b-form-textarea
-                        id="bonusDescription"
-                        v-model="gluerSalaryForm.bonusDescription"
-                        placeholder="Бонус шалтгаан"
-                    ></b-form-textarea>
-                </b-col>
+               
                 <b-col sm="auto" lg="12">
                     <label for="byCard">Картаар</label>
                     <b-form-input
@@ -92,7 +73,23 @@
                         placeholder="Бэлнээр"
                     ></b-form-input>
                 </b-col>
-                    
+                <b-col sm="auto" lg="12">
+                    <label for="bonusSalary">Бонус цалин</label>
+                    <b-form-input
+                        id="bonusSalary"
+                        v-model="gluerSalaryForm.bonusSalary"
+                        type="number"
+                        placeholder="Бонус"
+                    ></b-form-input>
+                </b-col>
+                <b-col sm="auto" lg="12">
+                    <label for="bonusDescription">Бонус шалтгаан</label>
+                    <b-form-textarea
+                        id="bonusDescription"
+                        v-model="gluerSalaryForm.bonusDescription"
+                        placeholder="Бонус шалтгаан"
+                    ></b-form-textarea>
+                </b-col>    
                 <b-col sm="auto" lg="12">
                         <label for="taxSalary">Торгууль</label>
                         <b-form-input
@@ -112,25 +109,51 @@
                     </b-col>
                 
                 </b-form-row>
-                <b-button
-                    v-if="gluerSalaryForm.byCash >0 || gluerSalaryForm.byCard>0"
+                <b-button 
+                    v-if="(gluerSalaryForm.byCash >0 || gluerSalaryForm.byCard>0) && !isSalaryPosted"
                     type="submit" class="mt-3" block variant="outline-success">
                     Цалингийн тооцоо хийх
                 </b-button>
+                <Loading v-if="isSalaryPosted" />
             </b-form>
         </b-col>
     </b-col>   
 </template>
 
 <script>
+import axios from 'axios';
+import {apiDomain,getHeader} from "../config/config";
+import Loading from './Loading';
 export default {
     name:"GluerSalaryForm",
     props:[
         'cgluerSalarySum',
+        'gluerSalary',
+        'beginDate',
+        'endDate', 
+        'userId'   
     ],
+    components:{
+        Loading
+    },
     methods:{
         postGluerSalaryCalculation(){
-            alert("we will do something super");
+            let warn = confirm("Та итгэлтэй байна уу ?");
+            if(warn && this.gluerSalary.length>0){
+                this.isSalaryPosted=true;
+                this.gluerSalaryForm.salaryDetails=this.gluerSalary;
+                this.gluerSalaryForm.calcBeginDate=this.beginDate;
+                this.gluerSalaryForm.calcEndDate=this.endDate;
+                this.gluerSalaryForm.userId = this.userId;
+                axios.post(apiDomain+'/admin/calculation/postsalary',this.gluerSalaryForm,{headers:getHeader()})
+                .then(()=>{
+                    this.isSalaryPosted=false;
+                })
+                .catch(error =>{
+                    this.isSalaryPosted=false;
+                    alert(error.message);
+                });
+            }
         }
     },
     data(){
@@ -142,7 +165,8 @@ export default {
           taxDescription:"",
           byCard : 0,
           byCash:0
-        }
+        },
+        isSalaryPosted:false
       }
     },
     computed:{

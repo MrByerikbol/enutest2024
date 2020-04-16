@@ -114,7 +114,6 @@
 </template>
 <script>
 import axios from 'axios';
-
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
 import DelListWork from './DelListWork';
@@ -152,7 +151,7 @@ export default {
         }
     },
     methods:{
-        calculateSalary(detailId,salarySum,unitCalculationCost){
+        calculateSalary(detailId,salarySum){
             
             let foundIndex = this.checkSalaryInformation(detailId);
             //console.info("osilaisha barligi bolip atir goi "+foundIndex);
@@ -160,9 +159,7 @@ export default {
                 this.salaryInformation.push({
                     'salary' : salarySum,
                     'itemId':detailId,
-                    'salaryType':2,
-                    
-                    'unitCalculationCost':unitCalculationCost});
+                    'salaryType':2});
             }
             else{
                 this.salaryInformation[foundIndex].salary=salarySum;

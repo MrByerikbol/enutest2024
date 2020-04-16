@@ -189,9 +189,7 @@ export default {
                 if(Number(s.itemId)==Number(itemId) && Number(s.salaryType)==Number(type))
                     theResult=index;
             });        
-            if (theResult!=-1){
-                return theResult;
-            }
+            
             return theResult;
         },  
         
