@@ -3,11 +3,17 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 //for the bootstrap vue 
-import BootstrapVue from 'bootstrap-vue'
+import {BootstrapVue,IconsPlugin} from 'bootstrap-vue'
+
+
+
+Vue.use(IconsPlugin)
 Vue.use(BootstrapVue)
+
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-search-select/dist/VueSearchSelect.css'
+
 // This imports all the layout components such as <b-container>, <b-row>, <b-col>:
 import { LayoutPlugin } from 'bootstrap-vue'
 Vue.use(LayoutPlugin)
@@ -34,9 +40,6 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
 
-import {IconsPlugin } from 'bootstrap-vue'
-
-Vue.use(IconsPlugin)
 
 Vue.use(VueMoment, {
     moment,

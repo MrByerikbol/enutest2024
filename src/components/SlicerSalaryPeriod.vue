@@ -3,20 +3,39 @@
         <div class="w-100 pb-2 text-danger pt-2" >{{foundUser.relUserInfo}} {{isList ? 'зүссэн' : 'хийсэн'}} 
             <strong>{{foundUser.confirmedDoneCount}}</strong> 
             {{isList ? 'листийн' : 'нэмэлт ажлын'}} 
-             задаргаа
-
+             задаргаа 
             <div class="mt-2 text-secondary">
                 Нэгж {{isList ? 'зүсэлтийн' : 'нэмэлт ажлын'}} үнэлгээ 
                 <input type="number" @change="calculatePeriodSalary" v-model="foundUser.unitCalculationCost">   
-
             </div>    
         </div>
-        <div class="mb-2 p-1 small-font w-100" :class=" !isList ? 'border-success' : 'border-secondary'" style="clear:left; border:1px dashed #6c757d"
+        <div class="mb-2 p-1 small-font w-100"
+             :class=" !isList ? 'border-success' : 'border-secondary'"
+             style="clear:left; border:1px dashed #6c757d"
              v-for="(workConfirm,confirmIndex) in workConfirms" :key="confirmIndex">
             <div class="w-100">
-                Огноо : <strong>{{workConfirm.createdDate}}</strong>    
+                Огноо :<strong>{{workConfirm.createdDate}}</strong>    
             </div>
-            
+            <div class="w-100" style="position:relative;" v-if="workConfirm.isCalculationConfirmed==1">
+                <b-icon icon="check" id="salaryOk"
+                    href="#"
+                    tabindex="0"
+                    v-b-tooltip.hover
+                    @click="updateSalaryBalance"
+                    title="Цалин бодогдсон"
+                    style="position:absolute;right:0;top:-25px;" 
+                    variant="success" font-scale="4"></b-icon>
+
+               
+                <div class="w-100">
+                    
+                    Тооцоо хийсэн : <strong>{{workConfirm.calcDate}}</strong>    
+                </div>
+                <div class="w-100">
+                    Тооцооны интервал : 
+                        <strong>{{workConfirm.calcBeginDate+' наас/нөөс '+workConfirm.calcEndDate}}</strong>    
+                </div>
+            </div>
             
             <div class="w-100">
                 Хамтарч зүсэгчид ({{workConfirm.workPeriods.length}}) : <br>
@@ -37,7 +56,7 @@
                     {{(foundUser.unitCalculationCost/(workConfirm.workPeriods.length+1))*workConfirm.confirmedCount}}
                 </strong>
             </div> 
-           
+            
         </div>
     </b-row>  
 </template>
@@ -52,6 +71,7 @@ export default {
         'isList',
       
         'relId',
+        
         'workId',
         'calcSalary'],
     data(){
@@ -61,6 +81,9 @@ export default {
         }
     },
     methods:{
+        updateSalaryBalance(){
+            alert("we will do something");
+        },
         getCurrentBeingCalculatedUser(){
             let foundUser = null;
             for (let user of this.listUsers){
@@ -76,6 +99,7 @@ export default {
         calculatePeriodSalary(){
             let salarySum = 
             this.workConfirms
+            .filter(w=>w.isCalculationConfirmed==0)
             .reduce(
                 (sum,currentSalary) => 
                 sum + 
