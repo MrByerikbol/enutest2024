@@ -78,6 +78,7 @@
                 :isList="false"
                 :workId="work.workId"
                 :calcSalary="calcSalary"
+                :updateSalaryBalance="updateSalaryBalance"
             />
         </div>
       
@@ -93,7 +94,8 @@ export default {
     name :"DelListWork",
     props:['listWorks','dStatus',
         'tableRefresher','showToast',
-            'isPvh','userId','deliveryIndex','listIndex','calcSalary'],
+        'updateSalaryBalance',
+        'isPvh','userId','deliveryIndex','listIndex','calcSalary'],
     components:{
         Loading,
         SlicerSalaryPeriod

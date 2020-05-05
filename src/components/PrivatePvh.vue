@@ -280,7 +280,7 @@
                     for(let l=0;l<this.relDetails.length;l++){
                         let choosed=this.relDetails[l];
                         if(choosed.productId==null || choosed.productId==0 
-                            || choosed.productPrice==0 || choosed.productCount==0
+                            || choosed.productCount==0
                             || choosed.totalPrice==0){
                             looped='error';    
                             break;

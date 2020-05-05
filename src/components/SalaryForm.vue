@@ -2,6 +2,7 @@
  <b-col lg="12">      
     
     <b-row class="text-primary">
+       
         <b-col lg="12" v-if="listSalarySum>0">
             <strong><em>
                 Бодогдсон  зүсэлтийн цалин:
@@ -23,7 +24,8 @@
         </b-col>
        
     </b-row>
-    <b-col lg="12" v-if="workSalarySum>0 || listSalarySum>0" class="text-danger">
+    <b-col lg="12" v-if="slicerSalaryForm.calcId==0 
+        && (workSalarySum>0 || listSalarySum>0) " class="text-danger">
     
         <h5 class="text-center">
             <span class="bd-content-title">
@@ -46,7 +48,48 @@
             }}
         </b-col>
     </b-col>
-    <b-col lg="12"  v-if="listSalarySum>0" >
+    <b-col lg="12" v-if="slicerSalaryForm.calcId>0 
+        && (workSalarySum>0 || listSalarySum>0) " class="text-danger">
+    
+        <h5 class="text-center">
+            <span class="bd-content-title">
+                Цалин өгөх
+            </span>
+        </h5> 
+        <b-col lg="12">
+            <strong>Авсан цалин=</strong>
+            {{
+               (Number(slicerSalaryForm.currentAssignedSalary)+
+               Number(slicerSalaryForm.bonusSalary))-
+               Number(slicerSalaryForm.taxSalary) 
+            }}
+        </b-col>
+        <b-col lg="12">
+            <strong><em>Үлдэгдэл цалин</em></strong>
+            {{
+               Number(slicerSalaryForm.currentBalance) -
+               (Number(slicerSalaryForm.byCard)+Number(slicerSalaryForm.byCash)+Number(slicerSalaryForm.taxSalary)) 
+            }}
+        </b-col>
+
+        <!-- begining of the calculation information -->
+        <b-col lg="12" class="pt-3 text-primary">
+            <strong><em>Тооцоо хийсэн:</em></strong>
+            {{
+               slicerSalaryForm.calcDate 
+            }}
+        </b-col>
+        <b-col lg="12" class="text-primary">
+            <strong><em>Тооцооны интервал:</em></strong><br>
+            
+            {{
+               slicerSalaryForm.calcBeginDate + ' наас/нээс ' +slicerSalaryForm.calcEndDate
+            }}
+            
+        </b-col>
+       
+    </b-col>
+    <b-col lg="12"  v-if="listSalarySum>0 || workSalarySum>0">
         <b-form v-on:submit.prevent="postSlicerSalaryCalculation">
             <b-form-row>
                     <b-col sm="auto" lg="12">
@@ -125,6 +168,7 @@
 import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
+import {EventBus} from '@/EventBus.js';
 export default {
     name:"SalaryForm",
     components:{
@@ -136,35 +180,99 @@ export default {
         'slicerSalary',
         'beginDate',
         'endDate', 
-        'userId'  
-       
+        'userId'
     ],
     data(){
       return {
+        dbListSalarySum : 0,
+        dbWorkSalarySum :0,
+        updateSalaryData:null,
         slicerSalaryForm:{
+          calcId:0,
           bonusSalary : 0,
           bonusDescription:"",
           taxSalary :0,
           taxDescription:"",
+
           byCard : 0,
-          byCash:0,
-          isSalaryPosted:false
-        }
+          byCash:0
+        },
+
+        isSalaryPosted:false
       }
     },
     methods:{
+        updateSlicerSalary(salaryInfo){
+            
+
+            window.scrollTo(0,0);
+
+            
+            axios.post(apiDomain+'/admin/calculation/getslicerdbsalary',salaryInfo,{headers:getHeader()})
+            .then((response)=>{
+                let dbData = response.data;
+                this.slicerSalaryForm.byCard=0;
+                this.slicerSalaryForm.byCash=0;
+
+                this.slicerSalaryForm.calcId= dbData.calcId;
+                this.slicerSalaryForm.bonusSalary= dbData.bonusSalary;
+                this.slicerSalaryForm.bonusDescription= dbData.bonusDescription;
+                this.slicerSalaryForm.taxSalary= dbData.taxSalary;
+                this.slicerSalaryForm.taxDescription= dbData.taxDescription;
+                this.dbListSalarySum=dbData.listSalarySum;
+                this.dbWorkSalarySum=dbData.workSalarySum;
+
+
+                this.slicerSalaryForm.currentBalance=dbData.currentBalance;
+                this.slicerSalaryForm.currentAssignedSalary=dbData.currentAssignedSalary;
+                this.slicerSalaryForm.calcDate=dbData.createdDate;
+                this.slicerSalaryForm.calcBeginDate=dbData.calcBeginDate;
+                this.slicerSalaryForm.calcEndDate=dbData.calcEndDate;
+            })
+            .catch(error =>{
+                alert(error.message);
+            });
+        },
         postSlicerSalaryCalculation(){
             let warn = confirm("Та итгэлтэй байна уу ?");
-            if(warn && this.slicerSalary.length>0){
+            
+            if((warn && this.slicerSalary.length>0) ||
+                (warn && this.slicerSalaryForm.calcId>0)  ){
                 this.isSalaryPosted=true;
-                this.slicerSalaryForm.salaryDetails=this.slicerSalary;
+                if(this.slicerSalaryForm.calcId>0){
+                    this.slicerSalaryForm.salaryDetails=[];
+                }
+                else{
+                    this.slicerSalaryForm.salaryDetails=this.slicerSalary;
+                }
+                
                 this.slicerSalaryForm.calcBeginDate=this.beginDate;
                 this.slicerSalaryForm.calcEndDate=this.endDate;
                 this.slicerSalaryForm.userId = this.userId;
 
                 axios.post(apiDomain+'/admin/calculation/postsalary',this.slicerSalaryForm,{headers:getHeader()})
-                .then(()=>{
+                .then((response)=>{
                     this.isSalaryPosted=false;
+                    let serverResult = response.data;
+                    if(serverResult=='success'){
+                         this.$bvToast.toast('Тооцоо амжилттай засагдлаа.', {
+                            title: 'Мэдээлэл',
+                            autoHideDelay: 5000,
+                            variant:"success"
+                        });
+                        if(this.updateSalaryData!=null)
+                            this.updateSlicerSalary(this.updateSalaryData);
+                    }
+                    if(serverResult=='error'){
+                        this.$bvToast.toast('Системд алдаа үүслээ !', {
+                            title: 'Алдааны мэдээлэл',
+                            autoHideDelay: 5000,
+                            variant:"danger"
+                        });
+                        this.dbListSalarySum=0;
+                        this.dbWorkSalarySum=0;
+                    }
+                   
                 })
                 .catch(error =>{
                     this.isSalaryPosted=false;
@@ -173,17 +281,35 @@ export default {
             }
         }
     },
-    
     computed:{
       listSalarySum:function(){
-        return this.clistSalarySum;
+          if(this.dbListSalarySum==0){
+              this.slicerSalaryForm.calcId=0;
+              return this.clistSalarySum;
+          }
+          else{
+              return this.dbListSalarySum;
+          }
+        
       },
       workSalarySum:function(){
-        return this.cworkSalarySum;
-      },
-      userPosition:function(){
-          return this.cuserPosition;
+          if(this.dbWorkSalarySum==0){
+              this.slicerSalaryForm.calcId=0;
+              return this.cworkSalarySum;
+          }
+          else{
+              return this.dbWorkSalarySum;
+          }
+        
       }
-    }    
+    },
+    mounted(){
+        let c = this;
+        EventBus.$on("updateSlicerSalary", (data)=>{
+            c.updateSalaryData=data;
+            c.updateSlicerSalary(data);
+        });
+    }
+
 }
 </script>

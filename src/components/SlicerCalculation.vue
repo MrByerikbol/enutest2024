@@ -49,7 +49,7 @@
                              v-for="(work,workIndex) in del.item.deliveryProducts" :key="workIndex">
 
                             <div class="float-left mb-1">
-                                <b-button size="sm" @dblclick="getDelWork(work.relId,'one')"  variant="outline-success">
+                                <b-button size="sm" variant="outline-success">
 
                                     <b-badge>
                                         {{work.catName+'-'+work.colorName+'-'+work.measureName}}
@@ -79,6 +79,7 @@
                                 :isPvh="false"
                                 :relId="work.relId"
                                 :calcSalary="calculateSalary"
+                                :updateSalaryBalance="updateSalaryBalance"
                             />
                             <DelListWork v-if="work.listWorks 
                                 && work.listWorks.length>0" 
@@ -90,6 +91,7 @@
                                 :tableRefresher="tableRefresher"
                                 :userId="userId"
                                 :calcSalary="calculateSalary"
+                                :updateSalaryBalance="updateSalaryBalance"
                             ></DelListWork>
 
                         </div>
@@ -162,6 +164,9 @@ export default {
         }
     },
     methods:{
+        updateSalaryBalance(anyId,isList){
+            EventBus.$emit("updateSlicerSalary",{'anyId':anyId,'isList':isList});
+        },
         calculateSalary(itemId,salarySum,type){
             let foundIndex = this.checkSalaryInformation(itemId,type);
             //console.log(`this is the list salary ${itemId} ${salarySum}`);
@@ -223,20 +228,29 @@ export default {
                     this.isBusy = false
                     this.totalRows=result.gridData.recordCount;
                     
-                    result.gridData.items.forEach((obj)=>{ 
-                        if(Number(obj.kusokStatus) == 0){
-                            obj._rowVariant = "light";
-                        }
-                        if(Number(obj.kusokStatus) == 1){
-                            obj._rowVariant = "warning";
-                        }
-                        if(Number(obj.kusokStatus) == 2){
-                            obj._rowVariant = "danger";
-                        }
-                    });
+                    
                     this.salaryInformation = [];
+                    
+                    
+                    result.gridData.items.forEach(
+                        s=>{
+                             
+                            s.deliveryProducts.forEach(d=>{
+                                d.listUsers.forEach(u=>{
+                                    //alert(JSON.stringify(u.anyWorkConfirms));
+                                    if(u.anyWorkConfirms.length>0){
+                                         
+                                        //filteredSalaryData.push(d);
+                                    }
+                                })
+                            })
+                        }
+                        
+                    );
+                   
                     return result.gridData.items;
                 }).catch(error => {
+                    console.error(error);
                     this.$bvToast.toast(error.message, {
                         title: 'Алдааны мэдээлэл',
                         autoHideDelay: 5000,

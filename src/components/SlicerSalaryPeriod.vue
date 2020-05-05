@@ -1,6 +1,6 @@
 <template>
      <b-row  :class=" !isList ? 'pl-5 pr-4' : 'pl-4 pr-2'">
-        <div class="w-100 pb-2 text-danger pt-2" >{{foundUser.relUserInfo}} {{isList ? 'зүссэн' : 'хийсэн'}} 
+        <div v-if="workConfirms.length>0" class="w-100 pb-2 text-danger pt-2" >{{foundUser.relUserInfo}} {{isList ? 'зүссэн' : 'хийсэн'}} 
             <strong>{{foundUser.confirmedDoneCount}}</strong> 
             {{isList ? 'листийн' : 'нэмэлт ажлын'}} 
              задаргаа 
@@ -14,14 +14,14 @@
              style="clear:left; border:1px dashed #6c757d"
              v-for="(workConfirm,confirmIndex) in workConfirms" :key="confirmIndex">
             <div class="w-100">
-                Огноо :<strong>{{workConfirm.createdDate}}</strong>    
+                Зүссэн Огноо :<strong>{{workConfirm.createdDate}}</strong>    
             </div>
             <div class="w-100" style="position:relative;" v-if="workConfirm.isCalculationConfirmed==1">
                 <b-icon icon="check" id="salaryOk"
                     href="#"
                     tabindex="0"
                     v-b-tooltip.hover
-                    @click="updateSalaryBalance"
+                    @click="updateSalaryBalance(workConfirm.anyId,isList)"
                     title="Цалин бодогдсон"
                     style="position:absolute;right:0;top:-25px;" 
                     variant="success" font-scale="4"></b-icon>
@@ -73,7 +73,9 @@ export default {
         'relId',
         
         'workId',
-        'calcSalary'],
+        'calcSalary',
+        'updateSalaryBalance'
+        ],
     data(){
         return {
             foundUser:{},
@@ -81,9 +83,7 @@ export default {
         }
     },
     methods:{
-        updateSalaryBalance(){
-            alert("we will do something");
-        },
+        
         getCurrentBeingCalculatedUser(){
             let foundUser = null;
             for (let user of this.listUsers){
@@ -92,14 +92,14 @@ export default {
                     break;
                 }
             }
-            //alert(JSON.stringify(foundUser.anyWorkConfirms));
+            
             this.workConfirms=foundUser.anyWorkConfirms;
             this.foundUser=foundUser;
         },
         calculatePeriodSalary(){
             let salarySum = 
             this.workConfirms
-            .filter(w=>w.isCalculationConfirmed==0)
+            .filter(w=>w.isCalculationConfirmed==0)//umnu ni tootsoolol hiigdeegui tohiolold l shine bolno
             .reduce(
                 (sum,currentSalary) => 
                 sum + 
