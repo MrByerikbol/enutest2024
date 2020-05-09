@@ -227,27 +227,9 @@ export default {
                     const result = response.data;
                     this.isBusy = false
                     this.totalRows=result.gridData.recordCount;
-                    
-                    
                     this.salaryInformation = [];
+                    EventBus.$emit("searchDone");
                     
-                    
-                    result.gridData.items.forEach(
-                        s=>{
-                             
-                            s.deliveryProducts.forEach(d=>{
-                                d.listUsers.forEach(u=>{
-                                    //alert(JSON.stringify(u.anyWorkConfirms));
-                                    if(u.anyWorkConfirms.length>0){
-                                         
-                                        //filteredSalaryData.push(d);
-                                    }
-                                })
-                            })
-                        }
-                        
-                    );
-                   
                     return result.gridData.items;
                 }).catch(error => {
                     console.error(error);

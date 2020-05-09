@@ -3,26 +3,53 @@
     
     <b-row class="text-primary">
        
-        <b-col lg="12" v-if="listSalarySum>0">
+        <b-col
+            lg="12" 
+            v-if="listSalarySum>0 && slicerSalaryForm.calcId==0">
             <strong><em>
                 Бодогдсон  зүсэлтийн цалин:
             </em></strong> {{listSalarySum}}
         </b-col>
-        <b-col lg="12" v-if="workSalarySum>0">
+        <b-col lg="12" v-if="workSalarySum>0 && slicerSalaryForm.calcId==0">
             <strong><em>Бодогдсон нэмэлт ажлын цалин:</em></strong> {{workSalarySum}}
         </b-col>
-        <b-col lg="12" v-if="slicerSalaryForm.bonusSalary>0">
-            <strong><em>Бодогдсон Бонус цалин:</em></strong> {{slicerSalaryForm.bonusSalary}}
+        <!-- herev zasch baival -->
+        <b-col lg="12" v-if="dbListSalarySum>0 && slicerSalaryForm.calcId>0">
+            <strong><em>
+                Бодогдсон  зүсэлтийн цалин:
+            </em></strong> {{dbListSalarySum}}
         </b-col>
-        <b-col lg="12" v-if="slicerSalaryForm.taxSalary>0">
-            <strong><em>Бодогдсон торгууль:</em></strong> {{slicerSalaryForm.taxSalary}}
+        <b-col lg="12" v-if="dbWorkSalarySum>0 && slicerSalaryForm.calcId>0">
+            <strong><em>Бодогдсон нэмэлт ажлын цалин:</em></strong> {{dbWorkSalarySum}}
         </b-col>
-        <b-col lg="12" v-if="workSalarySum>0 || listSalarySum>0">
-            <strong><em>Бодогдсон нийт цалин:</em></strong> 
-            {{(Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary))
-            -Number(slicerSalaryForm.taxSalary)}}
+
+        <b-col lg="12" v-if="slicerSalaryForm.calcId==0">
+            <b-col lg="12" v-if="slicerSalaryForm.bonusSalary>0">
+                <strong><em>Бодогдсон Бонус цалин:</em></strong> {{slicerSalaryForm.bonusSalary}}
+            </b-col>
+            
+
+            <b-col lg="12" v-if="workSalarySum>0 || listSalarySum>0">
+                <strong><em>Бодогдсон нийт цалин:</em></strong> 
+                {{Number(workSalarySum)+Number(listSalarySum)
+                    +Number(slicerSalaryForm.bonusSalary)}}
+            </b-col>
         </b-col>
-       
+        <!-- herev zasch baival -->
+
+        <b-col lg="12" v-if="slicerSalaryForm.calcId>0">
+            <b-col lg="12" v-if="slicerSalaryForm.dbBonusSalary>0">
+                <strong><em>Бодогдсон Бонус цалин:</em></strong> 
+                {{Number(slicerSalaryForm.dbBonusSalary)+Number(slicerSalaryForm.bonusSalary)}}
+            </b-col>
+           
+            <b-col lg="12" v-if="dbWorkSalarySum>0 || dbListSalarySum>0">
+                <strong><em>Бодогдсон нийт цалин:</em></strong> 
+                {{Number(dbWorkSalarySum)+Number(dbListSalarySum)
+                    +Number(slicerSalaryForm.dbBonusSalary)+Number(slicerSalaryForm.bonusSalary)}}
+            </b-col>
+        </b-col>
+
     </b-row>
     <b-col lg="12" v-if="slicerSalaryForm.calcId==0 
         && (workSalarySum>0 || listSalarySum>0) " class="text-danger">
@@ -32,39 +59,74 @@
                 Цалин өгөх
             </span>
         </h5> 
-        <b-col lg="12">
-        <strong>Авсан цалин=</strong>
+         <b-col lg="12">
+            <strong>Картаар авсан</strong>
             {{
-                (Number(slicerSalaryForm.byCard)
-                +Number(slicerSalaryForm.byCash))-Number(slicerSalaryForm.taxSalary)
-            
+               Number(slicerSalaryForm.byCard)
             }}
         </b-col>
         <b-col lg="12">
-        <strong><em>Үлдэгдэл цалин=</em></strong>
+            <strong>Бэлнээр авсан</strong>
             {{
-                (Number(workSalarySum)+Number(listSalarySum))
-                -(Number(slicerSalaryForm.byCard)+Number(slicerSalaryForm.byCash))
+               Number(slicerSalaryForm.byCash)
+            }}
+        </b-col>
+        <b-col lg="12" v-if="slicerSalaryForm.taxSalary>0">
+            <strong>Торгуулиар авсан</strong> 
+            {{Number(slicerSalaryForm.taxSalary)}}
+        </b-col>
+        <b-col lg="12">
+            <hr>
+            <strong>Авсан нийт цалин=</strong>
+                {{
+                    (Number(slicerSalaryForm.byCard)
+                    +Number(slicerSalaryForm.byCash))+Number(slicerSalaryForm.taxSalary)
+                }}
+        </b-col>
+        <b-col lg="12" class="text-success">
+            <strong><em>Үлдэгдэл цалин=</em></strong>
+            {{
+                (Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary))
+                -(Number(slicerSalaryForm.byCard)
+                +Number(slicerSalaryForm.byCash)+Number(slicerSalaryForm.taxSalary))
             }}
         </b-col>
     </b-col>
     <b-col lg="12" v-if="slicerSalaryForm.calcId>0 
-        && (workSalarySum>0 || listSalarySum>0) " class="text-danger">
+        && (dbWorkSalarySum>0 || dbListSalarySum>0) " class="text-danger">
     
         <h5 class="text-center">
             <span class="bd-content-title">
                 Цалин өгөх
             </span>
-        </h5> 
-        <b-col lg="12">
-            <strong>Авсан цалин=</strong>
+         </h5> 
+
+         <b-col lg="12">
+            <strong>Картаар авсан</strong>
             {{
-               (Number(slicerSalaryForm.currentAssignedSalary)+
-               Number(slicerSalaryForm.bonusSalary))-
-               Number(slicerSalaryForm.taxSalary) 
+               Number(slicerSalaryForm.dbByCard)
             }}
         </b-col>
         <b-col lg="12">
+            <strong>Бэлнээр авсан</strong>
+            {{
+               Number(slicerSalaryForm.dbByCash)
+            }}
+        </b-col>
+        <b-col lg="12" v-if="slicerSalaryForm.dbTaxSalary>0">
+            <strong>Торгуулиар авсан</strong> 
+            {{Number(slicerSalaryForm.dbTaxSalary)+Number(slicerSalaryForm.taxSalary)}}
+        </b-col>
+         
+
+        <b-col lg="12">
+            <hr>
+            <strong>Авсан нийт цалин=</strong>
+            {{
+               Number(slicerSalaryForm.currentAssignedSalary)
+            }}
+        </b-col>
+        <b-col lg="12" class="text-success">
             <strong><em>Үлдэгдэл цалин</em></strong>
             {{
                Number(slicerSalaryForm.currentBalance) -
@@ -79,6 +141,12 @@
                slicerSalaryForm.calcDate 
             }}
         </b-col>
+         <b-col lg="12" class="pt-3 text-primary">
+            <strong><em>Сүүлд засалт хийсэн:</em></strong><br>
+            {{
+               slicerSalaryForm.calcDate 
+            }}
+        </b-col>
         <b-col lg="12" class="text-primary">
             <strong><em>Тооцооны интервал:</em></strong><br>
             
@@ -89,7 +157,7 @@
         </b-col>
        
     </b-col>
-    <b-col lg="12"  v-if="listSalarySum>0 || workSalarySum>0">
+    <b-col lg="12"  v-if="listSalarySum>0 || workSalarySum>0 || dbListSalarySum>0 || dbWorkSalarySum>0">
         <b-form v-on:submit.prevent="postSlicerSalaryCalculation">
             <b-form-row>
                     <b-col sm="auto" lg="12">
@@ -109,7 +177,30 @@
                             placeholder="Бонус шалтгаан"
                         ></b-form-textarea>
                     </b-col>
+                   
+                
                     <b-col sm="auto" lg="12">
+                        <label for="byCard">Картаар</label>
+                        <b-form-input
+                            :min=0
+                            id="byCard"
+                            v-model="slicerSalaryForm.byCard"
+                            type="number"
+                            placeholder="Картаар"
+                        ></b-form-input>
+                    </b-col>
+                    <b-col sm="auto" lg="12">
+                        <label for="byCash">Бэлнээр</label>
+                        <b-form-input
+                            id="byCash"
+                            min=0
+                            v-model="slicerSalaryForm.byCash"
+                            type="number"
+                            placeholder="Бэлнээр"
+                        ></b-form-input>
+                    </b-col>
+
+                     <b-col sm="auto" lg="12">
                         <label for="taxSalary">Торгууль</label>
                         <b-form-input
                             id="taxSalary"
@@ -125,29 +216,6 @@
                             v-model="slicerSalaryForm.taxDescription"
                             placeholder="Торгууль шалтгаан"
                         ></b-form-textarea>
-                    </b-col>
-                
-                    <b-col sm="auto" lg="12">
-                        <label for="byCard">Картаар</label>
-                        <b-form-input
-                            :max="(Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary))
-                                -Number(slicerSalaryForm.taxSalary)"
-                            id="byCard"
-                            v-model="slicerSalaryForm.byCard"
-                            type="number"
-                            placeholder="Картаар"
-                        ></b-form-input>
-                    </b-col>
-                    <b-col sm="auto" lg="12">
-                        <label for="byCash">Бэлнээр</label>
-                        <b-form-input
-                            id="byCash"
-                            :max="(Number(workSalarySum)+Number(listSalarySum)+Number(slicerSalaryForm.bonusSalary))
-                                -Number(slicerSalaryForm.taxSalary)"
-                            v-model="slicerSalaryForm.byCash"
-                            type="number"
-                            placeholder="Бэлнээр"
-                        ></b-form-input>
                     </b-col>
                     
                     
@@ -187,6 +255,7 @@ export default {
         dbListSalarySum : 0,
         dbWorkSalarySum :0,
         updateSalaryData:null,
+
         slicerSalaryForm:{
           calcId:0,
           bonusSalary : 0,
@@ -203,29 +272,27 @@ export default {
     },
     methods:{
         updateSlicerSalary(salaryInfo){
-            
-
             window.scrollTo(0,0);
-
-            
-            axios.post(apiDomain+'/admin/calculation/getslicerdbsalary',salaryInfo,{headers:getHeader()})
+            axios.post(apiDomain+'/admin/calculation/getuserdbsalary',salaryInfo,{headers:getHeader()})
             .then((response)=>{
                 let dbData = response.data;
                 this.slicerSalaryForm.byCard=0;
                 this.slicerSalaryForm.byCash=0;
-
+                this.slicerSalaryForm.bonusSalary = 0;
+                this.slicerSalaryForm.taxSalary = 0;
                 this.slicerSalaryForm.calcId= dbData.calcId;
-                this.slicerSalaryForm.bonusSalary= dbData.bonusSalary;
                 this.slicerSalaryForm.bonusDescription= dbData.bonusDescription;
-                this.slicerSalaryForm.taxSalary= dbData.taxSalary;
+                this.slicerSalaryForm.dbBonusSalary = dbData.bonusSalary;
                 this.slicerSalaryForm.taxDescription= dbData.taxDescription;
+                this.slicerSalaryForm.dbByCard= dbData.byCard;
+                this.slicerSalaryForm.dbByCash= dbData.byCash;
+                this.slicerSalaryForm.dbTaxSalary = dbData.taxSalary;
                 this.dbListSalarySum=dbData.listSalarySum;
                 this.dbWorkSalarySum=dbData.workSalarySum;
-
-
                 this.slicerSalaryForm.currentBalance=dbData.currentBalance;
                 this.slicerSalaryForm.currentAssignedSalary=dbData.currentAssignedSalary;
                 this.slicerSalaryForm.calcDate=dbData.createdDate;
+                this.slicerSalaryForm.dbModiDate=dbData.modiDate;
                 this.slicerSalaryForm.calcBeginDate=dbData.calcBeginDate;
                 this.slicerSalaryForm.calcEndDate=dbData.calcEndDate;
             })
@@ -262,6 +329,10 @@ export default {
                         });
                         if(this.updateSalaryData!=null)
                             this.updateSlicerSalary(this.updateSalaryData);
+                        else {
+                             EventBus.$emit("slicerTableRefresher");    
+                        }
+
                     }
                     if(serverResult=='error'){
                         this.$bvToast.toast('Системд алдаа үүслээ !', {
@@ -283,24 +354,13 @@ export default {
     },
     computed:{
       listSalarySum:function(){
-          if(this.dbListSalarySum==0){
-              this.slicerSalaryForm.calcId=0;
-              return this.clistSalarySum;
-          }
-          else{
-              return this.dbListSalarySum;
-          }
-        
+         
+        this.slicerSalaryForm.calcId=0;         
+        return this.clistSalarySum;
       },
       workSalarySum:function(){
-          if(this.dbWorkSalarySum==0){
-              this.slicerSalaryForm.calcId=0;
-              return this.cworkSalarySum;
-          }
-          else{
-              return this.dbWorkSalarySum;
-          }
-        
+        this.slicerSalaryForm.calcId=0;
+        return this.cworkSalarySum;
       }
     },
     mounted(){
@@ -308,6 +368,12 @@ export default {
         EventBus.$on("updateSlicerSalary", (data)=>{
             c.updateSalaryData=data;
             c.updateSlicerSalary(data);
+        });
+
+        EventBus.$on("searchDone", ()=>{
+          c.slicerSalaryForm.calcId=0;
+          c.dbListSalarySum=0;
+          c.dbWorkSalarySum=0;
         });
     }
 

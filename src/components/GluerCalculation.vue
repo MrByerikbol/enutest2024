@@ -84,6 +84,7 @@
                                     :showToast="showToast"
                                     :calcSalary="calculateSalary"
                                     :userId="userId"
+                                    :updateSalaryBalance="updateSalaryBalance"
                                     :tableRefresher="tableRefresher"></DelPvh>
 
                             </div>
@@ -151,6 +152,9 @@ export default {
         }
     },
     methods:{
+        updateSalaryBalance(anyId){
+            EventBus.$emit("updateGluerSalary",{'anyId':anyId});
+        },
         calculateSalary(detailId,salarySum){
             
             let foundIndex = this.checkSalaryInformation(detailId);
@@ -208,19 +212,8 @@ export default {
                     const result = response.data;
                     this.isBusy = false
                     this.totalRows=result.gridData.recordCount;
-                    
-                    result.gridData.items.forEach((obj)=>{ 
-                        if(Number(obj.kusokStatus) == 0){
-                            obj._rowVariant = "light";
-                        }
-                        if(Number(obj.kusokStatus) == 1){
-                            obj._rowVariant = "warning";
-                        }
-                        if(Number(obj.kusokStatus) == 2){
-                            obj._rowVariant = "danger";
-                        }
-                    });
                     this.salaryInformation = [];
+                    EventBus.$emit("salarySearchDone");
                     return result.gridData.items;
                 }).catch(error => {
                     this.$bvToast.toast(error.message, {
@@ -237,7 +230,7 @@ export default {
     created(){
       
         var vm = this;
-        EventBus.$on("slicerTableRefresher", ()=> vm.tableRefresher());
+        EventBus.$on("gluerTableRefresher", ()=> vm.tableRefresher());
     }
 }
 </script>

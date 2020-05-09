@@ -75,6 +75,7 @@
                 :userId="userId"
                 :detailId="detail.detailId"
                 :calcSalary="calcSalary"
+                :updateSalaryBalance="updateSalaryBalance"
             />
         </div>
       
@@ -88,7 +89,7 @@ import Loading from './Loading';
 import GluerSalaryPeriod from './GluerSalaryPeriod';
 export default {
     name :"DelPvh",
-    props:['relDetails','dStatus','tableRefresher','showToast','userId','calcSalary'],
+    props:['relDetails','dStatus','tableRefresher','showToast','userId','calcSalary','updateSalaryBalance'],
     components:{
         Loading,
         GluerSalaryPeriod

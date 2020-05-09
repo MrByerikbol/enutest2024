@@ -3,7 +3,7 @@
       <b-col lg="8">
         <b-row>
           <h4>
-            <span class="bd-content-title">{{userPosition=='GLUER' + ` хийсэн ажил` ? 'Наагчын' : 'Зүсэгчийн' + ` хийсэн ажил`}}</span>
+            <span class="bd-content-title">{{userPosition=='GLUER'  ? 'Наагчын наасан ажил' : 'Зүсэгчийн зүссэн ажил'}}</span>
           </h4>
         </b-row>
 
@@ -159,6 +159,7 @@ export default {
            this.setPosition();
 
            EventBus.$emit('slicerTableRefresher');
+           EventBus.$emit('gluerTableRefresher');
          }
     },
     getDusers(){
