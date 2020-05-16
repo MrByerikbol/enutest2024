@@ -7,51 +7,52 @@
             <b-row class="mt-2">
                 <b-col lg="4">
                     <datepicker format="yyyy-MM-dd"
-                    :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Эхлэх огноо"></datepicker>
+                    :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Басталу уақыты"></datepicker>
                 </b-col>
                 <b-col lg="4">
                     <datepicker 
                         format="yyyy-MM-dd" 
-                    :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Дуусах огноо"></datepicker>
+                    :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Аяқталу уақыты"></datepicker>
                 </b-col>
                 <b-col lg="4">
                     <select v-model="dStatus" @change="tableRefresher" class="d-block w-100 small-font" style="height:29px !important;">
-                        <option value=0>--Ажил авах--</option>
-                        <option value=1>--Миний ажлууд--</option>
-                        <option value=-1>--Миний хүлээгдэж байгаа--</option>
-                        <option value=2>--Миний хийсэн--</option>
+                        <option value=0>--Жұмыс тандау--</option>
+                        <option value=1>--Өз жұмысым--</option>
+                        <option value=-1>--Күтiуде--</option>
+                        <option value=2>--Істегенiм--</option>
                     </select>
                 </b-col>
             </b-row>    
         </b-col> 
-        <b-col lg="8">
-        <b-form-group
-            label="Хайлт"
-            label-cols-sm="1"
-            label-align-sm="left"
-            label-size="sm"
-            label-for="filterInput"
-            class="mb-2 mt-3"
-            >
-            <b-input-group size="sm">
-                <b-form-input
+        <b-col lg="6" class="pt-3">
+            <input 
                 v-model="filter"
                 @keyup="filterChange"
                 @change="filterChange"
                 id="filterInput"
-                placeholder="Хайлт хийх утгаа оруулна уу"
-               
-                ></b-form-input>
-                <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
-                      @click="doSearch"> 
-                    Шүүх 
-                </b-button>
-            </b-input-group>
-            </b-form-group>
+                placeholder="Iздейтiн сөз"   
+                class="form-control"
+            >
+            <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
+                    @click="doSearch"> 
+                Талдау 
+            </b-button>
         </b-col>
     
-        <b-col lg="4" class="pt-3 text-right">
-            <strong>тоо:</strong> {{totalRows}}  
+        <b-col lg="3" class="pt-3 text-right">
+            <strong>саны:</strong> {{totalRows}}  
+        </b-col>
+        <b-col lg="3" class="pt-3 text-right">
+            <b-icon icon="arrow-repeat" id="salaryOk"
+                href="#"
+                tabindex="0"
+                v-b-tooltip.hover
+                @click="tableRefresher"
+                title="Жүктеу"
+                style="cursor:pointer"
+                variant="success" font-scale="2"
+            >
+            </b-icon>  
         </b-col>
         <b-table 
             
@@ -68,10 +69,10 @@
             @row-dblclicked="item=>$set(item, '_showDetails', !item._showDetails)"
             >
             <template v-slot:table-busy>
-            <div class="text-center text-info my-2">
-                <b-spinner class="align-middle"></b-spinner>
-                <strong>Ачаалж байна...</strong>
-            </div>
+                <div class="text-center text-info my-2">
+                    <b-spinner class="align-middle"></b-spinner>
+                    <strong>Ачаалж байна...</strong>
+                </div>
             </template>
             <template v-slot:cell(workInfo)="del">
                 <b-list-group>
@@ -97,7 +98,7 @@
                         <b-button
                             @click="changeWaitingStatus(del.item.deliveryId)"
                             variant="outline-warning" size="sm" class="mb-2 ml-2">
-                            {{dStatus=='-1' ? 'Зүсэх' : 'Хүлээлгэх'}}
+                            {{dStatus=='-1' ? 'Кесу' : 'Күттiру'}}
                         </b-button>
                         <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3"
                              v-for="(work,workIndex) in del.item.deliveryProducts" :key="workIndex">
@@ -109,16 +110,16 @@
                                         {{work.catName+'-'+work.colorName+'-'+work.measureName}}
                                     </b-badge>
                                     <b-badge  class="ml-1">
-                                        {{'Тоо : '+work.productCount}}
+                                        {{'Саны : '+work.productCount}}
                                     </b-badge>
                                     <b-badge  class="ml-1">
-                                        {{'Зүссэн : '+work.doneCount}}
+                                        {{'Кескен : '+work.doneCount}}
                                     </b-badge>
                                     <br v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0">
                                     <b-badge 
                                         v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0"
                                         variant="danger" class="ml-2 mt-1 float-right">
-                                        {{'Миний баталагдаагүй зүсэлт : '+ work.myUnconfirmedCount}}
+                                        {{'Расталмаған : '+ work.myUnconfirmedCount}}
                                     </b-badge>
                                 </b-button>
                                
@@ -134,14 +135,14 @@
                                     <b-dropdown-item-button v-if="work.doingCount>0 
                                          && work.doingCount <= (Number(work.productCount)-Number(work.doneCount))"
                                          @click="doneWork(work)">
-                                        Зүсэх
+                                        Кесу
                                     </b-dropdown-item-button>
                                     <b-dropdown-divider v-if="work.myConfirmations 
                                         && work.myConfirmations.length>0"></b-dropdown-divider>
                                     <b-dropdown-text 
                                         v-if="work.myConfirmations 
                                             && work.myConfirmations.length>0" class="text-danger" >
-                                        Миний батлах 
+                                        Растау
                                     </b-dropdown-text>
                                      <b-dropdown-item-button   v-for="(confirmation,conIndex) in
                                         work.myConfirmations" :key="conIndex" @click="confirmDoneCount(confirmation.confirmId)">
@@ -151,7 +152,7 @@
 
                                     <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
                                     <b-dropdown-text v-if="work.myJudges && work.myJudges.length>0" class="text-warning">
-                                        Намайг батлах
+                                        Растанылу
                                     </b-dropdown-text>
                                     <b-dropdown-item-button disabled v-for="(judge,jIndex) in
                                      work.myJudges" :key="jIndex">
@@ -175,12 +176,12 @@
                         </div>
                         <b-badge variant="danger">
                             {{del.item.listStatus==0 
-                                ? 'Шинэ' : del.item.listStatus=='1' ? 'Зүсэгдэж байна' : 'Зүсэгдсэн'}}
+                                ? 'Жаңа' : del.item.listStatus=='1' ? 'Кеслуде' : 'Кесiлдi'}}
                         </b-badge>
 
                          <b-badge variant="warning" class="ml-1">
                             {{del.item.pvhStatus==0 
-                                ? 'Наагдаагүй' : del.item.pvhStatus==1 ? 'Наагдаж байна' : 'Наагдсан'}}
+                                ? 'Жабсырылмаган' : del.item.pvhStatus==1 ? 'Жабсырылуда' : 'Жабсырылган'}}
                          </b-badge>
                     </b-list-group-item>  
                 </b-list-group>
@@ -196,7 +197,7 @@
         ></b-pagination>
 
         <b-modal id="waitingModal"
-             title="Тайлбар оруулах" 
+             title="Түснiктеме қосу" 
              no-close-on-backdrop
              lazy
              @hide="resetWform"
@@ -205,12 +206,12 @@
             <b-form v-on:submit.prevent="submitWaiting">
                   <b-form-row class="mb-3">
                       <b-col sm="auto" md="12">
-                          <label for="productName">Тайлбар</label>
+                          <label for="productName">Түснiктеме</label>
                           <textarea required v-model="wForm.waitingReason" class="form-control"></textarea>
                       </b-col>
                   </b-form-row>
-                  <b-button size="sm" type="submit" variant="primary" class="mr-2">Хүлээлгэх</b-button>
-                  <b-button size="sm" type="reset" variant="danger">Арилгах</b-button>
+                  <b-button size="sm" type="submit" variant="primary" class="mr-2">Күттiру</b-button>
+                  <b-button size="sm" type="reset" variant="danger">Жою</b-button>
               </b-form>    
           </b-modal>
     </b-row>  
@@ -239,7 +240,7 @@ export default {
             fields: [
                 {
                     key: 'workInfo',
-                    label: 'Ажлын мэдээлэл'
+                    label: 'Жұмыс ақпараты'
                 }
             ],
             isBusy:false,
@@ -261,7 +262,7 @@ export default {
     },
     methods:{
         postWaitingStatus(){
-            let warn = confirm("Та итгэлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе?");
             if(this.wForm.deliveryId>0 &&
                 this.wForm.isWait!=-1 &&
                 warn){
@@ -276,7 +277,8 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                    
-                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' 
+                        : 'қате шықты қайта көрнiз !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success'){
@@ -321,7 +323,7 @@ export default {
         },
         confirmDoneCount(confirmId){
             this.loading=true;
-            let warn = confirm("Итгэйлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
             if(warn){
                 axios.post(apiDomain+'/admin/work/slicer/confirmdonecount',{
                     'confirmId':confirmId,
@@ -330,7 +332,7 @@ export default {
                     this.loading=false;
                     //let rText = response.data;
                    
-                    // let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    // let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
                     // let variant =rText =='success' ? 'success' : 'danger';
             
                     // if(rText=='success')
@@ -341,7 +343,7 @@ export default {
                 .catch(error => {
                     //console.log(error.message)
                     this.$bvToast.toast(error.message, {
-                        title: 'Алдааны мэдээлэл',
+                        title: 'Қате ақпараты',
                         autoHideDelay: 5000,
                         variant:"danger"
                     })
@@ -352,24 +354,24 @@ export default {
         doneWork(work){
             
             if(!work.doingCount || Number(work.doingCount)==0){
-                this.showToast("Та зүссэх тоогоо оруулна уу.","danger");
+                this.showToast("Кесу санын енгізіңіз..","danger");
                 work.doingCoun=0;
                 return ;
                 
             }
             if(work.myJudges || work.myConfirmations) {
                 if(work.myJudges && work.myJudges.length>0){
-                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    this.showToast("Сiз растамағансыз немесе расталмағансыз.","danger");    
                     return ;
                 }
                 if(work.myConfirmations && work.myConfirmations.length>0){
-                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    this.showToast("Сiз растамағансыз немесе расталмағансыз.","danger");    
                     return ;
                     
                 }
             }
             if(Number(work.doingCount)>Number(work.productCount)-Number(work.doneCount)){
-                this.showToast("Та буруу тоо оруулсан байна","danger");
+                this.showToast("Терic кесу саны енгізілдi","danger");
                 work.doingCoun=0;
                 return ;
             }
@@ -385,7 +387,7 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                     //alert(rText);
-                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'қате шықты қайта көрнiз !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')
@@ -410,8 +412,7 @@ export default {
             .then((response)=>{
                this.loading=false;
                let rText = response.data;
-               let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : " Та баталгаажуулаагүй "
-                    +" зүсэлтүүд эсвэл танд баталгаа хийлгээгүй зүсэлтүүд байна !!!";
+               let msg = rText =='success' ? 'Операция сәтті аяқталды.' : " Сiз растамағансыз немесе расталмағансыз.";
                let variant =rText =='success' ? 'success' : 'danger';
 
                if(rText=='success'){
@@ -425,7 +426,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате ақпараты',
                     autoHideDelay: 5000,
                     variant:"danger"
                 })
@@ -438,7 +439,7 @@ export default {
             this.$bvToast.toast(
                 msg,
                 {
-                    title:"Мэдээлэл",
+                    title:"Ақпарат",
                     variant:variant,
                     toaster:'b-toaster-bottom-left'
                 }
@@ -505,7 +506,7 @@ export default {
                 return result.gridData.items;
             }).catch(error => {
                 this.$bvToast.toast(error.message, {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате ақпараты',
                     autoHideDelay: 5000,
                     variant:"danger"
                 })  

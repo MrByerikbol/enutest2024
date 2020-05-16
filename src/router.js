@@ -15,6 +15,7 @@ import DeliveryWareHouse from '@/components/DeliveryWareHouse';
 import DeliveryReport from '@/components/DeliveryReport';
 import Slicer from '@/components/Slicer';
 import Gluer from '@/components/Gluer';
+import AfterAuth from '@/components/AfterAuth';
 import KusokGluer from '@/components/KusokGluer';
 Vue.use(Router);
 export default new Router({
@@ -24,6 +25,11 @@ export default new Router({
             path: '/login',
             name: 'Login',
             component: Login,
+        },
+        {
+            path: '/afterauth',
+            name: 'AfterAuth',
+            component: AfterAuth,
         },
         {
             path: '/',

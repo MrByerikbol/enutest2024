@@ -755,7 +755,7 @@ export default {
                         let responseText=null;
 
                         if("success"==result){
-                            responseText="Үйлдэл амжилттай боллоо."
+                            responseText="Операция сәтті аяқталды."
                             this.selectedProduct={};
                             this.productCount=0;
                             this.chargeDate="";

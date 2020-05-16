@@ -339,7 +339,7 @@
                                 let responseText=null;
 
                                 if("success"==result){
-                                    responseText="Үйлдэл амжилттай боллоо."
+                                    responseText="Операция сәтті аяқталды."
                                     this.selectedProduct=null;
                                    
                                     this.chargeOff={

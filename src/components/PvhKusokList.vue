@@ -131,7 +131,7 @@
                                         :disabled="pvh.item.isDone==0 || pvh.item.isDone==1 ? false 
                                         : true"
                                         @click="gluePvh(pvh.item)"  variant="outline-danger" class="mr-1" size="sm" >
-                                        <font-awesome-icon icon="check" title="Пвх наах"/>
+                                        <font-awesome-icon icon="check" title=" ПВХ жабыстыру"/>
                                     </b-button>
                                 </b-col>
                             </b-row>
@@ -287,7 +287,7 @@ export default {
                 {'detailId':detailId,"doneCount":doingCount},{headers:getHeader()})
                 .then((response)=>{
                     let rData=response.data;
-                    let alertMsg = rData==='error' ? 'Алдаа үүслээ .' : 'Үйлдэл амжилттай боллоо.'
+                    let alertMsg = rData==='error' ? 'Алдаа үүслээ .' : 'Операция сәтті аяқталды.'
                     let variant = rData==='error' ? 'danger' : 'success';
                     this.$bvToast.toast(alertMsg, {
                         title: 'Мэдээлэл',

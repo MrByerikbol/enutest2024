@@ -224,9 +224,11 @@ export default {
     props:[
         'cgluerSalarySum',
         'gluerSalary',
+        'gluerKusokSalary',
         'beginDate',
         'endDate', 
-        'userId'   
+        'userId',
+        'cgluerKusokSalarySum'   
     ],
     components:{
         Loading
@@ -283,14 +285,15 @@ export default {
         postGluerSalaryCalculation(){
             let warn = confirm("Та итгэлтэй байна уу ?");
             
-            if((warn && this.gluerSalary.length>0) ||
+            if((warn && this.gluerSalary.length>0) || (warn && this.gluerKusokSalary.length>0) ||
                 (warn && this.gluerSalaryForm.calcId>0)  ){
                 this.isSalaryPosted=true;
                 if(this.gluerSalaryForm.calcId>0){
                     this.gluerSalaryForm.salaryDetails=[];
+                    
                 }
                 else{
-                    this.gluerSalaryForm.salaryDetails=this.gluerSalary;
+                    this.gluerSalaryForm.salaryDetails=[...this.gluerSalary,...this.gluerKusokSalary];
                 }
                 
                 this.gluerSalaryForm.calcBeginDate=this.beginDate;
@@ -335,8 +338,9 @@ export default {
     computed:{
       gluerSalarySum:function(){
         this.gluerSalaryForm.calcId=0;
-        return this.cgluerSalarySum;
-      }
+        return Number(this.cgluerSalarySum+this.cgluerKusokSalarySum);
+      },
+     
      
     },
     mounted(){

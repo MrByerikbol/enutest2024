@@ -5,8 +5,9 @@
                 <strong>тоо:</strong> {{totalRows}}  
             </b-col>
             <b-table 
+                
                 small 
-                ref="workTable"
+                ref="kusokWorkTable"
                 striped hover 
                 :items="workProvider" 
                 :fields="fields"
@@ -33,81 +34,35 @@
                             <b-button variant="outline-primary"  class="mb-2" size="sm">
                             
                                 {{del.item.orderNumber +'-'+ del.item.userInfo}}
-                                <b-badge variant="warning" class="ml-2 mt-1">
-                                    {{del.item.listCount}}
-                                </b-badge>
                                 <b-badge variant="warning" class="ml-2 mt-1 float-right">
                                     {{del.item.orderDate}}
-                                    
                                 </b-badge>
                             </b-button>
 
                             
-                            <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3"
-                                v-for="(work,workIndex) in del.item.deliveryProducts" :key="workIndex">
-
-                                <div class="float-left mb-1">
-                                    <b-button size="sm" @dblclick="getDelWork(work.relId,'one')"  variant="outline-success">
-
-                                        <b-badge>
-                                            {{work.catName+'-'+work.colorName+'-'+work.measureName}}
-                                        </b-badge>
-                                        <b-badge  class="ml-1">
-                                            {{'Тоо : '+work.productCount}}
-                                        </b-badge>
-                                        <b-badge  class="ml-1">
-                                            {{'Зүссэн : '+work.doneCount}}
-                                            
-                                        </b-badge>
-                                    </b-button>   
-                                </div>
-
-                                <div style="clear:left;" class="w-100 pl-3">
-                                    <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
-                                        v-for="(user,userIndex) in work.listUsers" :key="userIndex">
-                                        {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
-                                    </b-badge>
-                                </div>
-                                <DelListWork
-                                    v-if="work.listWorks 
-                                    && work.listWorks.length>0"
-                                    :listWorks="work.listWorks" 
-                                    :dStatus="2" 
-                                    :isPvh="false"
-                                ></DelListWork>
-
+                            <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3">
                                 <DelPvh
-                                    v-if="work.relDetails 
-                                            && work.relDetails.length>0" 
-                                    :relDetails="work.relDetails" 
+                                    v-if="del.item.relDetails && del.item.relDetails.length>0" 
+                                    :relDetails="del.item.relDetails" 
                                     :dStatus="2" 
-                                    :isKusok="false"
                                     :showToast="showToast"
                                     :calcSalary="calculateSalary"
                                     :userId="userId"
+                                    :isKusok="true"
                                     :updateSalaryBalance="updateSalaryBalance"
-                                    :tableRefresher="tableRefresher"></DelPvh>
-
-                               
-
+                                    :tableRefresher="tableRefresher">
+                                </DelPvh>
                             </div>
-                        
-                            <b-badge variant="danger">
-                                {{del.item.listStatus==0 
-                                    ? 'Шинэ' : del.item.listStatus=='1' ? 'Зүсэгдэж байна' : 'Зүсэгдсэн'}}
-                            </b-badge>
-
                             <b-badge variant="warning" class="ml-1">
-                                {{del.item.pvhStatus==0 
-                                    ? 'Наагдаагүй' : del.item.pvhStatus==1 ? 'Наагдаж байна' : 'Наагдсан'}}
+                                {{del.item.kusokStatus==0 
+                                    ? 'Наагдаагүй' : del.item.kusokStatus==1 ? 'Наагдаж байна' : 'Наагдсан'}}
                             </b-badge>
-
-                            
                         </b-list-group-item>  
                     </b-list-group>
                 </template>
             </b-table>
             <b-pagination
+              
                 v-model="currentPage"
                 :total-rows="totalRows"
                 :per-page="perPage"
@@ -122,17 +77,15 @@
 import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Loading from './Loading';
-import DelListWork from './DelListWork';
 import DelPvh from './DelPvh';
-
 
 import {EventBus} from '@/EventBus.js';
 export default {
-    name :"SlicerCalculation",
-    props:['userId','userInfo','beginDate','endDate','filter'],
+    name :"GluerKusokCalculation",
+    props:['userId','beginDate','endDate'],
+
     components:{
         Loading,
-        DelListWork,
         DelPvh
     },
     data(){
@@ -140,9 +93,10 @@ export default {
             loading:false,
             isSmall:true,
             fields: [
+                
                 {
                     key: 'workInfo',
-                    label: 'Наасан ажлын мэдээлэл'
+                    label: 'Наасан куосок ажлын мэдээлэл'
                 }
             ],
             isBusy:false,
@@ -151,9 +105,15 @@ export default {
             perPage: 1000,
             tableVariant:'light',
             salaryInformation:[],
+            
         }
     },
     methods:{
+        tableRefresher(){
+            if(this.$refs.kusokWorkTable)
+                this.$refs.kusokWorkTable.refresh();
+        },
+         
         updateSalaryBalance(anyId){
             EventBus.$emit("updateGluerSalary",{'anyId':anyId});
         },
@@ -171,7 +131,7 @@ export default {
                 this.salaryInformation[foundIndex].salary=salarySum;
             }
 
-            EventBus.$emit("gluerSalaryInformation",this.salaryInformation);
+            EventBus.$emit("gluerKusokSalaryInformation",this.salaryInformation);
         },
         checkSalaryInformation (detailId){
             let theResult = -1;
@@ -195,29 +155,21 @@ export default {
                 }
             );
         },
-        tableRefresher(){
-            if(this.$refs.workTable)
-                this.$refs.workTable.refresh();
-        },
         //hiise ajliin jagsaalt 
         workProvider(ctx){
             ctx.userId=this.userId;
-            ctx.filter=this.filter;
+            ctx.filter="";
             ctx.beginDate = this.beginDate;
             ctx.endDate = this.endDate;
-
             if(Number(this.userId)>0 && this.beginDate!="" && this.endDate!=""){
-               
                 this.isBusy = false
-                let promise = axios.post(apiDomain+'/admin/calculation/gluerworklist',ctx,{headers:getHeader()});
+                let promise = axios.post(apiDomain+'/admin/calculation/gluerkusoklist',ctx,{headers:getHeader()});
                 return promise.then((response) => {
                     const result = response.data;
                     this.isBusy = false
-                    this.totalRows=result.gridData.recordCount;
+                    this.totalRows=result.recordCount;
                     this.salaryInformation = [];
-                    EventBus.$emit("mainSalaryRendered");
-                    EventBus.$emit("salarySearchDone");
-                    return result.gridData.items;
+                    return result.items;
                 }).catch(error => {
                     this.$bvToast.toast(error.message, {
                         title: 'Алдааны мэдээлэл',
@@ -228,18 +180,14 @@ export default {
                     return []
                 });
             }
+         
+            
         }
 
     },
     created(){
-      
         var vm = this;
-        EventBus.$on("gluerTableRefresher", ()=> {
-            vm.tableRefresher();
-            EventBus.$emit("mainSalaryRendered");
-
-            EventBus.$emit("gluerKusokTableRefresher");
-        });
+        EventBus.$on("gluerKusokTableRefresher", ()=> vm.tableRefresher());
     }
 }
 </script>

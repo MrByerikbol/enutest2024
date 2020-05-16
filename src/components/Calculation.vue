@@ -42,6 +42,12 @@
               :beginDate="beginDate" 
               :endDate="endDate"
               :filter="''" />
+
+            <GluerKusokCalculation 
+                  v-if="userPosition=='GLUER' && mainSalaryRendered"
+                  :userId="userId" 
+                  :beginDate="beginDate" 
+                  :endDate="endDate"/>
           </b-col>
         </b-row>
       </b-col>
@@ -67,7 +73,9 @@
 
           <GluerSalaryForm v-if="userPosition=='GLUER'"
             :cgluerSalarySum="gluerSalarySum" 
+            :cgluerKusokSalarySum="gluerKusokSalarySum"
             :gluerSalary="gluerSalary"
+            :gluerKusokSalary="gluerKusokSalary"
             :beginDate="beginDate"
             :endDate="endDate"
             :userId="userId"
@@ -83,6 +91,7 @@ import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import SlicerCalculation from './SlicerCalculation';
 import GluerCalculation from './GluerCalculation';
+import GluerKusokCalculation from './GluerKusokCalculation';
 import SalaryForm from './SalaryForm';
 import GluerSalaryForm from './GluerSalaryForm';
 import {EventBus} from '@/EventBus.js';
@@ -97,10 +106,12 @@ export default {
     SlicerCalculation,
     GluerCalculation,
     SalaryForm,
-    GluerSalaryForm
+    GluerSalaryForm,
+    GluerKusokCalculation
   },
   data(){
     return {
+      mainSalaryRendered:false,
       cBeginDate:"",
       cEndDate:"",
 
@@ -115,7 +126,9 @@ export default {
       workSalarySum:0,
 
       gluerSalary:[],
-      gluerSalarySum:0
+      gluerKusokSalary:[],
+      gluerSalarySum:0,
+      gluerKusokSalarySum:0
       
     }
   },
@@ -147,8 +160,11 @@ export default {
       this.gluerSalarySum=
         this.gluerSalary
         .reduce((gluerSalarySum,list)=>gluerSalarySum+Number(list.salary),0);
-
-      
+    },
+    calculateKusokGluerSalary(){
+      this.gluerKusokSalarySum=
+        this.gluerKusokSalary
+        .reduce((gluerSalarySum,list)=>gluerSalarySum+Number(list.salary),0);
     },
     doFilter(){
       this.beginDate=moment(this.cBeginDate).format('YYYY-MM-DD');
@@ -188,6 +204,15 @@ export default {
     EventBus.$on("gluerSalaryInformation", (data)=>{
       c.gluerSalary = data;
       c.calculateGluerSalary();
+    });
+    
+    EventBus.$on("gluerKusokSalaryInformation", (data)=>{
+      c.gluerKusokSalary = data;
+      c.calculateKusokGluerSalary();
+    });
+    //kusok naaltiin tootsoog hiih gj neeree mailj bna da
+    EventBus.$on("mainSalaryRendered", ()=>{
+      c.mainSalaryRendered=true;
     });
   },
 }

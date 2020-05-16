@@ -504,7 +504,7 @@
                             <b-button type="submit" 
                                 v-if="totalPriceOfOrder>0 && choosenProducts.length>0
                                     && deliveryObject.userId>0
-                                    && mainOrderFormChecker " 
+                                    && mainOrderFormChecker && !submitted" 
                                 variant="primary" class="mr-2">Листийн захиалага үүсгэх</b-button>
 
                                 <b-button type="reset" variant="danger">Арилгах</b-button>
@@ -532,6 +532,7 @@
         },
         data() {
             return {
+                submitted:false,
                 showPrivatePvh:false,
                 choosenProducts:[],
                 loanResult : true,
@@ -569,7 +570,7 @@
                                 delJSON,{headers:getHeader()})
                             .then(()=>{
                                 //alert(response.data);
-                                this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                this.$bvToast.toast('Операция сәтті аяқталды.', {
                                     title: 'Амжилт',
                                     autoHideDelay: 5000,
                                     variant:"success"
@@ -746,7 +747,7 @@
                                 delJSON,{headers:getHeader()})
                             .then(()=>{
                                 //alert(response.data);
-                                this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                this.$bvToast.toast('Операция сәтті аяқталды.', {
                                     title: 'Амжилт',
                                     autoHideDelay: 5000,
                                     variant:"success"
@@ -841,7 +842,7 @@
                         delJSON,{headers:getHeader()})
                     .then(()=>{
                         //alert(response.data);
-                        this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                        this.$bvToast.toast('Операция сәтті аяқталды.', {
                             title: 'Амжилт',
                             autoHideDelay: 5000,
                             variant:"success"
@@ -895,7 +896,7 @@
                                 delJSON,{headers:getHeader()})
                             .then(()=>{
                                 //alert(response.data);
-                                this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                this.$bvToast.toast('Операция сәтті аяқталды.', {
                                     title: 'Амжилт',
                                     autoHideDelay: 5000,
                                     variant:"success"
@@ -943,6 +944,7 @@
                 );
             },
             onSubmit(evt) {
+                this.submitted=true;
                 evt.preventDefault()
                 if(this.choosenProducts.length>0){
                     let looped = null;

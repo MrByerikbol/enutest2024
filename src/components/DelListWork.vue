@@ -119,7 +119,7 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                    
-                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')
@@ -173,7 +173,7 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                     //alert(rText);
-                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')
@@ -197,7 +197,7 @@ export default {
             .then((response)=>{
                this.loading=false;
                let rText = response.data;
-               let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : " Та баталгаажуулаагүй "
+               let msg = rText =='success' ? 'Операция сәтті аяқталды.' : " Та баталгаажуулаагүй "
                     +" хйисэн ажлууд эсвэл танд баталгаа хийлгээгүй ажлууд байна !!!";
                let variant =rText =='success' ? 'success' : 'danger';
 

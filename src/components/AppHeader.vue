@@ -1,7 +1,7 @@
 <template>
   <div>
   <b-navbar toggleable="lg" type="dark" variant="info" class="fixed-top">
-    <b-navbar-brand href="#">Распилийн систем</b-navbar-brand>
+    <b-navbar-brand href="#">Кесу Жүйесi</b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -73,11 +73,11 @@
         <b-nav-item-dropdown right>
           <!-- Using 'button-content' slot -->
           <template slot="button-content"><em>{{loginedUser.firstName}}</em></template>
-          <b-dropdown-item href="/#/slicer">Зүсэлт</b-dropdown-item>
-          <b-dropdown-item href="/#/gluer">Наалт</b-dropdown-item>
-          <b-dropdown-item href="/#/kusokgluer">Кусок Наалт</b-dropdown-item>
-          <b-dropdown-item href="javascript:void(0)">Нууц үг солих</b-dropdown-item>
-          <b-dropdown-item href="javascript:void(0)" @click="logOut">Системээс гарах</b-dropdown-item>
+          <b-dropdown-item v-if="hasRole('SLICER')" href="/#/slicer">Kесу</b-dropdown-item>
+          <b-dropdown-item v-if="hasRole('GLUER')" href="/#/gluer">Жабсыру</b-dropdown-item>
+          <b-dropdown-item v-if="hasRole('GLUER')" href="/#/kusokgluer">Бөлшек Жабсыру</b-dropdown-item>
+          <b-dropdown-item href="javascript:void(0)">Құпия сөз</b-dropdown-item>
+          <b-dropdown-item href="javascript:void(0)" @click="logOut">Жүйеден шығу</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>

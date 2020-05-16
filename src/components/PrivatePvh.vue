@@ -470,7 +470,7 @@
                                     delJSON,{headers:getHeader()})
                                 .then(()=>{
                                     //alert(response.data);
-                                    this.$bvToast.toast('Үйлдэл амжилттай боллоо.', {
+                                    this.$bvToast.toast('Операция сәтті аяқталды.', {
                                         title: 'Амжилт',
                                         autoHideDelay: 5000,
                                         variant:"success"

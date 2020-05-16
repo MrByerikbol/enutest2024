@@ -1,6 +1,6 @@
 <template>
      <b-row>
-        <h6 class="pl-4">Наах ПВХ-нууд</h6>
+        <h6 class="pl-4">Жабыстыратын ПВХ-лар</h6>
         <div style="clear:left;" class="mb-1 w-100 d-inline-block pl-3"
                 v-for="(detail,detailIndex) in relDetails" :key="detailIndex">
                
@@ -13,17 +13,17 @@
                         {{detail.colorName +' '+detail.measureName}} {{detail.detailId}}
                     </b-badge>
                     <b-badge  class="ml-1">
-                        {{'Ажлын тоо : '+detail.productCount}}
+                        {{'Жумыс саны : '+detail.productCount}}
                     </b-badge>
                     <b-badge  class="ml-1" >
-                        {{'Хийсэн : '+detail.doneCount}}
+                        {{'Iстеген : '+detail.doneCount}}
                     </b-badge>
 
                     <br v-if="detail.myUnconfirmedCount && detail.myUnconfirmedCount>0">
                     <b-badge 
                         v-if="detail.myUnconfirmedCount && detail.myUnconfirmedCount>0"
                         variant="success" class="ml-2 mt-1 float-right">
-                        {{'Миний баталагдаагүй наалт : '+ detail.myUnconfirmedCount}}
+                        {{'Расталмаган : '+ detail.myUnconfirmedCount}}
                     </b-badge>
                 </b-button>
                 
@@ -32,10 +32,10 @@
             <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
                
                 <b-dropdown size="sm" class="ml-2" right
-                        id="dropdown-text"   variant="danger" text="Пвх наах">
+                        id="dropdown-text"   variant="danger" text=" ПВХ жабыстыру">
                     <b-dropdown-item-button v-if="Number(detail.productCount)-Number(detail.doneCount)>0"
                             @click="donePvh(detail)">
-                        Наах
+                        Жабыстыру
                     </b-dropdown-item-button>
 
                     <b-dropdown-divider v-if="detail.myConfirmations 
@@ -43,7 +43,7 @@
                     <b-dropdown-text 
                         v-if="detail.myConfirmations 
                             && detail.myConfirmations.length>0" class="text-danger" >
-                        Миний батлах 
+                        Мен растау 
                     </b-dropdown-text>
                         <b-dropdown-item-button   v-for="(confirmation,conIndex) in
                             detail.myConfirmations" :key="conIndex" 
@@ -53,7 +53,7 @@
 
                     <b-dropdown-divider v-if="detail.myJudges && detail.myJudges.length>0"></b-dropdown-divider>
                     <b-dropdown-text v-if="detail.myJudges && detail.myJudges.length>0" class="text-warning">
-                        Намайг батлах
+                        Менi растау
                     </b-dropdown-text>
                     <b-dropdown-item-button disabled v-for="(judge,jIndex) in
                         detail.myJudges" :key="jIndex">
@@ -76,6 +76,7 @@
                 :detailId="detail.detailId"
                 :calcSalary="calcSalary"
                 :updateSalaryBalance="updateSalaryBalance"
+              
             />
         </div>
       
@@ -102,7 +103,7 @@ export default {
     methods:{
         confirmDoneCount(pvhConfirmId){
             this.loading=true;
-            let warn = confirm("Итгэйлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
             if(warn){
                 axios.post(apiDomain+'/admin/work/gluer/confirmdonecount',{
                     'pvhConfirmId':pvhConfirmId,
@@ -112,7 +113,7 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                    
-                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'қате шықты қайта көрнiз !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')
@@ -122,7 +123,7 @@ export default {
                 .catch(error => {
                     //console.log(error.message)
                     this.$bvToast.toast(error.message, {
-                        title: 'Алдааны мэдээлэл',
+                        title: 'Қате ақпараты',
                         autoHideDelay: 5000,
                         variant:"danger"
                     })
@@ -133,17 +134,17 @@ export default {
         donePvh(detail){
             
             if(!detail.productCount || Number(detail.productCount)==0){
-                this.showToast("Та зүссэх тоогоо оруулна уу.","danger");
+                this.showToast("Жабсыру санын енгізіңіз.","danger");
                 return ;
                 
             }
             if(detail.myJudges || detail.myConfirmations) {
                 if(detail.myJudges && detail.myJudges.length>0){
-                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    this.showToast(" Сiз растамағансыз немесе расталмағансыз ","danger");    
                     return ;
                 }
                 if(detail.myConfirmations && detail.myConfirmations.length>0){
-                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    this.showToast(" Сiз растамағансыз немесе расталмағансыз ","danger");    
                     return ;
                     
                 }
@@ -161,7 +162,7 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                     //alert(rText);
-                    let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'қате шықты қайта көрнiз !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')
@@ -185,8 +186,7 @@ export default {
             .then((response)=>{
                this.loading=false;
                let rText = response.data;
-               let msg = rText =='success' ? 'Үйлдэл амжилттай боллоо.' : " Та баталгаажуулаагүй "
-                    +" наалтууд эсвэл танд баталгаа наалтууд байна !!!";
+               let msg = rText =='success' ? 'Операция сәтті аяқталды.' : " Сiз растамағансыз немесе расталмағансыз ";
                let variant =rText =='success' ? 'success' : 'danger';
 
                if(rText=='success'){
@@ -200,7 +200,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате ақпараты',
                     autoHideDelay: 5000,
                     variant:"danger"
                 })
