@@ -19,12 +19,12 @@
           <b-col lg="5" >
             <datepicker format="yyyy-MM-dd" 
                 :clear-button="true" @cleared="clearDate" v-model="cBeginDate"
-                placeholder="Эхлэх огноо"></datepicker>
+                placeholder="Басталу уақыты"></datepicker>
           </b-col>
           <b-col lg="5" >
             <datepicker format="yyyy-MM-dd" 
                 :clear-button="true" @cleared="cEndDate=''" v-model="cEndDate"
-                placeholder="Дуусах огноо"></datepicker>
+                placeholder="Бiту уақыты"></datepicker>
           </b-col>
           <b-col lg="2" >
             <b-button v-if="cBeginDate!='' && cEndDate!='' && userId>0" size="sm" @click="doFilter">Шүүх</b-button>

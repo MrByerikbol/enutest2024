@@ -63,7 +63,7 @@
         <template v-slot:table-busy>
           <div class="text-center text-info my-2">
             <b-spinner class="align-middle"></b-spinner>
-            <strong>Ачаалж байна...</strong>
+            <strong>Жүктелуде...</strong>
           </div>
         </template>
 
@@ -170,7 +170,7 @@ export default {
   },
   methods:{
     deleteRecord(){
-      let warn = confirm("Та итгэлтэй байна уу ?");
+      let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
         if(this.selectedRows.length>0){
           let o = new Object();
@@ -216,9 +216,9 @@ export default {
           evt.preventDefault();
           axios.post(apiDomain+'/admin/delivery/addshop/',this.shopForm,{headers:getHeader()})
             .then(response=>{
-                let alertMsg = "Шинээр дэлгүүр амжилттай үүслээ";
+                let alertMsg = "Шинээр дэлгүүр Жетістіктай үүслээ";
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })  
                 this.$bvModal.hide('shopModal')
@@ -233,7 +233,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })
             }

@@ -54,7 +54,7 @@
                                 <template v-slot:table-busy>
                                     <div class="text-center text-info my-2">
                                     <b-spinner class="align-middle"></b-spinner>
-                                    <strong>Ачаалж байна...</strong>
+                                    <strong>Жүктелуде...</strong>
                                     </div>
                                 </template>
                         
@@ -140,7 +140,7 @@
                                 <template v-slot:table-busy>
                                     <div class="text-center text-info my-2">
                                     <b-spinner class="align-middle"></b-spinner>
-                                    <strong>Ачаалж байна...</strong>
+                                    <strong>Жүктелуде...</strong>
                                     </div>
                                 </template>
                         
@@ -169,7 +169,7 @@
                                         id="catId"
                                         v-model="measureForm.catId"
                                     >
-                                        <option value=0>--сонгох--</option>
+                                        <option value=0>--таңдау--</option>
                                         <option v-for="(c,i) in productCats" :key="i" :value=c.catId>
                                             {{c.catName}}
                                         </option>
@@ -263,7 +263,7 @@ export default {
             this.parentRefs(12);
         },
         deleteColorRecord(){
-            let warn = confirm("Та итгэлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
             if(warn){
                 if(this.selectedColorRows.length>0){
                 let o = new Object();
@@ -316,9 +316,9 @@ export default {
            
             axios.post(apiDomain+'/admin/delivery/addref/',this.colorForm,{headers:getHeader()})
             .then(()=>{
-                let alertMsg = "Шинээр барааны өнгө амжилттай үүслээ";
+                let alertMsg = "Шинээр барааны өнгө Жетістіктай үүслээ";
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })  
                 this.$bvModal.hide('productColorModal')
@@ -332,7 +332,7 @@ export default {
             .catch(error => {
                     //console.log(error.message)
                     this.$bvToast.toast(error.message, {
-                        title: 'Алдааны мэдээлэл',
+                        title: 'Қате туралы ақпарат',
                         autoHideDelay: 5000
                     })
                 }
@@ -361,7 +361,7 @@ export default {
 
         //begining of the measure 
         deleteMeasureRecord(){
-            let warn = confirm("Та итгэлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
             if(warn){
                 if(this.selectedMeasureRows.length>0){
                 let o = new Object();
@@ -416,9 +416,9 @@ export default {
             if(this.measureForm.catId && this.measureForm.catId>0){
                 axios.post(apiDomain+'/admin/delivery/addref/',this.measureForm,{headers:getHeader()})
                 .then(()=>{
-                    let alertMsg = "Шинээр барааны хэмжээ амжилттай үүслээ";
+                    let alertMsg = "Шинээр барааны хэмжээ Жетістіктай үүслээ";
                     this.$bvToast.toast(alertMsg, {
-                        title: 'Амжилт',
+                        title: 'Жетістік',
                         autoHideDelay: 5000,
                         variant:'success'
                     })  
@@ -434,7 +434,7 @@ export default {
                 .catch(error => {
                         //console.log(error.message)
                         this.$bvToast.toast(error.message, {
-                            title: 'Алдааны мэдээлэл',
+                            title: 'Қате туралы ақпарат',
                             autoHideDelay: 5000,
                             variant:"danger"
                         })
@@ -443,7 +443,7 @@ export default {
             }
             else{
                 this.$bvToast.toast("Та төрөл заавал сонгоно уу.", {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате туралы ақпарат',
                     autoHideDelay: 5000,
                     variant:"danger"
                 })    

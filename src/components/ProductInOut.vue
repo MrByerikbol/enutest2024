@@ -91,7 +91,8 @@
                                 ref="chargeOffHistoryTable"
                                 striped hover selectable
                                 :items="chargeInProvider" 
-
+                                responsive
+                                small
                                 :fields="chargeInFields"
                                 :busy.sync="isBusyDetail"
                                 :current-page="currentPageDetail"
@@ -105,7 +106,7 @@
                                 <template v-slot:table-busy>
                                     <div class="text-center text-info my-2">
                                         <b-spinner class="align-middle"></b-spinner>
-                                        <strong>Ачаалж байна...</strong>
+                                        <strong>Жүктелуде...</strong>
                                     </div>
                                 </template>
                                 
@@ -196,6 +197,8 @@
                          </b-form-row>
                          <b-form-row>
                             <b-table 
+                                responsive
+                                small
                                 ref="outHistoryTable"
                                 striped hover selectable
                                 :items="chargeOutProvider" 
@@ -213,7 +216,7 @@
                                 <template v-slot:table-busy>
                                     <div class="text-center text-info my-2">
                                         <b-spinner class="align-middle"></b-spinner>
-                                        <strong>Ачаалж байна...</strong>
+                                        <strong>Жүктелуде...</strong>
                                     </div>
                                 </template>
                                 

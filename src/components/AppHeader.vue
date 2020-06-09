@@ -9,20 +9,20 @@
       <b-navbar-nav>
 
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') " href="javascript:void(0)" @click="newDelivery">
-          Шинэ захиалга
+          Жаңа тапсырыс
         </b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') || hasRole('DELIVERY')" href="/#/deliveries">Захиалгууд</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') || hasRole('DELIVERY')" href="/#/deliveries">Тапсырыстар</b-nav-item>
 
         <b-nav-item v-if="hasRole('ADMIN') 
-          || hasRole('MANAGER')" href="javascript:void(0)" @click="doCalculation1">Тооцоо</b-nav-item>
+          || hasRole('MANAGER')" href="javascript:void(0)" @click="doCalculation1">Есеп</b-nav-item>
           
-        <b-nav-item v-if="hasRole('ADMIN')" href="/#/users">Хэрэглэгчид</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN')" href="/#/users">Тұтнушылар</b-nav-item>
        
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/products">Бараанууд</b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/warehouse">Агуулах</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/products">Тауарлар</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/warehouse">Қойма</b-nav-item>
         
-        <b-nav-item v-if="hasRole('DELIVERY')" href="/#/deliverywarehouse">Агуулах</b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN')" href="/#/deliveryreport">Тайлан</b-nav-item>
+        <b-nav-item v-if="hasRole('DELIVERY')" href="/#/deliverywarehouse">Қойма</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN')" href="/#/deliveryreport">Ачот</b-nav-item>
 
       </b-navbar-nav>
 
@@ -36,40 +36,8 @@
           <b-dropdown-item href="#">RU</b-dropdown-item>
           <b-dropdown-item href="#">FA</b-dropdown-item>
         </b-nav-item-dropdown> -->
-        <b-nav-item-dropdown right>
-          <!-- Using 'button-content' slot -->
-          <template slot="button-content">
-            <em @click="getStatistic">Статистик</em>
-          </template>
-          <b-dropdown-item  href="javascript:void(0)">
-              Нийт : 
-              <strong style="float:right;" v-if="statisticData!=null">
-                {{statisticData.totalDeliveryCount}}
-              </strong>  
-              <em v-if="statisticData==null" class="pulse"></em>
-          </b-dropdown-item>
-          <b-dropdown-item href="javascript:void(0)">
-              Цуцалсан : 
-              <strong style="float:right;" v-if="statisticData!=null">
-                {{statisticData.totalDeclinedCount}}
-              </strong>  
-              <em v-if="statisticData==null" class="pulse"></em>
-          </b-dropdown-item>
-          <b-dropdown-item href="javascript:void(0)">
-              Хүргэсэн : 
-              <strong style="float:right;" v-if="statisticData!=null">
-                {{statisticData.totalDoneCount}}
-              </strong>  
-              <em v-if="statisticData==null" class="pulse"></em>
-          </b-dropdown-item>
-          <b-dropdown-item href="javascript:void(0)">
-              Идэвхитэй : 
-              <strong style="float:right;" v-if="statisticData!=null">
-                {{statisticData.totalActiveCount}}
-              </strong>  
-              <em v-if="statisticData==null" class="pulse"></em>
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
+        
+         
         <b-nav-item-dropdown right>
           <!-- Using 'button-content' slot -->
           <template slot="button-content"><em>{{loginedUser.firstName}}</em></template>
@@ -157,7 +125,7 @@ export default {
       }
       else{
         this.$bvToast.toast("Зөвхөн админ болон менежжер энэ үйлдэлийг хийх боломжтой", {
-            title: 'Алдааны мэдээлэл',
+            title: 'Қате туралы ақпарат',
             autoHideDelay: 5000
         })  
       }

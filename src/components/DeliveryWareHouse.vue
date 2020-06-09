@@ -58,7 +58,7 @@
           <template v-slot:table-busy>
             <div class="text-center text-info my-2">
               <b-spinner class="align-middle"></b-spinner>
-              <strong>Ачаалж байна...</strong>
+              <strong>Жүктелуде...</strong>
             </div>
           </template>
           
@@ -143,7 +143,7 @@
           <template v-slot:table-busy>
             <div class="text-center text-info my-2">
               <b-spinner class="align-middle"></b-spinner>
-              <strong>Ачаалж байна...</strong>
+              <strong>Жүктелуде...</strong>
             </div>
           </template>
           <template slot="isConfirmed" slot-scope="row">
@@ -290,7 +290,7 @@ export default {
         this.$refs.userProductTable.refresh();
     },
     confirmProduct(relId){
-        let warn = confirm("Та итгэлтэй байна уу ?");
+        let warn = confirm("Сіз сенімдісіз бе ?");
         if(warn){
             axios.post(apiDomain+'/admin/delivery/confirmproduct',{'relId':relId},{headers:getHeader()})
             .then(response=>{

@@ -4,7 +4,7 @@
             size="xl"
             
             id="privatePvhModal" 
-            title="Кусок ПВХ бүртгэх"
+            title="ПВХ бөлшектерін тіркеу"
             ref="privatePvhModal"
             @hide="onPrivatePvhModalHide"
             @show="onPrivatePvhShow"
@@ -18,7 +18,7 @@
                         <b-form-row class="mb-3">
                             <b-col sm="auto" lg="12">
                                 <label class="mr-sm-2" for="delshop">
-                                    Клиент
+                                    Тұтынушы
                                 </label>
                                 <b-form-row>
                                     <b-col md="6" sm="12" lg="6">
@@ -27,9 +27,9 @@
                                             v-model=kusokObject.userId
                                             class="form-control"
                                         >
-                                            <option value=0>--- Захиалага өгсөн клиент сонгох ---</option>
+                                            <option value=0>--- Тұтынушы таңдау ---</option>
                                             <option v-for="(u,index) in users" :key="index" :value=u.value>
-                                                {{'Овог : ' + u.text+ ' --- > ' +' Нэр : ' +u.lastName + ' --- >' +' Утас : ' + u.phoneNumber}}
+                                                {{'Тегі : ' + u.text+ ' ' +' Аты : ' +u.lastName + ' ' +' Тел : ' + u.phoneNumber}}
                                             </option>
                                         </select>
                                     </b-col>
@@ -44,7 +44,7 @@
                                     </b-col>
                                     <b-col   md="3" sm="12" lg="3" class="text-right ">
                                         <b-button v-if="relDetails.length>0"  type="button" 
-                                            block @click="formRefresher" variant="outline-primary">Шинэ кусок</b-button>
+                                            block @click="formRefresher" variant="outline-primary">Жаңа кусок</b-button>
                                     </b-col>
                                 </b-form-row>
                                 <b-form-row class="pt-4">
@@ -68,7 +68,7 @@
                             </b-col>
                             <b-col lg="2">
                                 <label class="mr-sm-2" >
-                                    <small>Өнгө</small>
+                                    <small>Түсi</small>
                                 </label>
                                 <select
                                     @change="findPvh(r)"
@@ -77,7 +77,7 @@
                                     :disabled="c.isDone==2 ? true : false"
                                     style="width:100% !important;"
                                 >
-                                    <option value=0>-- сонгох --</option>
+                                    <option value=0>-- таңдау --</option>
                                     <option  v-for="(option,catIndex)
                                         in productColors" v-bind:value=option.id :key="catIndex">
                                         {{ option.colorName}}
@@ -87,7 +87,7 @@
                             
                             <b-col sm="auto" md="2" lg="2">
                                 <label class="mr-sm-2">
-                                <small> Хэмжээ </small>
+                                <small> Көлемi </small>
                                 </label>
                                 <select
                                     @change="findPvh(r)"
@@ -96,7 +96,7 @@
                                         class="d-block small-font" style="width:100% !important;"
                                         v-model="c.measureId"
                                     >
-                                    <option value=0>--сонгох--</option>
+                                    <option value=0>--таңдау--</option>
                                     <option v-for="(option,measureIndex)
                                         in productMeasures.filter(p=>p.catName==='PVH') " v-bind:value=option.id :key="measureIndex">
                                         {{ option.measureName}}
@@ -106,7 +106,7 @@
                             
                             <b-col sm="auto"  md="2" lg="2">
                                 <label class="mr-sm-2" :for="'wareHouse'+r+27">
-                                    <small>Склад</small>
+                                    <small>Қойма</small>
                                 </label>
                                 <select 
                                     class="d-block small-font" style="width:100% !important;"
@@ -115,7 +115,7 @@
                                     :disabled="c.isDone==2 ? true : c.measureId &&
                                             c.measureId>0 ? false : true"
                                     v-model=c.wareHouseId>
-                                    <option value=0>--сонгох--</option>
+                                    <option value=0>--таңдау--</option>
                                     <option v-for="(w,wx) in wareHouses" :key="wx" :value="w.wareHouseId">
                                         {{w.wareHouseName}}
                                     </option>
@@ -124,7 +124,7 @@
                             </b-col>
                             <b-col sm="auto"  md="1" lg="1">
                                 <label class="mr-sm-2" >
-                                    <small>Тоо</small>
+                                    <small>Саны</small>
                                 </label>
                                 <input
                                     class="d-block small-font" style="width:100% !important;height : 25px !important;"
@@ -143,7 +143,7 @@
                                 <b-form-row>
                                     <b-col sm="auto" md="6" lg="6">
                                         <label class="mr-sm-2" :for="'wareHouse'+r+27">
-                                            <small>Наалт</small>
+                                            <small>Жабыстыру</small>
                                         </label>
                                         <select
                                             class="d-block small-font" style="width:100% !important;"
@@ -151,7 +151,7 @@
 
                                             :disabled="c.isDone==2 ? true : c.productCount==0 || c.wareHouseId==0 ? true : false"
                                             v-model="c.isDirect">
-                                            <option value=-1>--сонгох--</option>       
+                                            <option value=-1>--таңдау--</option>       
                                             <option value=1>
                                                 Прямой
                                             </option>
@@ -162,14 +162,14 @@
                                     </b-col>
                                     <b-col sm="auto" md="6" lg="6">
                                         <label class="mr-sm-2" :for="'wareHouse'+r+27">
-                                            <small>Ажил</small>
+                                            <small>Жұмыс</small>
                                         </label>
                                         <select
                                             @change="setWorkPrice(r)"
                                             class="d-block small-font" style="width:100% !important;"
                                             :disabled="c.isDone==2 ? true : c.isDirect==-1  ? true : false"
                                             v-model="c.workPriceId">
-                                            <option value=0>--сонгох--</option>        
+                                            <option value=0>--таңдау--</option>        
                                             <option v-for="(w,wi) in workPrices.filter(w => parseInt(w.workTypeId)==parseInt(c.isDirect))"  :key="wi" :value=w.id>
                                                 {{w.workName}}
                                             </option>
@@ -179,7 +179,7 @@
                             </b-col>
                             <b-col sm="auto"  md="1" lg="1">
                                 <label class="mr-sm-2" for="totalPrice">
-                                    <small>Нийт</small>
+                                    <small>Барлығы</small>
                                 </label>
                                 <input
                                     class="d-block small-font" style="width:100% !important;
@@ -208,14 +208,15 @@
                                 
                         </b-form-row>
                         <b-form-row class="py-3">
-                            <b-col lg="12" class="text-right text-info font-weight-bold" style="text-decoration:underline !important;">
-                                Кусок нийлбэр дүн : {{totalPriceOfKusokPvh}}
+                            <b-col lg="12" class="text-right text-info font-weight-bold"
+                                style="text-decoration:underline !important;">
+                                Барлык бағасы : {{totalPriceOfKusokPvh}}
                             </b-col>
                         </b-form-row>
                         <b-form-row>
                              <b-col lg="4">
                                 <b-alert show variant="warning"  v-if="prematurePvh.length>0">
-                                    <h6>Татах шаардлагатай пвх</h6> 
+                                    <h6>Қажетті пвх</h6> 
                                     <hr>
                                     <div v-for="(p,i) in prematurePvh" :key="i" >
                                         <span v-if="lastBalance(p.wareHouseId,p.productId)<0 
@@ -231,8 +232,8 @@
                             </b-col>
                             <b-col lg="8" class="text-right">
                                 <b-button type="submit"  v-if="mainValidation"
-                                    variant="primary" class="mr-2">Кусок ПВХ үүсгэх</b-button>
-                                <b-button v-if="kusokObject.kusokId==0" type="reset" variant="danger">Арилгах</b-button>
+                                    variant="primary" class="mr-2">Тіркеу</b-button>
+                                <b-button v-if="kusokObject.kusokId==0" type="reset" variant="danger">Жою</b-button>
                             </b-col>
                         </b-form-row>
                     </b-form>
@@ -299,8 +300,8 @@
                             this.kusokFormObject,{headers:getHeader()})
                         .then(()=>{
                             
-                            this.$bvToast.toast('Кусок ПВХ амжилттай үүслээ.', {
-                                title: 'Амжилт',
+                            this.$bvToast.toast('Кусок ПВХ Жетістіктай үүслээ.', {
+                                title: 'Жетістік',
                                 autoHideDelay: 5000,
                                 variant:"success"
                             });
@@ -311,7 +312,7 @@
                         .catch(error => {
                             //console.log(error.message)
                             this.$bvToast.toast(error.message, {
-                                title: 'Алдааны мэдээлэл',
+                                title: 'Қате туралы ақпарат',
                                 autoHideDelay: 5000,
                                 danger:'danger'
                             })
@@ -320,7 +321,7 @@
                     
                 }
                 else{
-                    this.$bvToast.toast('Та хамгийн багадаа 1 бараа сонгох хэрэгтэй.', {
+                    this.$bvToast.toast('Та хамгийн багадаа 1 бараа таңдау хэрэгтэй.', {
                         title: 'Анхааруулга',
                         autoHideDelay: 5000,
                         variant:"danger"
@@ -354,7 +355,7 @@
                     this.$bvToast.toast(
                         "Та зүсэгдсэн ПВХ нуудыг хасах боломжгүй.",
                         {
-                            title:"Алдааны мэдээлэл !!!",
+                            title:"Қате туралы ақпарат !!!",
                             variant:"danger"
                         }
                     );
@@ -370,7 +371,7 @@
                         .catch(error => {
                             //console.log(error.message)
                             this.$bvToast.toast(error.message, {
-                                title: 'Алдааны мэдээлэл',
+                                title: 'Қате туралы ақпарат',
                                 autoHideDelay: 5000
                             })
                         });
@@ -423,7 +424,7 @@
                 .catch(error => {
                     //console.log(error.message)
                     this.$bvToast.toast(error.message, {
-                        title: 'Алдааны мэдээлэл',
+                        title: 'Қате туралы ақпарат',
                         autoHideDelay: 5000
                     })
                 });
@@ -456,7 +457,7 @@
             removePvh(r){
                 if(this.relDetails[r].detailId 
                     && Number(this.relDetails[r].detailId>0)){
-                    let warn = confirm("Та итгэлтэй байна уу ?");
+                    let warn = confirm("Сіз сенімдісіз бе ?");
                     let dbWarn = confirm("Та үнэхээр итгэлтэй байна уу ?");
                     if(warn && dbWarn){
                         let delIndexes = [];
@@ -471,7 +472,7 @@
                                 .then(()=>{
                                     //alert(response.data);
                                     this.$bvToast.toast('Операция сәтті аяқталды.', {
-                                        title: 'Амжилт',
+                                        title: 'Жетістік',
                                         autoHideDelay: 5000,
                                         variant:"success"
                                     });
@@ -480,7 +481,7 @@
                                 .catch(error => {
                                     //console.log(error.message)
                                     this.$bvToast.toast(error.message, {
-                                        title: 'Алдааны мэдээлэл',
+                                        title: 'Қате туралы ақпарат',
                                         autoHideDelay: 5000
                                     })
                                 })     

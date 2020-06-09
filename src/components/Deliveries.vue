@@ -1,24 +1,24 @@
 <template>
   <div>
-    <b-card title="Захиалгын жагсаалт" bg-variant="light">
+    <b-card title="Тапсырыс тізімі" bg-variant="light">
       <b-tabs pills card  v-model="tabIndex"  @input="dateFilter">
         <b-row class="mt-2">
           <b-col lg="3">
             <datepicker format="yyyy-MM-dd"
-              :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Эхлэх огноо"></datepicker>
+              :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Басталу уақыты"></datepicker>
           </b-col>
           <b-col lg="3">
             <datepicker format="yyyy-MM-dd" 
-             :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Дуусах огноо"></datepicker>
+             :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Бiту уақыты"></datepicker>
           </b-col>
         </b-row>
-        <b-tab title="Шинэ"
+        <b-tab title="Жаңа"
            active>
           <b-card-text>
             <b-row>
               <b-col lg="8">
                 <b-form-group
-                  label="Хайлт"
+                  label="Іздеу"
                   label-cols-sm="1"
                   label-align-sm="left"
                   label-size="sm"
@@ -30,11 +30,11 @@
                       v-model="filter"
                      
                       id="filterInput1"
-                      placeholder="Хайлт хийх утгаа оруулна уу"
+                      placeholder="Іздеу"
                       @keyup="filterChange"
                       @change="filterChange"
                     ></b-form-input>
-                    <b-button size="sm" class="ml-3"  @click="doSearch"> Шүүх </b-button>
+                    <b-button size="sm" class="ml-3"  @click="doSearch"> Ізде </b-button>
                   </b-input-group>
                  
                 </b-form-group>
@@ -43,7 +43,7 @@
               
               
               <b-col lg="4" class="pt-3 text-right">
-                <strong>тоо:</strong> {{totalRows}}  
+                <strong>саны:</strong> {{totalRows}}  
               </b-col>
               <b-table 
                 responsive
@@ -63,28 +63,28 @@
                 <template v-slot:table-busy>
                   <div class="text-center text-info my-2">
                     <b-spinner class="align-middle"></b-spinner>
-                    <strong>Ачаалж байна...</strong>
+                    <strong>Жүктелуде...</strong>
                   </div>
                 </template>
                 <template v-slot:cell(orderActions)="row">
                     <b-button @click="row.toggleDetails" 
                       variant="outline-success" class="mr-1" size="sm"   >
-                      <font-awesome-icon icon="list" title="Лист харах"/>
+                      <font-awesome-icon icon="list" title="ЛДСП көру"/>
                     </b-button>
                     
                     <b-button  
                       variant="outline-primary" @click="editOrder(row.item.deliveryId)" class="mr-1" size="sm" >
-                      <font-awesome-icon icon="pen"  title="Захиалага засах"/>
+                      <font-awesome-icon icon="pen"  title="Тапсырыс жөндеу"/>
                     </b-button>
-                    <b-button variant="outline-danger" class="mr-1" size="sm" >
-                      <font-awesome-icon icon="window-close"  title="Захиалага устгах"/>
+                    <b-button @click="deleteOrder(row.item.deliveryId)" variant="outline-danger" class="mr-1" size="sm" >
+                      <font-awesome-icon icon="window-close"  title="Тапсырыс жою"/>
                     </b-button>
                 </template>
                 <template v-slot:row-details="row">
                   <b-card>
                     <b-row>
                       <b-col lg="6">
-                        <h6>Листүүд</h6>
+                        <h6>ЛДСП лер</h6>
                       </b-col>
                     </b-row>
                     <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
@@ -93,7 +93,7 @@
                             @click="row.toggleDetails"
                             :disabled="row.item.relDetails.length>0 ? false : true " 
                             variant="outline-success" class="mr-1" size="sm"   >
-                            <font-awesome-icon icon="list" title="Пвх харах"/>
+                            <font-awesome-icon icon="list" title="Пвх көру"/>
                           </b-button>
                          
                       </template>
@@ -101,22 +101,22 @@
                           {{row.item.relDetails.length}}
                       </template>
                       <template v-slot:cell(isDone)="row">
-                        {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                        {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                       </template>
                       <!-- pvh jagaaslt -->
                       <template v-slot:row-details="row">
                           <b-card>
-                            <h6>пвх - нууд</h6>
+                            <h6>пвх - лар</h6>
                             <b-table striped hover :fields="pvhFields" table-variant="danger" 
                               :items="row.item.relDetails">
 
                               <template v-slot:cell(isDone)="pvh">
-                                {{pvh.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                                {{pvh.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                               </template>
                             </b-table>
                             <b-row>
                               <b-col lg="12" class="text-right py-2">
-                                <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх хаах</b-button>
+                                <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх жабу</b-button>
                               </b-col>
                             </b-row>
                           </b-card>
@@ -124,7 +124,7 @@
                     </b-table>
                     <b-row>
                       <b-col lg="12" class="text-right py-2">
-                        <b-button size="sm" variant="danger" @click="row.toggleDetails">Лист хаах</b-button>
+                        <b-button size="sm" variant="danger" @click="row.toggleDetails">ЛДСП жабу</b-button>
                       </b-col>
                     </b-row>
                   </b-card>
@@ -142,12 +142,12 @@
              </b-row>              
           </b-card-text>
         </b-tab>
-        <b-tab title="Хийгдэж байгаа">
+        <b-tab title="Iстелуде">
           <b-card-text>
               <b-row>
                 <b-col lg="8">
                   <b-form-group
-                    label="Хайлт"
+                    label="Iздеу"
                     label-cols-sm="1"
                     label-align-sm="left"
                     label-size="sm"
@@ -159,11 +159,11 @@
                         v-model="filter"
                        
                         id="filterInput2"
-                        placeholder="Хайлт хийх утгаа оруулна уу"
+                        placeholder="Iздеу"
                         @keyup="filterChange"
                         @change="filterChange"
                       ></b-form-input>
-                      <b-button size="sm" class="ml-3"  @click="doSearch"> Шүүх </b-button>
+                      <b-button size="sm" class="ml-3"  @click="doSearch"> Iзде </b-button>
                     </b-input-group>
                   
                   </b-form-group>
@@ -172,7 +172,7 @@
                 
                 
                 <b-col lg="4" class="pt-3 text-right">
-                  <strong>тоо:</strong> {{totalRowsProgress}}  
+                  <strong>саны:</strong> {{totalRowsProgress}}  
                 </b-col>
                 <b-table 
                   responsive
@@ -192,18 +192,18 @@
                   <template v-slot:table-busy>
                     <div class="text-center text-info my-2">
                       <b-spinner class="align-middle"></b-spinner>
-                      <strong>Ачаалж байна...</strong>
+                      <strong>Жүктелуде...</strong>
                     </div>
                   </template>
                   <template v-slot:cell(orderActions)="row">
                       <b-button @click="row.toggleDetails" 
                         variant="outline-success" class="mr-1" size="sm"   >
-                        <font-awesome-icon icon="list" title="Лист харах"/>
+                        <font-awesome-icon icon="list" title="ЛДСП көру"/>
                       </b-button>
                      
                       <b-button  
                         variant="outline-primary" class="mr-1" size="sm" >
-                        <font-awesome-icon icon="pen" @click="editOrder(row.item.deliveryId)" title="Захиалага засах"/>
+                        <font-awesome-icon icon="pen" @click="editOrder(row.item.deliveryId)" title="Тапсырыс жөндеу"/>
                       </b-button>
                      
                   </template>
@@ -211,7 +211,7 @@
                     <b-card>
                       <b-row>
                         <b-col lg="6">
-                          <h6>Листүүд</h6>
+                          <h6>ЛДСП лер</h6>
                         </b-col>
                       </b-row>
                       <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
@@ -220,7 +220,7 @@
                               @click="row.toggleDetails"
                               :disabled="row.item.relDetails.length>0 ? false : true " 
                               variant="outline-success" class="mr-1" size="sm"   >
-                              <font-awesome-icon icon="list" title="Пвх харах"/>
+                              <font-awesome-icon icon="list" title="Пвх жабу"/>
                             </b-button>
                            
                         </template>
@@ -228,23 +228,23 @@
                             {{row.item.relDetails.length}}
                         </template>
                         <template v-slot:cell(isDone)="row">
-                          {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                          {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                         </template>
                         <!-- pvh jagaaslt -->
                         <template v-slot:row-details="row">
                             <b-card>
-                              <h6>пвх - нууд</h6>
+                              <h6>пвх - лар</h6>
                               <b-table striped hover :fields="pvhFields" table-variant="danger" 
                                 :items="row.item.relDetails">
 
                                 <template v-slot:cell(isDone)="pvh">
-                                  {{pvh.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                                  {{pvh.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                                 </template>
                                
                               </b-table>
                               <b-row>
                                 <b-col lg="12" class="text-right py-2">
-                                  <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх хаах</b-button>
+                                  <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх жабу</b-button>
                                 </b-col>
                               </b-row>
                             </b-card>
@@ -252,7 +252,7 @@
                       </b-table>
                       <b-row>
                       <b-col lg="12" class="text-right py-2">
-                        <b-button size="sm" variant="danger" @click="row.toggleDetails">Лист хаах</b-button>
+                        <b-button size="sm" variant="danger" @click="row.toggleDetails">ЛДСП жабу</b-button>
                       </b-col>
                     </b-row>
                   </b-card>
@@ -270,12 +270,12 @@
              </b-row>                 
           </b-card-text>
         </b-tab>
-        <b-tab title="Хийгдэж дууссан">
+        <b-tab title="Iстелген">
           <b-card-text>
             <b-row>
                 <b-col lg="8">
                   <b-form-group
-                    label="Хайлт"
+                    label="Iздеу"
                     label-cols-sm="1"
                     label-align-sm="left"
                     label-size="sm"
@@ -287,11 +287,11 @@
                         v-model="filter"
                        
                         id="filterInput"
-                        placeholder="Хайлт хийх утгаа оруулна уу"
+                        placeholder="Iздеу"
                         @keyup="filterChange"
                         @change="filterChange"
                       ></b-form-input>
-                      <b-button size="sm" class="ml-3"  @click="doSearch"> Шүүх </b-button>
+                      <b-button size="sm" class="ml-3"  @click="doSearch"> Iзде </b-button>
                     </b-input-group>
                   
                   </b-form-group>
@@ -300,7 +300,7 @@
                 
                 
                 <b-col lg="4" class="pt-3 text-right">
-                  <strong>тоо:</strong> {{totalRowsDone}}  
+                  <strong>саны:</strong> {{totalRowsDone}}  
                 </b-col>
                 <b-table 
                   responsive
@@ -320,14 +320,14 @@
                   <template v-slot:table-busy>
                     <div class="text-center text-info my-2">
                       <b-spinner class="align-middle"></b-spinner>
-                      <strong>Ачаалж байна...</strong>
+                      <strong>Жүктелуде...</strong>
                     </div>
                   </template>
                   <template v-slot:cell(orderActions)="row">
                       <center>
                         <b-button @click="row.toggleDetails" 
                           variant="outline-success" class="mr-1" size="sm"   >
-                          <font-awesome-icon icon="list" title="Лист харах"/>
+                          <font-awesome-icon icon="list" title="ЛДСП көру"/>
                         </b-button>
                       </center>
                      
@@ -336,7 +336,7 @@
                     <b-card>
                       <b-row>
                         <b-col lg="6">
-                          <h6>Листүүд</h6>
+                          <h6>ЛДСП лер</h6>
                         </b-col>
                       </b-row>
                       <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
@@ -346,7 +346,7 @@
                                 @click="row.toggleDetails"
                                 :disabled="row.item.relDetails.length>0 ? false : true " 
                                 variant="outline-warning" class="mr-1" size="sm"   >
-                                <font-awesome-icon icon="list" title="Пвх харах"/>
+                                <font-awesome-icon icon="list" title="Пвх жабу"/>
                               </b-button>
                             </center>
                         </template>
@@ -354,7 +354,7 @@
                             {{row.item.relDetails.length}}
                         </template>
                         <template v-slot:cell(isDone)="row">
-                          {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                          {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                         </template>
                        
                         <!-- pvh jagaaslt -->
@@ -365,13 +365,13 @@
                                 :items="row.item.relDetails">
 
                                 <template v-slot:cell(isDone)="row">
-                                  {{row.item.isDone==0 ? 'Хийгдээгүй' : 'Хийгдсэн'}}
+                                  {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                                 </template>
                                
                               </b-table>
                               <b-row>
                                 <b-col lg="12" class="text-right py-2">
-                                  <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх хаах</b-button>
+                                  <b-button size="sm" variant="danger" @click="row.toggleDetails">Пвх жабу</b-button>
                                 </b-col>
                               </b-row>
                             </b-card>
@@ -379,7 +379,7 @@
                       </b-table>
                       <b-row>
                       <b-col lg="12" class="text-right py-2">
-                        <b-button size="sm" variant="danger" @click="row.toggleDetails">Лист хаах</b-button>
+                        <b-button size="sm" variant="danger" @click="row.toggleDetails">ЛДСП жабу</b-button>
                       </b-col>
                     </b-row>
                   </b-card>
@@ -421,22 +421,22 @@ export default {
       fieldsNew: [
           {
             key: 'orderNumber',
-            label: 'Дугаар',
+            label: 'Тапсырыс саны',
             variant: 'primary'
           },
           {
             key: 'userInfo',
-            label: 'Клиент',
+            label: 'Тұтынушы',
             variant: 'danger'
           },
           {
             key: 'totalProductPrice',
-            label: 'Үнэ',
+            label: 'Бағасы',
             variant: 'success'
           },
           {
             key: 'listCount',
-            label: 'Лист',
+            label: 'ЛДСП',
             variant: 'warning'
           },
           {
@@ -446,13 +446,13 @@ export default {
           },
           {
             key: 'orderDate',
-            label: 'Огноо',
+            label: 'Уақыт',
             variant: 'info'
           },
            
           {
             key: 'orderActions',
-            label: 'Үйлдэлүүд',
+            label: 'Әрекеттер',
             align:'center'
           }
 
@@ -460,31 +460,39 @@ export default {
       listFields: [
           {
             key: 'catName',
-            label: 'Төрөл'
+            label: 'Түрi'
           },
           {
             key: 'colorName',
-            label: 'Өнгө'
+            label: 'Түсi'
           },
           {
             key: 'measureName',
-            label: 'Хэмжээ'
+            label: 'Көлемi'
           },
           {
             key: 'productCount',
-            label: 'Тоо'
+            label: 'Саны'
+          },
+          {
+            key: 'doneCount',
+            label: 'Iстегенi'
+          },
+           {
+            key: 'leftCount',
+            label: 'Қалағаны'
           },
           {
             key: 'productPrice',
-            label: 'Үнэ'
+            label: 'Бағасы'
           },
           {
             key: 'totalPrice',
-            label: 'Нийт'
+            label: 'Барлығы'
           },
           {
             key: 'wareHouseName',
-            label: 'Склад'
+            label: 'Қойма'
           },
           {
             key: 'pvhCount',
@@ -497,22 +505,22 @@ export default {
           },
           {
             key: 'listActions',
-            label: 'Үйлдэлүүд'
+            label: 'Әрекеттер'
           }
       ],
      
       pvhFields: [
           {
             key: 'catName',
-            label: 'Төрөл'
+            label: 'Түрi'
           },
           {
             key: 'colorName',
-            label: 'Өнгө'
+            label: 'Түсi'
           },
           {
             key: 'measureName',
-            label: 'Хэмжээ'
+            label: 'Көлемi'
           },
          
          
@@ -522,11 +530,11 @@ export default {
           },
           {
             key: 'totalPrice',
-            label: 'Нийт'
+            label: 'Барлығы'
           },
           {
             key: 'wareHouseName',
-            label: 'Склад'
+            label: 'Қойма'
           },
           {
             key: 'isDone',
@@ -535,21 +543,21 @@ export default {
           },
           {
             key: 'pvhActions',
-            label: 'Үйлдэлүүд'
+            label: 'Әрекеттер'
           }
       ],
       pvhFieldsDone: [
           {
             key: 'catName',
-            label: 'Төрөл'
+            label: 'Түрі'
           },
           {
             key: 'colorName',
-            label: 'Өнгө'
+            label: 'Түсі'
           },
           {
             key: 'measureName',
-            label: 'Хэмжээ'
+            label: 'Көлемі'
           },
          
          
@@ -559,11 +567,11 @@ export default {
           },
           {
             key: 'totalPrice',
-            label: 'Нийт'
+            label: 'Барлығы'
           },
           {
             key: 'wareHouseName',
-            label: 'Склад'
+            label: 'Қойма'
           },
           {
             key: 'isDone',
@@ -602,7 +610,7 @@ export default {
         this.refreshTables();
       }
       else{
-        this.$bvToast.toast("Хайлтын утгуудаа орлуулна уу!!!", {
+        this.$bvToast.toast("Іздеу мәндері енгiзнiз !!!", {
             title: 'Алдаа',
             autoHideDelay: 5000,
             variant:"danger"
@@ -620,7 +628,7 @@ export default {
         axios.post(apiDomain+'/admin/order/charge_off_order_products',{'operationType':operationType, 'objectId':objectId},{headers:getHeader()})
         .then(response=>{
           this.$bvToast.toast('Операция сәтті аяқталды.', {
-              title: 'Амжилт',
+              title: 'Жетістік',
               autoHideDelay: 5000,
               variant:"success"
           })
@@ -671,7 +679,7 @@ export default {
     
     completeOrder(delId){
       //alert(delId);
-      let warn = confirm("Та итгэлтэй байна уу ?");
+      let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
         let result = this.hasRole("DELIVERY");
         let result1 = this.hasRole("MANAGER");
@@ -683,7 +691,7 @@ export default {
         }
         else{
           this.$bvToast.toast("Зөвхөн хүргэгчид энэ үйлдэлийг хийх боломжтой", {
-              title: 'Алдааны мэдээлэл',
+              title: 'Қате туралы ақпарат',
               autoHideDelay: 5000
           })  
         }
@@ -732,7 +740,7 @@ export default {
           return(result.gridData.items)
         }).catch(error => {
           this.$bvToast.toast(error.message, {
-              title: 'Алдааны мэдээлэл',
+              title: 'Қате туралы ақпарат',
               autoHideDelay: 5000,
               variant:"danger"
           })  
@@ -766,7 +774,7 @@ export default {
           return(result.gridData.items)
         }).catch(error => {
           this.$bvToast.toast(error.message, {
-              title: 'Алдааны мэдээлэл',
+              title: 'Қате туралы ақпарат',
               autoHideDelay: 5000,
               variant:"danger"
           })  
@@ -803,7 +811,7 @@ export default {
           return(result.gridData.items)
         }).catch(error => {
           this.$bvToast.toast(error.message, {
-              title: 'Алдааны мэдээлэл',
+              title: 'Қате туралы ақпарат',
               autoHideDelay: 5000,
               variant:"danger"
           })  
@@ -852,7 +860,7 @@ export default {
             let responseMsg=response.data;
             if(responseMsg=='norole'){
               this.$bvToast.toast("Та зөвхөн өөрийн оруулсан хүргэлт цуцлах боломжтой", {
-                  title: 'Алдааны мэдээлэл',
+                  title: 'Қате туралы ақпарат',
                   autoHideDelay: 5000
               });
               this.deliveryDescription="";
@@ -862,10 +870,10 @@ export default {
             this.deliveryDescription="";
             let alertMsg = null;
             if("ignore"===type){
-              alertMsg="Амжилттай цуцлагдлаа"
+              alertMsg="Жетістіктай цуцлагдлаа"
             }
             if("done"===type){
-              alertMsg="Амжилттай хүргэлт хийгдлээ"
+              alertMsg="Жетістіктай хүргэлт хийгдлээ"
             }
             this.$bvToast.toast(alertMsg, {
               title: 'Алдаа',
@@ -893,9 +901,36 @@ export default {
       if(this.tabIndex==2){
         this.$refs.doneOrderTable.refresh();
       }
-    }
-    
-    
+    },
+   
+    deleteOrder(delId){
+      let warn = confirm("Сіз сенімдісіз бе ?");
+      if(warn){
+        let selectedRows=[];
+        selectedRows.push({"id":delId});
+        if(selectedRows.length>0){
+          let o = new Object();
+         
+          o.selectedRows=selectedRows;
+
+          o.type='del_delivery';
+
+          axios.post(apiDomain+'/admin/delivery/deleteref',o,{headers:getHeader()})
+            .then(()=>{
+              this.refreshTables();  
+            })
+            .catch(error => {
+                
+                this.$bvToast.toast(error.message, {
+                    title: 'алдаа',
+                    variant:'danger',
+                    autoHideDelay: 5000
+                })
+            }) 
+        }
+      }
+      
+    },
   },
 
   computed:{

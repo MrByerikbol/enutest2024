@@ -23,7 +23,7 @@
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
                 <b-spinner class="align-middle"></b-spinner>
-                <strong>Ачаалж байна...</strong>
+                <strong>Жүктелуде...</strong>
             </div>
             </template>
             <template v-slot:cell(workInfo)="del">
@@ -234,7 +234,7 @@ export default {
                 }).catch(error => {
                     console.error(error);
                     this.$bvToast.toast(error.message, {
-                        title: 'Алдааны мэдээлэл',
+                        title: 'Қате туралы ақпарат',
                         autoHideDelay: 5000,
                         variant:"danger"
                     })  

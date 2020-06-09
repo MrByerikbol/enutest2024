@@ -24,34 +24,36 @@
                 </b-col>
             </b-row>    
         </b-col> 
-        <b-col lg="8">
-        <b-form-group
-            label="Іздеу"
-            label-cols-sm="1"
-            label-align-sm="left"
-            label-size="sm"
-            label-for="filterInput"
-            class="mb-2 mt-3"
-            >
-            <b-input-group size="sm">
-                <b-form-input
+        <b-col lg="6" class="pt-3">
+            <input 
+                type="search"
                 v-model="filter"
                 @keyup="filterChange"
                 @change="filterChange"
                 id="filterInput"
-                placeholder="Iздейтiн сөз"
-               
-                ></b-form-input>
-                <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
-                      @click="doSearch"> 
-                    Талдау 
-                </b-button>
-            </b-input-group>
-            </b-form-group>
+                placeholder="Iздейтiн сөз"   
+                class="form-control"
+            >
+            <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
+                    @click="doSearch"> 
+                Талдау 
+            </b-button>
         </b-col>
     
-        <b-col lg="4" class="pt-3 text-right">
+        <b-col lg="3" class="pt-3 text-right">
             <strong>саны:</strong> {{totalRows}}  
+        </b-col>
+        <b-col lg="3" class="pt-3 text-right">
+            <b-icon icon="arrow-repeat" id="salaryOk"
+                href="#"
+                tabindex="0"
+                v-b-tooltip.hover
+                @click="tableRefresher"
+                title="Жүктеу"
+                style="cursor:pointer"
+                variant="success" font-scale="2"
+            >
+            </b-icon>  
         </b-col>
         <b-table 
             small 

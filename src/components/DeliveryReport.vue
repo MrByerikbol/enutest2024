@@ -25,11 +25,11 @@
       <b-form-row class="mb-3">
         <b-col lg="4" >
             <datepicker format="yyyy-MM-dd" 
-                :clear-button="true" @cleared="clearDate" v-model="beginDate" placeholder="Эхлэх огноо"></datepicker>
+                :clear-button="true" @cleared="clearDate" v-model="beginDate" placeholder="Басталу уақыты"></datepicker>
         </b-col>
         <b-col lg="4" class="text-right">
             <datepicker style="display:block;" format="yyyy-MM-dd" 
-                :clear-button="true" @cleared="clearDate1" v-model="endDate" placeholder="Дуусах огноо"></datepicker>
+                :clear-button="true" @cleared="clearDate1" v-model="endDate" placeholder="Бiту уақыты"></datepicker>
         </b-col>
 
         <b-col lg="2" >
@@ -82,7 +82,7 @@
         <template v-slot:table-busy>
           <div class="text-center text-info my-2">
             <b-spinner class="align-middle"></b-spinner>
-            <strong>Ачаалж байна...</strong>
+            <strong>Жүктелуде...</strong>
           </div>
         </template>
 
@@ -146,7 +146,7 @@
         <template v-slot:table-busy>
           <div class="text-center text-info my-2">
             <b-spinner class="align-middle"></b-spinner>
-            <strong>Ачаалж байна...</strong>
+            <strong>Жүктелуде...</strong>
           </div>
         </template>
 
@@ -212,7 +212,7 @@
         <template v-slot:table-busy>
           <div class="text-center text-info my-2">
             <b-spinner class="align-middle"></b-spinner>
-            <strong>Ачаалж байна...</strong>
+            <strong>Жүктелуде...</strong>
           </div>
         </template>
 

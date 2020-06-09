@@ -283,7 +283,7 @@ export default {
             });
         },
         postGluerSalaryCalculation(){
-            let warn = confirm("Та итгэлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
             
             if((warn && this.gluerSalary.length>0) || (warn && this.gluerKusokSalary.length>0) ||
                 (warn && this.gluerSalaryForm.calcId>0)  ){
@@ -305,7 +305,7 @@ export default {
                     this.isSalaryPosted=false;
                     let serverResult = response.data;
                     if(serverResult=='success'){
-                         this.$bvToast.toast('Тооцоо амжилттай засагдлаа.', {
+                         this.$bvToast.toast('Тооцоо Жетістіктай засагдлаа.', {
                             title: 'Мэдээлэл',
                             autoHideDelay: 5000,
                             variant:"success"
@@ -319,7 +319,7 @@ export default {
                     }
                     if(serverResult=='error'){
                         this.$bvToast.toast('Системд алдаа үүслээ !', {
-                            title: 'Алдааны мэдээлэл',
+                            title: 'Қате туралы ақпарат',
                             autoHideDelay: 5000,
                             variant:"danger"
                         });

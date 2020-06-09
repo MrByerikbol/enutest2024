@@ -26,6 +26,7 @@
         </b-col> 
         <b-col lg="6" class="pt-3">
             <input 
+                type="search"
                 v-model="filter"
                 @keyup="filterChange"
                 @change="filterChange"
@@ -71,7 +72,7 @@
             <template v-slot:table-busy>
                 <div class="text-center text-info my-2">
                     <b-spinner class="align-middle"></b-spinner>
-                    <strong>Ачаалж байна...</strong>
+                    <strong>Жүктелуде...</strong>
                 </div>
             </template>
             <template v-slot:cell(workInfo)="del">
@@ -128,14 +129,20 @@
                             <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
                                 <input type="number"
                                     style="width:60px"
+                                    :disabled="(work.myConfirmations && work.myConfirmations.length>0) 
+                                        || (work.myJudges && work.myJudges.length>0)"
+
                                     :max="Number(work.productCount)-Number(work.doneCount)"
+                                    min="0"
                                     v-model=work.doingCount>
                                 <b-dropdown size="sm" class="ml-2" right
-                                     id="dropdown-text"   variant="danger" text="Зүсэх">
-                                    <b-dropdown-item-button v-if="work.doingCount>0 
+                                     id="dropdown-text"   variant="danger" text="Кесу">
+                                    <b-dropdown-item-button v-if=" 
+                                         work.doingCount>0 
+                                         && work.myConfirmations.length==0 
                                          && work.doingCount <= (Number(work.productCount)-Number(work.doneCount))"
                                          @click="doneWork(work)">
-                                        Кесу
+                                         Кесу
                                     </b-dropdown-item-button>
                                     <b-dropdown-divider v-if="work.myConfirmations 
                                         && work.myConfirmations.length>0"></b-dropdown-divider>
@@ -147,7 +154,7 @@
                                      <b-dropdown-item-button   v-for="(confirmation,conIndex) in
                                         work.myConfirmations" :key="conIndex" @click="confirmDoneCount(confirmation.confirmId)">
 
-                                        {{confirmation.relUserInfo +":"+confirmation.doneCount}}
+                                        {{confirmation.relUserInfo +" : "+confirmation.doneCount}}
                                      </b-dropdown-item-button>
 
                                     <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
@@ -387,7 +394,8 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                     //alert(rText);
-                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'қате шықты қайта көрнiз !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'Сіз бул жумыста белсенді емессіз'
+                     +' немесе қате шықты қайта көрнiз !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')

@@ -65,7 +65,7 @@
         <template v-slot:table-busy>
           <div class="text-center text-info my-2">
             <b-spinner class="align-middle"></b-spinner>
-            <strong>Ачаалж байна...</strong>
+            <strong>Жүктелуде...</strong>
           </div>
         </template>
 
@@ -91,7 +91,7 @@
                             v-model="userForm.userType"  
                         >
                           <option value=0>Систем</option>
-                          <option value=1> Клиент </option>
+                          <option value=1> Тұтынушы </option>
                         </select>
                     </b-col>
                     <b-col sm="auto" md="12" v-if="userForm.userType==1">
@@ -235,7 +235,7 @@ export default {
   },
   methods:{
     deleteRecord(){
-      let warn = confirm("Та итгэлтэй байна уу ?");
+      let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
         if(this.selectedRows.length>0){
           axios.post(apiDomain+'/admin/deleterecord/',this.selectedRows,{headers:getHeader()})
@@ -277,7 +277,7 @@ export default {
           evt.preventDefault();
           axios.post(apiDomain+'/admin/core/postuser/',this.userForm,{headers:getHeader()})
             .then(response=>{
-                let alertMsg = "Хэрэглэгч амжилттай үүслээ";
+                let alertMsg = "Хэрэглэгч Жетістіктай үүслээ";
                 if(response.data==='dublicated'){
                   alertMsg='Хэрэглэгчийн и-мэйл давхардсан байна.'
                 }
@@ -298,7 +298,7 @@ export default {
                 }
                 
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })
 
@@ -308,7 +308,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })
             }

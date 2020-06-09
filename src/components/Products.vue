@@ -55,7 +55,7 @@
           <template v-slot:table-busy>
             <div class="text-center text-info my-2">
               <b-spinner class="align-middle"></b-spinner>
-              <strong>Ачаалж байна...</strong>
+              <strong>Жүктелуде...</strong>
             </div>
           </template>
           <template v-slot:cell(catDetail)="row">
@@ -141,7 +141,7 @@
         <b-row>
           <b-col lg="6" md="6" sm="12">
             <select @change="catChange1" class="form-control" v-model="catId">
-              <option value="0">---сонгох---</option>
+              <option value="0">---таңдау---</option>
               <option v-for="(cat,i) in productCats " :key="i" :value="cat.catId">
                 {{cat.catName}}
               </option>
@@ -167,7 +167,7 @@
           <template v-slot:table-busy>
             <div class="text-center text-info my-2">
               <b-spinner class="align-middle"></b-spinner>
-              <strong>Ачаалж байна...</strong>
+              <strong>Жүктелуде...</strong>
             </div>
           </template>
 
@@ -190,7 +190,7 @@
                       <b-col sm="auto" md="12">
                           <label for="productName">Барааны төрөл</label>
                           <select class="form-control" v-model="productForm.catId">
-                            <option value=0>---сонгох---</option>
+                            <option value=0>---таңдау---</option>
                             <option v-for="(p,i) in productCats " :value="p.catId" :key="i">
                               {{p.catName}}
                             </option>
@@ -199,7 +199,7 @@
                       <b-col sm="auto" md="12">
                           <label for="productColor">Барааны өнгө</label>
                           <select id="productColor" class="form-control" v-model="productForm.colorId">
-                            <option value=0>---сонгох---</option>
+                            <option value=0>---таңдау---</option>
                             <option v-for="(p,i) in productColors " :value="p.id" :key="i">
                               {{p.colorName}}
                             </option>
@@ -208,7 +208,7 @@
                       <b-col sm="auto" md="12">
                           <label for="productName">Барааны хэмжээ</label>
                           <select class="form-control" v-model="productForm.measureId">
-                            <option value=0>---сонгох---</option>
+                            <option value=0>---таңдау---</option>
                             <option v-for="(p,i) in productMeasures.filter(m=>parseInt(m.catId)==parseInt(productForm.catId)) " :value="p.id" :key="i">
                               {{p.measureName}}
                             </option>
@@ -382,7 +382,7 @@ export default {
       this.$refs.productTable.refresh();
     },
     deleteRecord(){
-      let warn = confirm("Та итгэлтэй байна уу ?");
+      let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
         if(this.selectedRows.length>0){
           let o = new Object();
@@ -430,7 +430,7 @@ export default {
           let dbProduct= this.productForm;
           if(dbProduct.measureId==0 || dbProduct.colorId==0){
             this.$bvToast.toast("Та хэмжээ эсвэл өнгө сонгоогүй байна .", {
-                title: 'Алдааны мэдээлэл',
+                title: 'Қате туралы ақпарат',
                 variant:'danger',
                 autoHideDelay: 5000
             });
@@ -441,15 +441,15 @@ export default {
                 
                 if(response.data == 'dublicated'){
                   this.$bvToast.toast('Энэ бараа лавлах санд бүртгэгдсэн байна .', {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате туралы ақпарат',
                     variant:'danger',
                     autoHideDelay: 5000
                   })
                   return ;
                 }
-                let alertMsg = "Шинээр дэлгүүр амжилттай үүслээ";
+                let alertMsg = "Шинээр дэлгүүр Жетістіктай үүслээ";
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000,
                     variant:"info"
                 })  
@@ -470,7 +470,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате туралы ақпарат',
                     variant:'danger',
                     autoHideDelay: 5000
                 })
@@ -504,7 +504,7 @@ export default {
     
     //begining of the product category methods 
     deleteCatRecord(){
-      let warn = confirm("Та итгэлтэй байна уу ?");
+      let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
         if(this.selectedCatRows.length>0){
           let o = new Object();
@@ -556,9 +556,9 @@ export default {
           evt.preventDefault();
           axios.post(apiDomain+'/admin/pcat/addproductcategory/',this.catForm,{headers:getHeader()})
             .then(()=>{
-                let alertMsg = "Шинээр барааны амжилттай үүслээ";
+                let alertMsg = "Шинээр барааны Жетістіктай үүслээ";
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })  
                 this.$bvModal.hide('productCatModal')
@@ -575,7 +575,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })
             }

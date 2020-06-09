@@ -8,18 +8,18 @@
             <b-row class="mt-2">
                 <b-col lg="4">
                     <datepicker format="yyyy-MM-dd"
-                    :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Эхлэх огноо"></datepicker>
+                    :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Басталу уақыты"></datepicker>
                 </b-col>
                 <b-col lg="4">
                     <datepicker format="yyyy-MM-dd" 
-                    :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Дуусах огноо"></datepicker>
+                    :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Бiту уақыты"></datepicker>
                 </b-col>
                 <b-col lg="4">
                     <select v-model="dStatus" @change="tableRefresher" class="d-block w-100 small-font" style="height:29px !important;">
-                        <option value=0>--Шинэ--</option>
-                        <option value=1>--Хийгдэж байгаа--</option>
-                        <option value=2>--Хийгдэж дуссан--</option>
-                        <option value=-1>--Бүгд--</option>
+                        <option value=0>--Жаңа--</option>
+                        <option value=1>--Iстелуде--</option>
+                        <option value=2>--Iстелген--</option>
+                        <option value=-1>--Барлығы--</option>
                     </select>
                 </b-col>
 
@@ -40,19 +40,19 @@
                 @keyup="filterChange"
                 @change="filterChange"
                 id="filterInput"
-                placeholder="Хайлт хийх утгаа оруулна уу"
+                placeholder="Iздеу"
                
                 ></b-form-input>
                 <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
                       @click="doSearch"> 
-                    Шүүх 
+                    Iзде 
                 </b-button>
             </b-input-group>
             </b-form-group>
         </b-col>
     
         <b-col lg="4" class="pt-3 text-right">
-            <strong>тоо:</strong> {{totalRows}}  
+            <strong>Саны:</strong> {{totalRows}}  
         </b-col>
         <b-table 
             responsive
@@ -71,7 +71,7 @@
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
                 <b-spinner class="align-middle"></b-spinner>
-                <strong>Ачаалж байна...</strong>
+                <strong>Жүктелуде...</strong>
             </div>
             </template>
              <template v-slot:cell(userInfo)="user">
@@ -90,33 +90,32 @@
                       v-if="row.item.kusokStatus==0 || row.item.kusokStatus==1 "  
                       variant="outline-primary" 
                       @click="editPvhKusok(row.item.kusokId)" class="mr-1" size="sm" >
-                      <font-awesome-icon icon="pen"  title="Захиалага засах"/>
+                      <font-awesome-icon icon="pen"  title="Тапсырысты жөндеу"/>
                     </b-button>
-                     <b-button
+                     <!-- <b-button
                         :disabled="row.item.kusokStatus>1 ? true :false"
                         @click="completePvhKusok(row.item.kusokId)" 
                         variant="outline-warning" class="mr-1" size="sm" >
                         <font-awesome-icon icon="check"  title="Захиалага дуусгах"/>
-                    </b-button>
+                    </b-button> -->
                     <b-button v-if="row.item.kusokStatus==0" variant="outline-danger" class="mr-1" size="sm" >
                       <font-awesome-icon icon="window-close"
-                         @click="deleteKusokPvh(row.item.kusokId)" title="Захиалага устгах"/>
+                         @click="deleteKusokPvh(row.item.kusokId)" title="Тапсырысты жою"/>
                     </b-button>
                 </center>
 
             </template>
             <template v-slot:row-details="row">
-                
-                <b-card>
-                    <h6>пвх - нууд</h6>
+               
+                    <h6>пвх - лар</h6>
                     <b-table striped hover :fields="pvhFields" table-variant="primary" 
                         :items="row.item.relDetails">
                         <template v-slot:cell(workInfo)="work">
                             {{ work.item.isDirect==1 ? 'Прямой': 'Обалный' + '-' +work.item.workName}}
                         </template>
                         <template v-slot:cell(isDone)="pvh">
-                            {{pvh.item.isDone==2 ? 'Хийгдсэн' : (pvh.item.isDone==1 ? 
-                                'Хийгдэж байгаа' : 'Хийгдээгүй') }}
+                            {{pvh.item.isDone==2 ? 'Iстелген' : (pvh.item.isDone==1 ? 
+                                'Iстелуде' : 'Iстелмеген') }}
                         </template>
                         <template v-slot:cell(pvhActions)="pvh">
                             <b-row>
@@ -173,30 +172,30 @@ export default {
             fields: [
                 {
                     key: 'orderNumber',
-                    label: 'Дугаар'
+                    label: 'Тапсырыс саны'
                 },
                 {
                     key: 'userInfo',
-                    label: 'Клиент'
+                    label: 'Тұтынушы'
                 },
                 {
                     key: 'totalKusokPrice',
-                    label: 'Нийт үнэ'
+                    label: 'Барлық бағасы'
                 },
                 {
                     key: 'totalMetr',
-                    label: 'Нийт мр'
+                    label: 'Барлық мр'
                     
                 },
                 {
                     key: 'createdDate',
-                    label: 'Огноо',
+                    label: 'Уақыт',
                   
                 },
                 
                 {
                     key: 'orderActions',
-                    label: 'Үйлдэлүүд',
+                    label: 'Әрекеттер',
                     align:'center'
                 }
             ],
@@ -211,20 +210,20 @@ export default {
             pvhFields: [
                 {
                     key: 'catName',
-                    label: 'Төрөл'
+                    label: 'Түрi'
                 },
                 {
                     key: 'colorName',
-                    label: 'Өнгө'
+                    label: 'Түсi'
                 },
                 {
                     key: 'measureName',
-                    label: 'Хэмжээ'
+                    label: 'Көлемi'
                 },
                 
                 {
                     key: 'workInfo',
-                    label: 'Ажил'
+                    label: 'Жұмыс'
                 },
                 {
                     key: 'productCount',
@@ -232,11 +231,11 @@ export default {
                 },
                 {
                     key: 'totalPrice',
-                    label: 'Нийт'
+                    label: 'Барлығы'
                 },
                 {
                     key: 'wareHouseName',
-                    label: 'Склад'
+                    label: 'Қойма'
                 },
                 {
                     key: 'isDone',
@@ -245,12 +244,12 @@ export default {
                 },
                 {
                     key: 'doneCount',
-                    label: 'Наасан'
+                    label: 'Жапсырған'
                 
                 },
                 {
                     key: 'pvhActions',
-                    label: 'Үйлдэлүүд'
+                    label: 'Әрекеттер'
                 }
             ],
             dStatus:0
@@ -264,16 +263,16 @@ export default {
             let checker = Number(item.productCount)-Number(doneCount);
             let doingCount = Number(item.doingCount);
             if(doingCount==0){
-                this.$bvToast.toast("Та наасан тоогоо оруулна уу !!!", {
-                    title: 'Алдаа !!!',
+                this.$bvToast.toast("Жабсырған санды енгiзнiз !!!", {
+                    title: 'Қате !!!',
                     autoHideDelay: 5000,
                     variant:'danger'
                 });
                 return ;
             }
             if(checker<doingCount){
-                this.$bvToast.toast("Та наасан тоогоо буруу оруулсан байна !!!", {
-                    title: 'Алдаа !!!',
+                this.$bvToast.toast("Енгiзнiз сан терiс !!!", {
+                    title: 'Қате !!!',
                     autoHideDelay: 5000,
                     variant:'danger'
                 });
@@ -281,16 +280,16 @@ export default {
                 return ;          
             }
 
-            let warn = confirm("Та итгэлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
             if(warn){
                 axios.post(apiDomain+'/admin/order/setdonecount',
                 {'detailId':detailId,"doneCount":doingCount},{headers:getHeader()})
                 .then((response)=>{
                     let rData=response.data;
-                    let alertMsg = rData==='error' ? 'Алдаа үүслээ .' : 'Операция сәтті аяқталды.'
+                    let alertMsg = rData==='error' ? 'Қате шықты .' : 'Операция сәтті аяқталды.'
                     let variant = rData==='error' ? 'danger' : 'success';
                     this.$bvToast.toast(alertMsg, {
-                        title: 'Мэдээлэл',
+                        title: 'Ақпарат',
                         autoHideDelay: 5000,
                         variant:variant
                     });
@@ -299,7 +298,7 @@ export default {
                 .catch(error => {
                     //console.log(error.message)
                     this.$bvToast.toast(error.message, {
-                        title: 'алдаа',
+                        title: 'қате',
                         autoHideDelay: 5000,
                         variant:"danger"
                     })
@@ -307,8 +306,8 @@ export default {
             }
         },
         deleteKusokPvh(kusokId){
-            let warn = confirm("Та итгэлтэй байна уу ?");
-            let dblWarn = confirm("Та үнэхээр итгэлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
+            let dblWarn = confirm("Сіз шынымен сенімдісіз бе?");
             if(warn && dblWarn){ 
                 axios.post(apiDomain+'/admin/order/deletepvhkusok',
                 {'kusokId':kusokId},{headers:getHeader()})
@@ -332,7 +331,7 @@ export default {
                 axios.post(apiDomain+'/admin/order/completepvhkusok',{'kusokId':kusokId},{headers:getHeader()})
                 .then(response=>{
                     let variant = response.data=='success' ? 'success' : "danger";
-                    let alertMsg = variant=='success' ? "Үйлдэл амжилттай үүслээ." 
+                    let alertMsg = variant=='success' ? "Үйлдэл Жетістіктай үүслээ." 
                         : "Алдаа үүслээ та дахин оролдоно уу ."
                     this.showToast(alertMsg,variant);
                     this.tableRefresher(1);
@@ -342,7 +341,7 @@ export default {
                     this.$bvToast.toast(
                         error.message,
                         {
-                            title:"Алдааны мэдээлэл",
+                            title:"Қате туралы ақпарат",
                             variant:"danger"
                         }
                     );
@@ -353,7 +352,7 @@ export default {
             this.$bvToast.toast(
                 msg,
                 {
-                    title:"Мэдээлэл",
+                    title:"Ақпарат",
                     variant:variant
                 }
             );
@@ -421,7 +420,7 @@ export default {
                 return result.gridData.items;
             }).catch(error => {
                 this.$bvToast.toast(error.message, {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате туралы ақпарат',
                     autoHideDelay: 5000,
                     variant:"danger"
                 })  

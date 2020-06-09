@@ -7,51 +7,53 @@
             <b-row class="mt-2">
                 <b-col lg="4">
                     <datepicker format="yyyy-MM-dd"
-                    :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Эхлэх огноо"></datepicker>
+                    :clear-button="true" @cleared="clearBegin" v-model="beginDate" placeholder="Басталу уақыты"></datepicker>
                 </b-col>
                 <b-col lg="4">
                     <datepicker 
                         format="yyyy-MM-dd" 
-                    :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Дуусах огноо"></datepicker>
+                    :clear-button="true" @cleared="clearEnd" v-model="endDate" placeholder="Аяқталу уақыты"></datepicker>
                 </b-col>
                 <b-col lg="4">
                     <select v-model="dStatus" @change="tableRefresher" class="d-block w-100 small-font" style="height:29px !important;">
-                        <option value=0>--Ажил авах--</option>
-                        <option value=1>--Миний ажлууд--</option>
-                      
-                        <option value=2>--Миний хийсэн--</option>
+                        <option value=0>--Жұмыс тандау--</option>
+                        <option value=1>--Өз жұмысым--</option>
+                        <option value=2>--Істегенiм--</option>
                     </select>
                 </b-col>
             </b-row>    
         </b-col> 
-        <b-col lg="8">
-        <b-form-group
-            label="Хайлт"
-            label-cols-sm="1"
-            label-align-sm="left"
-            label-size="sm"
-            label-for="filterInput"
-            class="mb-2 mt-3"
-            >
-            <b-input-group size="sm">
-                <b-form-input
+        
+        <b-col lg="6" class="pt-3">
+            <input 
+                type="search"
                 v-model="filter"
                 @keyup="filterChange"
                 @change="filterChange"
                 id="filterInput"
-                placeholder="Хайлт хийх утгаа оруулна уу"
-               
-                ></b-form-input>
-                <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
-                      @click="doSearch"> 
-                    Шүүх 
-                </b-button>
-            </b-input-group>
-            </b-form-group>
+                placeholder="Iздейтiн сөз"   
+                class="form-control"
+            >
+            <b-button size="sm" class="ml-3" v-if="beginDate!='' || filter!=''"
+                    @click="doSearch"> 
+                Талдау 
+            </b-button>
         </b-col>
     
-        <b-col lg="4" class="pt-3 text-right">
-            <strong>тоо:</strong> {{totalRows}}  
+        <b-col lg="3" class="pt-3 text-right">
+            <strong>саны:</strong> {{totalRows}}  
+        </b-col>
+        <b-col lg="3" class="pt-3 text-right">
+            <b-icon icon="arrow-repeat" id="salaryOk"
+                href="#"
+                tabindex="0"
+                v-b-tooltip.hover
+                @click="tableRefresher"
+                title="Жүктеу"
+                style="cursor:pointer"
+                variant="success" font-scale="2"
+            >
+            </b-icon>  
         </b-col>
         <b-table 
             
@@ -70,7 +72,7 @@
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
                 <b-spinner class="align-middle"></b-spinner>
-                <strong>Ачаалж байна...</strong>
+                <strong>Жүктелуде...</strong>
             </div>
             </template>
             <template v-slot:cell(workInfo)="del">
@@ -92,7 +94,7 @@
                             :tableRefresher="tableRefresher" :showToast="showToast"/>
                         <b-badge variant="danger">
                             {{del.item.kusokStatus==0 
-                                ? 'Шинэ' : del.item.kusokStatus=='1' ? 'Наагдаж байна' : 'Наагдсан'}}
+                                ? 'Жапсырылмаған' : del.item.kusokStatus=='1' ? 'Жапсырылуда' : 'Жапсырылған'}}
                         </b-badge>
 
                        
@@ -137,7 +139,7 @@ export default {
             fields: [
                 {
                     key: 'workInfo',
-                    label: 'Кусок пвх мэдээлэл'
+                    label: 'Жұмыс ақпараты'
                 }
             ],
             isBusy:false,
@@ -163,7 +165,7 @@ export default {
             this.$bvToast.toast(
                 msg,
                 {
-                    title:"Мэдээлэл",
+                    title:"Ақпарат",
                     variant:variant,
                     toaster:'b-toaster-bottom-left'
                 }
@@ -232,7 +234,7 @@ export default {
                 return result.gridData.items;
             }).catch(error => {
                 this.$bvToast.toast(error.message, {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате ақпараты',
                     autoHideDelay: 5000,
                     variant:"danger"
                 })  

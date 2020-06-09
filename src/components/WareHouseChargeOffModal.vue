@@ -13,20 +13,20 @@
                     <b-col lg="4" sm="auto" md="3">
                         <label for="productCat">Төрөл</label>
                         <select v-model="catId" @change="catChange" class="form-control">
-                            <option value=0>--сонгох--</option>
+                            <option value=0>--таңдау--</option>
                             <option v-for="(c ,i) in comProductCats" :value=c.catId :key="i">
                                 {{c.catName}}
                             </option>
                         </select>
                     </b-col>
                     <b-col lg="4" sm="auto" md="4">
-                        <label class="mr-sm-2" >Өнгө сонгох</label>
+                        <label class="mr-sm-2" >Өнгө таңдау</label>
                         <model-list-select
                             :list="productColors"
                             option-value="id"
                             option-text="name"
                             v-model="selectedColor"
-                            placeholder="Өнгө сонгох"
+                            placeholder="Өнгө таңдау"
                             @searchchange="searchColor"
                             :isDisabled="catId==0 ? true : false"
                         >
@@ -35,7 +35,7 @@
                     <b-col lg="4" sm="auto" md="3">
                         <label for="productCat">Хэмжээ</label>
                         <select @change="findProduct" :disabled=" !selectedColor.id ? true : false " v-model="measureId" class="form-control">
-                            <option value=0>--сонгох--</option>
+                            <option value=0>--таңдау--</option>
                             <option v-for="(c ,i) in productFilteredMeasures" :value=c.id :key="i">
                                 {{c.measureName}}
                             </option>
@@ -140,7 +140,7 @@
                         <template v-slot:table-busy>
                             <div class="text-center text-info my-2">
                                 <b-spinner class="align-middle"></b-spinner>
-                                <strong>Ачаалж байна...</strong>
+                                <strong>Жүктелуде...</strong>
                             </div>
                         </template>
                         
@@ -314,7 +314,7 @@
                 }
             },
             chargeOffProduct(){
-                if(confirm("Та итгэлтэй байна уу ?")){
+                if(confirm("Сіз сенімдісіз бе ?")){
                     if(this.selectedProduct.id 
                             && this.selectedProduct.id>0){
                         let dbChargeOffDate = null;

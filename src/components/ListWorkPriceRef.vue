@@ -49,7 +49,7 @@
                                 <template v-slot:table-busy>
                                     <div class="text-center text-info my-2">
                                     <b-spinner class="align-middle"></b-spinner>
-                                    <strong>Ачаалж байна...</strong>
+                                    <strong>Жүктелуде...</strong>
                                     </div>
                                 </template>
                                 
@@ -79,7 +79,7 @@
                                         id="catId"
                                         v-model="workPriceForm.catId"
                                     >
-                                        <option value=-1>--сонгох--</option>
+                                        <option value=-1>--таңдау--</option>
                                         <option v-for="(p,i) in productCats.filter(c=>c.catName!='PVH')" :key="i" :value="p.catId">
                                             {{p.catName}}
                                         </option>
@@ -169,7 +169,7 @@ export default {
     },
     methods:{
         deleteWorkPriceRecord(){
-            let warn = confirm("Та итгэлтэй байна уу ?");
+            let warn = confirm("Сіз сенімдісіз бе ?");
             if(warn){
                 if(this.selectedWorkPriceRows.length>0){
                 let o = new Object();
@@ -216,7 +216,7 @@ export default {
             evt.preventDefault();
             if(this.workPriceForm.catId==-1){
                     this.$bvToast.toast("Та ажлын төрөл сонгоно уу!!!", {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате туралы ақпарат',
                     autoHideDelay: 5000,
                     variant:'danger'
                 })
@@ -225,9 +225,9 @@ export default {
             axios.post(apiDomain+'/admin/delivery/addlistworkprice/',this.workPriceForm,{headers:getHeader()})
             .then(()=>{
                 
-                let alertMsg = "Шинээр ажлын хөлс амжилттай үүслээ";
+                let alertMsg = "Шинээр ажлын хөлс Жетістіктай үүслээ";
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000,
                     variant:"success"
                 })  
@@ -244,7 +244,7 @@ export default {
             .catch(error => {
                     //console.log(error.message)
                     this.$bvToast.toast(error.message, {
-                        title: 'Алдааны мэдээлэл',
+                        title: 'Қате туралы ақпарат',
                         autoHideDelay: 5000,
                         variant:'danger'
                     })

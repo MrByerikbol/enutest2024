@@ -56,7 +56,7 @@
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
                 <b-spinner class="align-middle"></b-spinner>
-                <strong>Ачаалж байна...</strong>
+                <strong>Жүктелуде...</strong>
             </div>
             </template>
            <template v-slot:cell(getDetail)="row">
@@ -116,20 +116,20 @@
                         <b-col lg="4" sm="auto" md="3">
                             <label for="productCat">Төрөл</label>
                             <select v-model="catId" @change="catChange" class="form-control">
-                                <option value=0>--сонгох--</option>
+                                <option value=0>--таңдау--</option>
                                 <option v-for="(c ,i) in productCats" :value=c.catId :key="i">
                                     {{c.catName}}
                                 </option>
                             </select>
                         </b-col>
                         <b-col lg="4" sm="auto" md="4">
-                            <label class="mr-sm-2" >Өнгө сонгох</label>
+                            <label class="mr-sm-2" >Өнгө таңдау</label>
                             <model-list-select
                                 :list="productColors"
                                 option-value="id"
                                 option-text="name"
                                 v-model="selectedColor"
-                                placeholder="Өнгө сонгох"
+                                placeholder="Өнгө таңдау"
                                 @searchchange="searchColor"
                                 :isDisabled="catId==0 ? true : false"
                             >
@@ -138,7 +138,7 @@
                         <b-col lg="4" sm="auto" md="3">
                             <label for="productCat">Хэмжээ</label>
                             <select @change="findProduct" :disabled=" !selectedColor.id ? true : false " v-model="measureId" class="form-control">
-                                <option value=0>--сонгох--</option>
+                                <option value=0>--таңдау--</option>
                                 <option v-for="(c ,i) in productFilteredMeasures" :value=c.id :key="i">
                                     {{c.measureName}}
                                 </option>
@@ -257,7 +257,7 @@
                             <template v-slot:table-busy>
                                 <div class="text-center text-info my-2">
                                     <b-spinner class="align-middle"></b-spinner>
-                                    <strong>Ачаалж байна...</strong>
+                                    <strong>Жүктелуде...</strong>
                                 </div>
                             </template>
                            
@@ -296,7 +296,7 @@
             <b-form-row>
                 <b-col lg="6">
                     <select class="form-control-sm mt-3" v-model="wId" @change="getWareHouseProduct">
-                        <option value=0>---Агуулах сонгох---</option>
+                        <option value=0>---Агуулах таңдау---</option>
                         <option v-for="(w,index) in wareHouses" :value="w.wareHouseId" :key="index">
                             {{w.wareHouseName}}
                         </option>
@@ -331,6 +331,8 @@
                 <b-table 
                     ref="wareHouseProductTable"
                     striped hover selectable
+                    responsive
+                    small
                     :items="wareHouseProductProvider" 
                     :fields="wareHouseProductFields"
                     :busy.sync="isBusyWareHouseProduct"
@@ -361,7 +363,7 @@
                     <template v-slot:table-busy>
                         <div class="text-center text-info my-2">
                             <b-spinner class="align-middle"></b-spinner>
-                            <strong>Ачаалж байна...</strong>
+                            <strong>Жүктелуде...</strong>
                         </div>
                     </template>
                    
@@ -730,7 +732,7 @@ export default {
         //this.$refs.detailTableRef.refresh();
     },
     addProduct(){
-        if(confirm("Та итгэлтэй байна уу ?")){
+        if(confirm("Сіз сенімдісіз бе ?")){
             if(this.selectedProduct.id 
                     && this.selectedProduct.id>0){
                 let dbChargeDate = null;
@@ -828,7 +830,7 @@ export default {
         
     },
     deleteRecord(){
-      let warn = confirm("Та итгэлтэй байна уу ?");
+      let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
         if(this.selectedRows.length>0){
           let o = new Object();
@@ -876,9 +878,9 @@ export default {
           evt.preventDefault();
           axios.post(apiDomain+'/admin/delivery/addwarehouse/',this.wareHouseForm,{headers:getHeader()})
             .then(()=>{
-                let alertMsg = "Шинээр агуулах амжилттай үүслээ";
+                let alertMsg = "Шинээр агуулах Жетістіктай үүслээ";
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })  
                 this.$bvModal.hide('wareHouseModal')
@@ -892,7 +894,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Амжилт',
+                    title: 'Жетістік',
                     autoHideDelay: 5000
                 })
             }

@@ -1,6 +1,6 @@
 <template>
      <b-row>
-        <h6 class="pl-4">Хийгдэх нэмэлт ажлууд</h6>
+        <h6 class="pl-4">Орындалатын қосымша жұмыс</h6>
         <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3"
                 v-for="(work,workIndex) in listWorks" :key="workIndex">
                
@@ -12,17 +12,17 @@
                         {{work.workName}}
                     </b-badge>
                     <b-badge  class="ml-1">
-                        {{'Ажлын тоо : '+work.workCount}}
+                        {{'Жұмыс саны : '+work.workCount}}
                     </b-badge>
                     <b-badge  class="ml-1" >
-                        {{'Хийсэн : '+work.doneWorkCount}}
+                        {{'Істелген : '+work.doneWorkCount}}
                     </b-badge>
 
                     <br v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0">
                     <b-badge 
                         v-if="work.myUnconfirmedCount && work.myUnconfirmedCount>0"
                         variant="danger" class="ml-2 mt-1 float-right">
-                        {{'Миний баталагдаагүй ажил : '+ work.myUnconfirmedCount}}
+                        {{'Расталмаған жұмысым: '+ work.myUnconfirmedCount}}
                     </b-badge>
                 </b-button>
                 
@@ -31,14 +31,19 @@
             <div v-if="dStatus==1 && !isPvh" class="float-left ml-1 margin-bottom-sm">
                 <input type="number"
                     style="width:60px"
+                    :disabled="(work.myConfirmations && work.myConfirmations.length>0) 
+                                        || (work.myJudges && work.myJudges.length>0)"
                     :max="Number(work.workCount)-Number(work.doneWorkCount)"
+                     min="0"
                     v-model=work.doingCount>
                 <b-dropdown size="sm" class="ml-2" right
                         id="dropdown-text"   variant="warning" text="Хийх">
-                    <b-dropdown-item-button v-if="work.doingCount>0 
+                    <b-dropdown-item-button 
+                            v-if="work.doingCount>0 
+                            && work.myConfirmations.length==0 
                             && work.doingCount <= (Number(work.workCount)-Number(work.doneWorkCount))"
                             @click="doneWork(work)">
-                        Хийх
+                        Істеу
                     </b-dropdown-item-button>
 
                     <b-dropdown-divider v-if="work.myConfirmations 
@@ -46,7 +51,7 @@
                     <b-dropdown-text 
                         v-if="work.myConfirmations 
                             && work.myConfirmations.length>0" class="text-danger" >
-                        Миний батлах 
+                        Растау 
                     </b-dropdown-text>
                         <b-dropdown-item-button   v-for="(confirmation,conIndex) in
                             work.myConfirmations" :key="conIndex" 
@@ -56,7 +61,7 @@
 
                     <b-dropdown-divider v-if="work.myJudges && work.myJudges.length>0"></b-dropdown-divider>
                     <b-dropdown-text v-if="work.myJudges && work.myJudges.length>0" class="text-warning">
-                        Намайг батлах
+                        Расталыну
                     </b-dropdown-text>
                     <b-dropdown-item-button disabled v-for="(judge,jIndex) in
                         work.myJudges" :key="jIndex">
@@ -119,7 +124,7 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                    
-                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'қате шықты қайта көрнiз !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')
@@ -129,7 +134,7 @@ export default {
                 .catch(error => {
                     //console.log(error.message)
                     this.$bvToast.toast(error.message, {
-                        title: 'Алдааны мэдээлэл',
+                        title: 'Қате туралы ақпарат',
                         autoHideDelay: 5000,
                         variant:"danger"
                     })
@@ -140,24 +145,24 @@ export default {
         doneWork(work){
             
             if(!work.doingCount || Number(work.doingCount)==0){
-                this.showToast("Та зүссэх тоогоо оруулна уу.","danger");
+                this.showToast("Жумыс санын енгізіңіз.","danger");
                 work.doingCoun=0;
                 return ;
                 
             }
             if(work.myJudges || work.myConfirmations) {
                 if(work.myJudges && work.myJudges.length>0){
-                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    this.showToast("Сiз растамағансыз немесе расталмағансыз.","danger");    
                     return ;
                 }
                 if(work.myConfirmations && work.myConfirmations.length>0){
-                    this.showToast("Та баталгаажуулалт хийгээгүй эсвэл баталагдаагүй байна.","danger");    
+                    this.showToast("Сiз растамағансыз немесе расталмағансыз.","danger");    
                     return ;
                     
                 }
             }
             if(Number(work.doingCount)>Number(work.workCount)-Number(work.doneWorkCount)){
-                this.showToast("Та буруу тоо оруулсан байна","danger");
+                this.showToast("Сіз қате сан енгіздіңіз","danger");
                 work.doingCount=0;
                 return ;
             }
@@ -173,7 +178,7 @@ export default {
                     this.loading=false;
                     let rText = response.data;
                     //alert(rText);
-                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'Алдаа үүслээ дахин оролдоно уу !!!';
+                    let msg = rText =='success' ? 'Операция сәтті аяқталды.' : 'қате шықты қайта көрнiз !!!';
                     let variant =rText =='success' ? 'success' : 'danger';
 
                     if(rText=='success')
@@ -197,8 +202,7 @@ export default {
             .then((response)=>{
                this.loading=false;
                let rText = response.data;
-               let msg = rText =='success' ? 'Операция сәтті аяқталды.' : " Та баталгаажуулаагүй "
-                    +" хйисэн ажлууд эсвэл танд баталгаа хийлгээгүй ажлууд байна !!!";
+               let msg = rText =='success' ? 'Операция сәтті аяқталды.' : "Сiз растамағансыз немесе расталмағансыз. ";
                let variant =rText =='success' ? 'success' : 'danger';
 
                if(rText=='success'){
@@ -212,7 +216,7 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Алдааны мэдээлэл',
+                    title: 'Қате туралы ақпарат',
                     autoHideDelay: 5000,
                     variant:"danger"
                 })
