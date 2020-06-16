@@ -33,7 +33,15 @@
                
                 <b-dropdown size="sm" class="ml-2" right
                         id="dropdown-text"   variant="danger" text=" ПВХ жабыстыру">
-                    <b-dropdown-item-button v-if="Number(detail.productCount)-Number(detail.doneCount)>0"
+                    <b-dropdown-item-button
+
+                            v-if="
+                                ((!detail.myJudges || detail.myJudges.length==0) 
+                                && Number(detail.productCount)-Number(detail.doneCount))>0
+                                &&
+                                ((!detail.myConfirmations || detail.myConfirmations.length==0) 
+                                && Number(detail.productCount)-Number(detail.doneCount))>0
+                            "
                             @click="donePvh(detail)">
                         Жабыстыру
                     </b-dropdown-item-button>
@@ -43,7 +51,7 @@
                     <b-dropdown-text 
                         v-if="detail.myConfirmations 
                             && detail.myConfirmations.length>0" class="text-danger" >
-                        Мен растау 
+                        Растау 
                     </b-dropdown-text>
                         <b-dropdown-item-button   v-for="(confirmation,conIndex) in
                             detail.myConfirmations" :key="conIndex" 
@@ -53,7 +61,7 @@
 
                     <b-dropdown-divider v-if="detail.myJudges && detail.myJudges.length>0"></b-dropdown-divider>
                     <b-dropdown-text v-if="detail.myJudges && detail.myJudges.length>0" class="text-warning">
-                        Менi растау
+                        Расталыну
                     </b-dropdown-text>
                     <b-dropdown-item-button disabled v-for="(judge,jIndex) in
                         detail.myJudges" :key="jIndex">

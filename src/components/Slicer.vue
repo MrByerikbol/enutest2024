@@ -141,7 +141,7 @@
                                          work.doingCount>0 
                                          && work.myConfirmations.length==0 
                                          && work.doingCount <= (Number(work.productCount)-Number(work.doneCount))"
-                                         @click="doneWork(work)">
+                                         @click="doneWork(work,work.listUsers)">
                                          Кесу
                                     </b-dropdown-item-button>
                                     <b-dropdown-divider v-if="work.myConfirmations 
@@ -358,7 +358,13 @@ export default {
             }
             
         },
-        doneWork(work){
+        doneWork(work,members){
+            if(members.filter(m=>m.isActive==1).length>2){
+                let memberConfirm = confirm("Бул жумуысты 2 ден жогары"
+                +" белсенди кесушилер кесуде сиз сенимдисиз бе ?");
+                if(!memberConfirm)
+                    return ;
+            }
             
             if(!work.doingCount || Number(work.doingCount)==0){
                 this.showToast("Кесу санын енгізіңіз..","danger");

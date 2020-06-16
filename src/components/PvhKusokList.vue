@@ -92,12 +92,7 @@
                       @click="editPvhKusok(row.item.kusokId)" class="mr-1" size="sm" >
                       <font-awesome-icon icon="pen"  title="Тапсырысты жөндеу"/>
                     </b-button>
-                     <!-- <b-button
-                        :disabled="row.item.kusokStatus>1 ? true :false"
-                        @click="completePvhKusok(row.item.kusokId)" 
-                        variant="outline-warning" class="mr-1" size="sm" >
-                        <font-awesome-icon icon="check"  title="Захиалага дуусгах"/>
-                    </b-button> -->
+                   
                     <b-button v-if="row.item.kusokStatus==0" variant="outline-danger" class="mr-1" size="sm" >
                       <font-awesome-icon icon="window-close"
                          @click="deleteKusokPvh(row.item.kusokId)" title="Тапсырысты жою"/>
@@ -106,7 +101,7 @@
 
             </template>
             <template v-slot:row-details="row">
-               
+                <b-card>
                     <h6>пвх - лар</h6>
                     <b-table striped hover :fields="pvhFields" table-variant="primary" 
                         :items="row.item.relDetails">

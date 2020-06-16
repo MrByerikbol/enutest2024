@@ -602,7 +602,6 @@ export default {
         })
     },
     getRefs(type){
-     
       axios.get(apiDomain+'/admin/delivery/refs/'+type,{headers:getHeader()})
           .then(response=>{
               if(type==7){

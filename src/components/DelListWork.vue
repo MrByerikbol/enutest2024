@@ -6,7 +6,7 @@
                
             <div class="float-left mb-1 pl-4">
                 <Loading v-if="loading"/>
-                <b-button size="sm" v-if="!loading" @dblclick="getListWork(work.workId)" variant="outline-warning">
+                <b-button  size="sm" v-if="!loading" @dblclick="getListWork(work.workId)" variant="outline-warning">
 
                     <b-badge>
                         {{work.workName}}

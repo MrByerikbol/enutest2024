@@ -136,9 +136,8 @@
                                 id="productPrice"
                                 v-model="choosenProducts[index].productPrice"
                                 type="number"
-                                disabled
                                 required
-                                
+                                disabled
                             >
                         </b-col>
                         <b-col sm="auto"  md="1" lg="1">
@@ -454,6 +453,46 @@
                                  
                             </b-form-row>
                         </b-col>
+                        <b-col lg="6" v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
+                            <label class="mr-sm-2" for="totalPrice">
+                                <small>Дайын берген</small>
+                            </label>
+                            <input
+                                class="d-block small-font" 
+                                style="width:100% !important;
+                                height : 25px !important;"
+                                id="totalPrice"
+                                v-model=deliveryObject.takenCostByCash
+                                type="number"
+                                min="0"
+                                oninput="(function(e){e.setCustomValidity(''); return !e.validity.valid && e.setCustomValidity(' ')})(this)"
+                                oninvalid="this.setCustomValidity('Дайын жане карт аркылы берилген есеп косындысы жалпы сомадан артык болуга болмайды !!!')"
+                                :max="
+                                    (totalPriceOfOrder-deliveryObject.takenCostByCard)<0 ?
+                                    0 : totalPriceOfOrder-deliveryObject.takenCostByCard
+                                "
+                            />    
+                        </b-col>
+                        <b-col lg="6" v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
+                            <label class="mr-sm-2" for="totalPrice">
+                                <small>Картбен берген</small>
+                            </label>
+                            <input
+                                class="d-block small-font" 
+                                style="width:100% !important;
+                                height : 25px !important;"
+                                id="totalPrice"
+                                v-model=deliveryObject.takenCostByCard
+                                type="number"
+                                min=0
+                                :max="
+                                    (totalPriceOfOrder-deliveryObject.takenCostByCash)<0 ?
+                                    0 : totalPriceOfOrder-deliveryObject.takenCostByCash
+                                "
+                                oninput="(function(e){e.setCustomValidity(''); return !e.validity.valid && e.setCustomValidity(' ')})(this)"
+                                oninvalid="this.setCustomValidity('Дайын жане карт аркылы берилген есеп косындысы жалпы сомадан артык болуга болмайды !!!')"
+                            />    
+                        </b-col>
                     </b-form-row>
                     <b-form-row class="py-3 " v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
                         <b-col lg="2">
@@ -466,7 +505,9 @@
                         
                          <b-col lg="10" class="text-right text-info font-weight-bold" style="text-decoration:underline !important;">
                             Тапсырыстың жалпы сомасы : {{totalPriceOfOrder}}
-                        </b-col>
+                            <br>
+                            <span class="text-danger">Тапсырыстың жалпы карызы : {{loanOfCurrentOrder}}</span>
+                         </b-col>
                         
                         
                     </b-form-row>
@@ -945,9 +986,19 @@
                 );
             },
             onSubmit(evt) {
-                this.submitted=true;
-                evt.preventDefault()
+               
+                evt.preventDefault();
                 if(this.choosenProducts.length>0){
+                    if(Number(Number(this.deliveryObject.takenCostByCash)
+                        +Number(this.deliveryObject.takenCostByCard))>Number(this.totalPriceOfOrder)){
+                            this.$bvToast.toast('Дайын жане карт аркылы берилген есеп косындысы жалпы сомадан артык болуга болмайды !!!', {
+                                title: 'Қате',
+                                variant:'danger',
+                                autoHideDelay: 5000
+                            });
+                            return ;
+                    }
+                    this.submitted=true;
                     let looped = null;
                     for(let l=0;l<this.choosenProducts.length;l++){
                         let choosed=this.choosenProducts[l];
@@ -1150,7 +1201,10 @@
         },
         
         computed: {
-            
+            loanOfCurrentOrder :function(){
+                return this.totalPriceOfOrder
+                    -this.deliveryObject.takenCostByCash-this.deliveryObject.takenCostByCard;
+            },
             ...mapState([
                 'users',
                 'deliveryFormObject',

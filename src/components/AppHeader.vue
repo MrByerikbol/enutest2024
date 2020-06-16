@@ -103,14 +103,11 @@ export default {
       this.setDeliveryRefs(2);
       this.setDeliveryRefs(9);
       this.setDeliveryRefs(10);
-
       this.setDeliveryRefs(7);
       this.setDeliveryRefs(11);
       this.setDeliveryRefs(12);
       this.setDeliveryRefs(13);
       this.setDeliveryRefs(14);
-
-      
       if(this.$route.name.trim()!='NewDelivery'){
         this.$router.push({name:'NewDelivery'});
       }

@@ -97,7 +97,7 @@
                         <b-button
                             @click="changeWaitingStatus(del.item.deliveryId)"
                             variant="outline-warning" size="sm" class="mb-2 ml-2">
-                            {{dStatus=='-1' ? 'Кесу' : 'Күттiру'}}
+                            {{dStatus=='-1' ? 'Жабыстыру' : 'Күттiру'}}
                         </b-button>
                         <div style="clear:left;" class="mt-1 w-100 d-inline-block pl-3"
                              v-for="(work,workIndex) in del.item.deliveryProducts" :key="workIndex">
@@ -131,19 +131,16 @@
                                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                                 </b-badge>
                             </div>
-                            <DelListWork v-if="work.listWorks 
+                            <!-- <DelListWork v-if="work.listWorks 
                                         && work.listWorks.length>0"
                                         :listWorks="work.listWorks" 
                                 :dStatus="dStatus" 
                                 :isPvh="true"
                                 :showToast="showToast"
-                                :tableRefresher="tableRefresher"></DelListWork>
-                            
+                                :tableRefresher="tableRefresher"></DelListWork> -->
                             <DelPvh
                                 v-if="work.relDetails 
-                                        && work.relDetails.length>0" 
-
-                                        
+                                        && work.relDetails.length>0"                                         
                                 :relDetails="work.relDetails" 
                                 :dStatus="dStatus" 
                                 :showToast="showToast"
@@ -198,7 +195,7 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 import Loading from './Loading';
-import DelListWork from './DelListWork';
+// import DelListWork from './DelListWork';
 import DelPvh from './DelPvh';
 
 
@@ -209,7 +206,7 @@ export default {
     components:{
         Datepicker,
         Loading,
-        DelListWork,
+       //DelListWork,
         DelPvh
     },
     data(){

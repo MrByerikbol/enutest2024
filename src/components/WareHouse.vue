@@ -321,7 +321,23 @@
                         </b-input-group>
                     </b-form-group>
                 </b-col>
-                
+                <b-col lg="12">
+                    <b-form-row v-if="wId>0">
+                        <b-col lg="6" md="6" sm="12">
+                            <span class="w-100 mb-2">Баланс басталуы</span>
+                            <input placeholder="Баланс басталуы" 
+                                v-model="balanceBegin"
+                                @change="balanceKeyChange"
+                                class="form-sm-control w-100" type="number"/>
+                        </b-col>    
+                        <b-col lg="6" md="6" sm="12">
+                            <span class="w-100 mb-2">Баланс аякталуы</span>
+                            <input placeholder="Баланс аякталуы"
+                                @change="balanceKeyChange"
+                                v-model="balanceEnd" class="form-sm-control float-right w-100" type="number"/>
+                        </b-col>    
+                    </b-form-row>    
+                </b-col> 
                 <b-col lg="12" class="py-3 text-right text-info">
                     Барааны нийт тоо:<strong>{{sumOfProductCount}}</strong>
                     Нийлбэр үнэ:<strong>{{sumOfProductPrice}}</strong>
@@ -557,10 +573,15 @@ export default {
       //the additional development
       productMeasures: [],
       productFilteredMeasures:[],
-      productCats : []
+      productCats : [],
+      balanceBegin:0,
+      balanceEnd:0
     }
   },
   methods:{
+    balanceKeyChange(){
+        this.$refs.wareHouseProductTable.refresh();
+    },
     catChange(){
         if(this.catId>0){
             this.productFilteredMeasures=this.productMeasures.filter(m=>m.catId===this.catId);
@@ -930,7 +951,8 @@ export default {
     wareHouseProductProvider(ctx){
         
         if(this.wId>0){
-           
+            ctx.balanceBegin=this.balanceBegin;
+            ctx.balanceEnd=this.balanceEnd;
             ctx.wareHouseId = this.wId;
             this.isBusyWareHouseProduct = false;
             let promise = axios.post(apiDomain+'/admin/bay_warehouse/getwarehouseproducts',ctx,{headers:getHeader()});

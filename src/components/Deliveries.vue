@@ -270,6 +270,7 @@
              </b-row>                 
           </b-card-text>
         </b-tab>
+        
         <b-tab title="Iстелген">
           <b-card-text>
             <b-row>
@@ -397,6 +398,12 @@
              </b-row>  
           </b-card-text>
         </b-tab>
+        <b-tab title="Кеңейтілген іздеу жане касса есебі">
+          <b-card-text v-show="tabIndex==3">
+            <AdvancedOrderSearch :beginDate="beginDate"
+               :endDate="endDate" :tabIndex="tabIndex"></AdvancedOrderSearch>  
+          </b-card-text>
+        </b-tab>
       </b-tabs>
     </b-card>
   </div>
@@ -407,12 +414,14 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import {mapState,mapActions} from 'vuex';
 import Datepicker from 'vuejs-datepicker';
+import AdvancedOrderSearch from './AdvancedOrderSearch'
 const moment = require('moment')
 require('moment/locale/es')
 export default {
   name: 'Deliveries',
   components: {
-    Datepicker
+    Datepicker,
+    AdvancedOrderSearch
   },
   data(){
     return {
@@ -431,18 +440,23 @@ export default {
           },
           {
             key: 'totalProductPrice',
-            label: 'Бағасы',
+            label: 'Тапсырыс сомасы',
             variant: 'success'
           },
           {
-            key: 'listCount',
-            label: 'ЛДСП',
+            key: 'takenCostByCash',
+            label: 'Дайын',
             variant: 'warning'
           },
           {
-            key: 'pvhCount',
-            label: 'ПВХ',
+            key: 'takenCostByCard',
+            label: 'Картбен',
             variant: 'primary'
+          },
+          {
+            key: 'deliveryLoan',
+            label: 'Несие',
+            variant: 'danger'
           },
           {
             key: 'orderDate',
@@ -480,7 +494,7 @@ export default {
           },
            {
             key: 'leftCount',
-            label: 'Қалағаны'
+            label: 'Қалғаны'
           },
           {
             key: 'productPrice',
@@ -681,7 +695,7 @@ export default {
       //alert(delId);
       let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
-        let result = this.hasRole("DELIVERY");
+        let result = this.hasRole("OPERATOR");
         let result1 = this.hasRole("MANAGER");
         let result2 = this.hasRole("ADMIN");
 
@@ -716,6 +730,8 @@ export default {
     },
 
     newOrderProvider(ctx){
+        if(this.tabIndex!=0)
+          return ;
         ctx.orderType="new";
         ctx.filter=this.filter;
         if(this.beginDate!=""){
@@ -749,6 +765,8 @@ export default {
         })
     },
     progressOrderProvider(ctx){
+        if(this.tabIndex!=1)
+          return ;
         ctx.orderType="progress";
 
         ctx.filter=this.filter;
@@ -784,10 +802,9 @@ export default {
     },
 
     doneOrderProvider(ctx){
-       
-
+        if(this.tabIndex!=2)
+          return ;
         ctx.orderType="done";
-
         ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
