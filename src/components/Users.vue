@@ -48,7 +48,7 @@
         :table-variant="tableVariant"
         :filter="filter"
         :select-mode="selectMode"
-        selected-variant="active"
+        selected-variant="danger"
       
         @row-selected="onUserSelected"
         >

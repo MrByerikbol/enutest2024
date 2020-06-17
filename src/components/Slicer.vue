@@ -66,7 +66,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :table-variant="tableVariant"
-            selected-variant="active"
+            selected-variant="danger"
             @row-dblclicked="item=>$set(item, '_showDetails', !item._showDetails)"
             >
             <template v-slot:table-busy>

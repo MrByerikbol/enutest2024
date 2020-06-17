@@ -27,16 +27,13 @@
                             <label class="mr-sm-2" for="delshop">Тұтынушы</label>
                             <b-form-row>
                                 <b-col md="8" sm="8" lg="8">
-                                    
                                     <select
-                                        
                                         v-model="deliveryObject.userId"
-                                       
                                         class="form-control"
                                     >
                                         <option value=0>--- Тұтынушы таңдау ---</option>
                                         <option v-for="(u,index) in users" :key="index" :value="u.value">
-                                            {{'Тегі : ' + u.text+ ' ' +' Аты : ' +u.lastName + ' ' +' Тел : ' + u.phoneNumber}}
+                                            {{u.text + '-'+u.lastName+' Тел : ' + u.phoneNumber}}
                                         </option>
                                     </select>
                                 </b-col>
@@ -453,6 +450,10 @@
                                  
                             </b-form-row>
                         </b-col>
+                        
+                    </b-form-row>
+                    
+                    <b-form-row>
                         <b-col lg="6" v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
                             <label class="mr-sm-2" for="totalPrice">
                                 <small>Дайын берген</small>
@@ -495,21 +496,11 @@
                         </b-col>
                     </b-form-row>
                     <b-form-row class="py-3 " v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
-                        <b-col lg="2">
-                            <!-- <label class="label-container text-danger">Зээлээр эсэх
-                                <input @change="checkLoan(deliveryObject.userId,
-                                    totalPriceOfOrder)" type="checkbox" v-model="deliveryObject.isLoan">
-                                <span class="checkmark"></span>
-                            </label>                          -->
-                        </b-col>
-                        
-                         <b-col lg="10" class="text-right text-info font-weight-bold" style="text-decoration:underline !important;">
+                         <b-col lg="12" class="text-right text-info font-weight-bold" style="text-decoration:underline !important;">
                             Тапсырыстың жалпы сомасы : {{totalPriceOfOrder}}
                             <br>
                             <span class="text-danger">Тапсырыстың жалпы карызы : {{loanOfCurrentOrder}}</span>
                          </b-col>
-                        
-                        
                     </b-form-row>
                     <b-form-row>
                         <b-col lg="4">

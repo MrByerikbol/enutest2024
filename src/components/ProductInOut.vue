@@ -100,7 +100,7 @@
                                 :table-variant="'info'"
                                 :filter="filterDetail"
                                 :select-mode="'multi'"
-                                selected-variant="active"
+                                selected-variant="danger"
                             >
                                 
                                 <template v-slot:table-busy>
@@ -210,7 +210,7 @@
                                 :table-variant="'danger'"
                                 :filter="filterOff"
                                 :select-mode="'single'"
-                                selected-variant="active"
+                                selected-variant="danger"
                             >
                                 
                                 <template v-slot:table-busy>

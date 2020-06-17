@@ -88,7 +88,7 @@
                         @keyup="filterChange"
                         @change="filterChange"
                     ></b-form-input>
-                    <b-button :disabled="searching" size="sm" class="ml-3"  @click="doAdvancedSearch">
+                    <b-button size="sm" class="ml-3"  @click="doAdvancedSearch">
                          {{searching ? 'Кеңейтілген іздеу жасалуда...':'Кеңейтілген іздеу жаса'}} 
                     </b-button>
                 </b-input-group>
@@ -112,7 +112,11 @@
             </b-row>
             <b-row  v-for="(s,sIndex) in statisticInfo" :key="sIndex">
                 <b-col lg="6"></b-col>
-                <b-col lg="2" class="text-right">{{s.catName}}</b-col>
+                <b-col lg="2" class="text-right">
+                    {{(s.catName=='PVH' || s.catName=='kusokPVH')
+                     ? s.catName=='PVH' ? 'ПВХ' : ' КУСОК ПВХ' 
+                     : s.catName }}
+                </b-col>
                 <b-col lg="2" class="text-right">{{s.productCount}}</b-col>
                 <b-col lg="2" class="text-right">{{s.totalOrderPrice}}</b-col>
             </b-row>
@@ -211,7 +215,7 @@
         </b-table>
         <b-pagination
             v-model="currentPageAdvanced"
-            :total-rows="advancedTotalRows"
+            :total-rows="totalRowsOfSearch"
             :per-page="perPage"
             align="fill"
             size="sm"
@@ -242,6 +246,11 @@
                         key: 'userInfo',
                         label: 'Тұтынушы',
                         variant: 'danger'
+                    },
+                    {
+                        key: 'totalProductPrice',
+                        label: 'Тапсырыс сомасы',
+                        variant: 'success'
                     },
                     {
                         key: 'takenCostByCash',
@@ -360,9 +369,9 @@
                     }
                 ],
                 isBusy:false,
-                advancedTotalRows:0,
+                
                 currentPageAdvanced:1,
-                perPage: 40,
+                perPage: 33,
                 tableVariant:'light',
                 productCats:[],
                 productColors:[],
@@ -411,8 +420,11 @@
                     .reduce((acc,c)=>acc+c);
                     this.calculating=false;
                 })
-                .catch(error => {
-                    alert(error.message);
+                .catch(() => {
+                    this.calculating=false;
+                    this.searching=false;
+                    //alert(error.message);
+                    this.genSum=0;
                 }) 
             },
             doAdvancedSearch(){
@@ -452,16 +464,11 @@
                     this.isBusy = false;
                     this.totalRowsOfSearch=result.gridData.recordCount;
                     
-                    if(this.beginDate==''){
-                        this.searching =  false;
-                    }
-                    else{
-                        if(!this.calculating){
-                            this.searching=false;
-                        }
-                    }
+                    this.searching=false;
                     return(result.gridData.items)
                 }).catch(error => {
+                    this.calculating=false;
+                    this.searching=false;
                     this.$bvToast.toast(error.message, {
                     title: 'Қате туралы ақпарат',
                     autoHideDelay: 5000,

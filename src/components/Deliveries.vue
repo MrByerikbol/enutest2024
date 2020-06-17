@@ -16,7 +16,7 @@
            active>
           <b-card-text>
             <b-row>
-              <b-col lg="8">
+              <b-col lg="6">
                 <b-form-group
                   label="Іздеу"
                   label-cols-sm="1"
@@ -40,24 +40,29 @@
                 </b-form-group>
                 
               </b-col>
+              <b-col lg="4" class="pt-3">
+                <select class="form-sm-control float-right" v-model="sortType"
+                   @change="sortChange">
+                  <option value="asc">Тапсырыс номерi бойынша</option>
+                  <option value="desc">Жаңа тапсырыс бойынша</option>
+                </select>
+              </b-col>
               
-              
-              <b-col lg="4" class="pt-3 text-right">
+              <b-col lg="2" class="pt-3 text-right">
                 <strong>саны:</strong> {{totalRows}}  
               </b-col>
               <b-table 
-                responsive
-                small 
                 ref="newOrderTable"
-                striped hover 
+                responsive="sm"
+                small 
+                striped hover selectable
                 :items="newOrderProvider" 
                 :fields="fieldsNew"
                 :busy.sync="isBusy"
                 :current-page="currentPage"
                 :per-page="perPage"
                 :table-variant="tableVariant"
-               
-                selected-variant="active"
+                selected-variant="danger"
                 
                 >
                 <template v-slot:table-busy>
@@ -130,6 +135,7 @@
                   </b-card>
                 </template>
               </b-table>
+           
               <b-pagination
                   v-model="currentPage"
                   :total-rows="totalRows"
@@ -145,7 +151,7 @@
         <b-tab title="Iстелуде">
           <b-card-text>
               <b-row>
-                <b-col lg="8">
+                <b-col lg="6">
                   <b-form-group
                     label="Iздеу"
                     label-cols-sm="1"
@@ -170,12 +176,18 @@
                   
                 </b-col>
                 
-                
-                <b-col lg="4" class="pt-3 text-right">
+                <b-col lg="4" class="pt-3">
+                  <select class="form-sm-control float-right" v-model="sortType"
+                    @change="sortChange">
+                    <option value="asc">Тапсырыс номерi бойынша</option>
+                    <option value="desc">Жаңа тапсырыс бойынша</option>
+                  </select>
+                </b-col>
+                <b-col lg="2" class="pt-3 text-right">
                   <strong>саны:</strong> {{totalRowsProgress}}  
                 </b-col>
                 <b-table 
-                  responsive
+                  responsive="sm"
                   small 
                   ref="progressOrderTable"
                   striped hover 
@@ -186,7 +198,7 @@
                   :per-page="perPage"
                   :table-variant="tableVariant"
                 
-                  selected-variant="active"
+                  selected-variant="danger"
                   
                   >
                   <template v-slot:table-busy>
@@ -280,14 +292,14 @@
                     label-cols-sm="1"
                     label-align-sm="left"
                     label-size="sm"
-                    label-for="filterInput"
+                    label-for="filterInputu"
                     class="mb-2 mt-3"
                   >
                     <b-input-group size="sm">
                       <b-form-input
                         v-model="filter"
                        
-                        id="filterInput"
+                        id="filterInputu"
                         placeholder="Iздеу"
                         @keyup="filterChange"
                         @change="filterChange"
@@ -304,7 +316,7 @@
                   <strong>саны:</strong> {{totalRowsDone}}  
                 </b-col>
                 <b-table 
-                  responsive
+                  responsive="sm"
                   small 
                   ref="doneOrderTable"
                   striped hover 
@@ -315,7 +327,7 @@
                   :per-page="perPage"
                   :table-variant="tableVariant"
                 
-                  selected-variant="active"
+                  selected-variant="danger"
                   
                   >
                   <template v-slot:table-busy>
@@ -398,10 +410,15 @@
              </b-row>  
           </b-card-text>
         </b-tab>
-        <b-tab title="Кеңейтілген іздеу жане касса есебі">
+        <b-tab title="Кеңейтілген іздеу">
           <b-card-text v-show="tabIndex==3">
             <AdvancedOrderSearch :beginDate="beginDate"
                :endDate="endDate" :tabIndex="tabIndex"></AdvancedOrderSearch>  
+          </b-card-text>
+        </b-tab>
+        <b-tab title="Касса есебi">
+          <b-card-text v-show="tabIndex==4">
+            Дамуда  
           </b-card-text>
         </b-tab>
       </b-tabs>
@@ -431,7 +448,6 @@ export default {
           {
             key: 'orderNumber',
             label: 'Тапсырыс саны',
-            variant: 'primary'
           },
           {
             key: 'userInfo',
@@ -613,11 +629,16 @@ export default {
 
       tabIndex:0,
       beginDate :"",
-      endDate: ""
+      endDate: "",
+      sortBy: 'orderNumber',
+      sortDesc: false,
+      sortType:"asc"
     }
   },
   methods:{
-    
+    sortChange(){
+      this.refreshTables();
+    },
     doSearch(){
       
       if(this.beginDate || this.filter.length>0){
@@ -682,6 +703,7 @@ export default {
     },
 
     dateFilter(index){
+      this.sortType="asc";
       this.tabIndex=index;
       this.beginDate="";
       this.endDate="";
@@ -733,6 +755,7 @@ export default {
         if(this.tabIndex!=0)
           return ;
         ctx.orderType="new";
+        ctx.sortType=this.sortType;
         ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
@@ -768,7 +791,7 @@ export default {
         if(this.tabIndex!=1)
           return ;
         ctx.orderType="progress";
-
+       ctx.sortType=this.sortType;
         ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
@@ -805,6 +828,7 @@ export default {
         if(this.tabIndex!=2)
           return ;
         ctx.orderType="done";
+        ctx.sortType=this.sortType;
         ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')

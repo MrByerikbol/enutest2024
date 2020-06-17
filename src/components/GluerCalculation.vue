@@ -14,7 +14,7 @@
                 :current-page="currentPage"
                 :per-page="perPage"
                 :table-variant="tableVariant"
-                selected-variant="active"   
+                selected-variant="danger"   
             >
                 <template v-slot:table-busy>
 

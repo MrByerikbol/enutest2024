@@ -48,7 +48,7 @@
           :table-variant="tableVariant"
           :filter="catfilter"
           :small="isSmall"
-          selected-variant="active"
+          selected-variant="danger"
           isSmall=true
           @row-selected="onCatSelected"
           >
@@ -159,7 +159,7 @@
           :table-variant="tableVariant"
           :filter="filter"
           :select-mode="selectMode"
-          selected-variant="active"
+          selected-variant="danger"
           :small="isSmall"
           @row-selected="onProductSelected"
           >
@@ -283,7 +283,7 @@ export default {
           },
           {
             key: 'productOutPrice',
-            label: 'Зарах үнэ',
+            label: 'Зарах үнэ'
           }
       ],
       isBusy:false,

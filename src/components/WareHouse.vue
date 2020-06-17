@@ -49,7 +49,7 @@
             :table-variant="tableVariant"
             :filter="filter"
             :select-mode="selectMode"
-            selected-variant="active"
+            selected-variant="danger"
             @row-dblclicked="rowDoubleClick"
             @row-selected="onWareHouseSelected"
             >
@@ -240,7 +240,7 @@
                             :table-variant="'info'"
                             :filter="filterDetail"
                             :select-mode="selectMode"
-                            selected-variant="active"
+                            selected-variant="danger"
                         
                             @row-selected="onDetailSelected"
                             >
@@ -357,7 +357,7 @@
                     :table-variant="'warning'"
                     :filter="filterWareHouseProduct"
                     :select-mode="selectMode"
-                    selected-variant="active"
+                    selected-variant="danger"
                     @row-dblclicked="inOutDblClick"
                     @row-selected="onWareHouseProductSelected"
                     >

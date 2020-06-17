@@ -28,7 +28,8 @@
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-       
+        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR')"
+           href="javasript:void(0)" @click="showLoanModal">Несие тiркеу</b-nav-item>
 
         <!-- <b-nav-item-dropdown text="Lang" right>
           <b-dropdown-item href="#">EN</b-dropdown-item>
@@ -44,12 +45,14 @@
           <b-dropdown-item v-if="hasRole('SLICER')" href="/#/slicer">Kесу</b-dropdown-item>
           <b-dropdown-item v-if="hasRole('GLUER')" href="/#/gluer">Жабсыру</b-dropdown-item>
           <b-dropdown-item v-if="hasRole('GLUER')" href="/#/kusokgluer">Бөлшек Жабсыру</b-dropdown-item>
+          
           <b-dropdown-item href="javascript:void(0)">Құпия сөз</b-dropdown-item>
           <b-dropdown-item href="javascript:void(0)" @click="logOut">Жүйеден шығу</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
+  <OrderLoan v-if="showOrderLoanModal"></OrderLoan>
 </div>  
 </template>
 
@@ -57,16 +60,23 @@
 import {mapActions,mapState} from 'vuex';
 import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
+import OrderLoan from "./OrderLoan.vue";
 export default {
   name: 'AppHeader',
   data(){
     return {
-      statisticData:null
+      statisticData:null,
+      showOrderLoanModal : false
     }
   },
-  
+  components:{
+    OrderLoan
+  },
   methods:{
-   
+    showLoanModal(){
+      this.showOrderLoanModal=true;
+      this.$bvModal.show("orderLoanModal");
+    },
     getStatistic(){
       this.statisticData=null;
        axios.get(apiDomain+'/admin/getstatistic',{headers:getHeader()})

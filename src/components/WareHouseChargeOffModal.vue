@@ -134,7 +134,7 @@
                         :table-variant="'info'"
                         :filter="filterDetail"
                         :select-mode="'multi'"
-                        selected-variant="active"
+                        selected-variant="danger"
                     >
                         
                         <template v-slot:table-busy>
