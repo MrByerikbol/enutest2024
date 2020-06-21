@@ -256,15 +256,17 @@
                 </b-card>
             </template>
         </b-table>
-        <b-pagination
-            v-model="currentPageAdvanced"
-            :total-rows="totalRowsOfSearch"
-            :per-page="perPage"
-            align="fill"
-            size="sm"
-            class="my-0"
-            
-        ></b-pagination>
+        <div class="w-100">
+            <b-pagination
+                v-model="currentPageAdvanced"
+                :total-rows="totalRowsOfSearch"
+                :per-page="perPage"
+                align="fill"
+                size="sm"
+                class="my-0"
+                
+            ></b-pagination>
+        </div>
     </b-row>      
 </template>
 <script>

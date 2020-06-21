@@ -146,13 +146,12 @@
                                 id="productCount"
                                 v-model="choosenProducts[index].productCount"
                                 type="number"
-                                min="0"
+                                :min="p.isDone==0 ? 0 : p.doneCount"
                                 @change="totalCalculation(index)"
                                 required
-                                :disabled="p.isDone==1 ? true : choosenProducts[index].wareHouseId &&
+                                :disabled="p.isDone==2 ? true : choosenProducts[index].wareHouseId &&
                                            choosenProducts[index].wareHouseId>0 && choosenProducts[index].deliveryProductId>0 ? false : true"
                             />
-
                         </b-col>
                         <b-col sm="auto"  md="1" lg="1">
                             <label class="mr-sm-2" for="totalPrice">
@@ -374,7 +373,7 @@
                                         min="0"
                                         @change="pvhTotalCalculation(c)"
                                         required
-                                        :disabled="c.isDone==1 ? true : c.wareHouseId &&
+                                        :disabled="c.isDone==2 ? true : c.wareHouseId &&
                                                 c.wareHouseId>0 && c.productId>0 ? false : true"
                                     />
 

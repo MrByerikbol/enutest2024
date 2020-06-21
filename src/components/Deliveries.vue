@@ -166,16 +166,17 @@
                   </b-card>
                 </template>
               </b-table>
-           
-              <b-pagination
-                  v-model="currentPage"
-                  :total-rows="totalRows"
-                  :per-page="perPage"
-                  align="fill"
-                  size="sm"
-                  class="my-0"
-                  
-              ></b-pagination>
+              <div class="w-100">
+                <b-pagination
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                    
+                ></b-pagination>
+              </div>
              </b-row>              
           </b-card-text>
         </b-tab>
@@ -331,15 +332,17 @@
                   </b-card>
                 </template>
               </b-table>
-              <b-pagination
-                  v-model="currentPageProgress"
-                  :total-rows="totalRowsProgress"
-                  :per-page="perPage"
-                  align="fill"
-                  size="sm"
-                  class="my-0"
-                  
-              ></b-pagination>
+              <div class="w-100">
+                <b-pagination
+                    v-model="currentPageProgress"
+                    :total-rows="totalRowsProgress"
+                    :per-page="perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                    
+                ></b-pagination>
+              </div>
              </b-row>                 
           </b-card-text>
         </b-tab>
@@ -488,15 +491,17 @@
                   </b-card>
                 </template>
               </b-table>
-              <b-pagination
-                  v-model="currentPageDone"
-                  :total-rows="totalRowsDone"
-                  :per-page="perPage"
-                  align="fill"
-                  size="sm"
-                  class="my-0"
-                  
-              ></b-pagination>
+              <div class="w-100">
+                <b-pagination
+                    v-model="currentPageDone"
+                    :total-rows="totalRowsDone"
+                    :per-page="perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                    
+                ></b-pagination>
+              </div>
              </b-row>  
           </b-card-text>
         </b-tab>
