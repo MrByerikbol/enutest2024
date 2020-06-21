@@ -71,6 +71,12 @@
                     <strong>Жүктелуде...</strong>
                   </div>
                 </template>
+                <template v-slot:cell(orderDate)='regInfo'>
+                    <div class="text-center">
+                      {{regInfo.item.orderDate}}<br>  
+                      <small><strong>{{regInfo.item.regUserInfo}}</strong></small>  
+                    </div>
+                </template>
                 <template v-slot:cell(orderActions)="row">
                     <b-button @click="row.toggleDetails" 
                       variant="outline-success" class="mr-1" size="sm"   >
@@ -105,6 +111,18 @@
                       <template v-slot:cell(pvhCount)="row">
                           {{row.item.relDetails.length}}
                       </template>
+                      <template v-slot:cell(listSlicers)="row">
+                        <span class="text-danger" v-if="row.item.listUsers.length==0">
+                          Кесушiлер тандамаган
+                        </span>
+                        <div style="clear:left;" class="w-100 ">
+                            <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                v-for="(user,userIndex) in row.item.listUsers" 
+                                :key="userIndex">
+                                {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                            </b-badge>
+                        </div>
+                      </template>
                       <template v-slot:cell(isDone)="row">
                         {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                       </template>
@@ -114,9 +132,22 @@
                             <h6>пвх - лар</h6>
                             <b-table striped hover :fields="pvhFields" table-variant="danger" 
                               :items="row.item.relDetails">
-
                               <template v-slot:cell(isDone)="pvh">
                                 {{pvh.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
+                              </template>
+                              <template v-slot:cell(totalPrice)="t">
+                                {{t.item.totalPrice+(t.item.productCount*t.item.workPrice)}}
+                              </template>
+                              <template v-slot:cell(listGluers)="gluer">
+                                <span class="text-danger" v-if="gluer.item.listUsers.length==0">
+                                    Жабсырушы тандамаган
+                                </span>
+                                <div style="clear:left;" class="w-100 ">
+                                    <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                        v-for="(user,userIndex) in gluer.item.listUsers" :key="userIndex">
+                                        {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                                    </b-badge>
+                                </div>
                               </template>
                             </b-table>
                             <b-row>
@@ -207,6 +238,12 @@
                       <strong>Жүктелуде...</strong>
                     </div>
                   </template>
+                  <template v-slot:cell(orderDate)='regInfo'>
+                    <div class="text-center">
+                      {{regInfo.item.orderDate}}<br>  
+                      <small><strong>{{regInfo.item.regUserInfo}}</strong></small>  
+                    </div>
+                  </template>
                   <template v-slot:cell(orderActions)="row">
                       <b-button @click="row.toggleDetails" 
                         variant="outline-success" class="mr-1" size="sm"   >
@@ -242,17 +279,41 @@
                         <template v-slot:cell(isDone)="row">
                           {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                         </template>
+                        <template v-slot:cell(listSlicers)="row">
+                          <span class="text-danger" v-if="row.item.listUsers.length==0">
+                            Кесушiлер тандамаган
+                          </span>
+                          <div style="clear:left;" class="w-100 ">
+                              <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                  v-for="(user,userIndex) in row.item.listUsers" 
+                                  :key="userIndex">
+                                  {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                              </b-badge>
+                          </div>
+                        </template>
                         <!-- pvh jagaaslt -->
                         <template v-slot:row-details="row">
                             <b-card>
                               <h6>пвх - лар</h6>
                               <b-table striped hover :fields="pvhFields" table-variant="danger" 
                                 :items="row.item.relDetails">
-
+                                 <template v-slot:cell(totalPrice)="t">
+                                  {{t.item.totalPrice+(t.item.productCount*t.item.workPrice)}}
+                                </template>
                                 <template v-slot:cell(isDone)="pvh">
                                   {{pvh.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                                 </template>
-                               
+                                <template v-slot:cell(listGluers)="gluer">
+                                  <span class="text-danger" v-if="gluer.item.listUsers.length==0">
+                                      Жабсырушы тандамаган
+                                  </span>
+                                  <div style="clear:left;" class="w-100 ">
+                                      <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                          v-for="(user,userIndex) in gluer.item.listUsers" :key="userIndex">
+                                          {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                                      </b-badge>
+                                  </div>
+                                </template>
                               </b-table>
                               <b-row>
                                 <b-col lg="12" class="text-right py-2">
@@ -345,6 +406,12 @@
                       </center>
                      
                   </template>
+                  <template v-slot:cell(orderDate)='regInfo'>
+                    <div class="text-center">
+                      {{regInfo.item.orderDate}}<br>  
+                      <small><strong>{{regInfo.item.regUserInfo}}</strong></small>  
+                    </div>
+                  </template>
                   <template v-slot:row-details="row">
                     <b-card>
                       <b-row>
@@ -369,18 +436,41 @@
                         <template v-slot:cell(isDone)="row">
                           {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                         </template>
-                       
+                        <template v-slot:cell(listSlicers)="row">
+                          <span class="text-danger" v-if="row.item.listUsers.length==0">
+                            Кесушiлер тандамаган
+                          </span>
+                          <div style="clear:left;" class="w-100 ">
+                              <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                  v-for="(user,userIndex) in row.item.listUsers" 
+                                  :key="userIndex">
+                                  {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                              </b-badge>
+                          </div>
+                        </template>
                         <!-- pvh jagaaslt -->
                         <template v-slot:row-details="row">
                             <b-card>
                               <h6>пвх - нууд</h6>
-                              <b-table striped hover :fields="pvhFieldsDone" table-variant="danger" 
+                              <b-table striped hover :fields="pvhFields" table-variant="danger" 
                                 :items="row.item.relDetails">
-
+                                 <template v-slot:cell(totalPrice)="t">
+                                  {{t.item.totalPrice+(t.item.productCount*t.item.workPrice)}}
+                                </template>
                                 <template v-slot:cell(isDone)="row">
                                   {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                                 </template>
-                               
+                                <template v-slot:cell(listGluers)="gluer">
+                                  <span class="text-danger" v-if="gluer.item.listUsers.length==0">
+                                      Жабсырушы тандамаган
+                                  </span>
+                                  <div style="clear:left;" class="w-100 ">
+                                      <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                          v-for="(user,userIndex) in gluer.item.listUsers" :key="userIndex">
+                                          {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                                      </b-badge>
+                                  </div>
+                                </template>
                               </b-table>
                               <b-row>
                                 <b-col lg="12" class="text-right py-2">
@@ -418,7 +508,7 @@
         </b-tab>
         <b-tab title="Касса есебi">
           <b-card-text v-show="tabIndex==4">
-            Дамуда  
+            <CurrentDayCalculation :beginDate='beginDate' :endDate='endDate'/>  
           </b-card-text>
         </b-tab>
       </b-tabs>
@@ -432,13 +522,15 @@ import {apiDomain,getHeader} from "../config/config";
 import {mapState,mapActions} from 'vuex';
 import Datepicker from 'vuejs-datepicker';
 import AdvancedOrderSearch from './AdvancedOrderSearch'
+import CurrentDayCalculation from './CurrentDayCalculation'
 const moment = require('moment')
 require('moment/locale/es')
 export default {
   name: 'Deliveries',
   components: {
     Datepicker,
-    AdvancedOrderSearch
+    AdvancedOrderSearch,
+    CurrentDayCalculation
   },
   data(){
     return {
@@ -476,7 +568,7 @@ export default {
           },
           {
             key: 'orderDate',
-            label: 'Уақыт',
+            label: 'Уақыт,Тiркеушi',
             variant: 'info'
           },
            
@@ -534,8 +626,12 @@ export default {
            
           },
           {
-            key: 'listActions',
-            label: 'Әрекеттер'
+            key: 'listSlicers',
+            label: 'Кесушiлер'
+          },
+          {
+              key: 'listActions',
+              label: 'Әрекеттер'
           }
       ],
      
@@ -572,40 +668,9 @@ export default {
            
           },
           {
-            key: 'pvhActions',
-            label: 'Әрекеттер'
-          }
-      ],
-      pvhFieldsDone: [
-          {
-            key: 'catName',
-            label: 'Түрі'
-          },
-          {
-            key: 'colorName',
-            label: 'Түсі'
-          },
-          {
-            key: 'measureName',
-            label: 'Көлемі'
-          },
-         
-         
-          {
-            key: 'productCount',
-            label: 'Метр'
-          },
-          {
-            key: 'totalPrice',
-            label: 'Барлығы'
-          },
-          {
-            key: 'wareHouseName',
-            label: 'Қойма'
-          },
-          {
-            key: 'isDone',
-            label: 'Статус'
+            key: 'listGluers',
+            label: 'Жабсырушылар',
+            variant:"primary"
            
           }
       ],

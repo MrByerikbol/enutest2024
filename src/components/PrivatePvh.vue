@@ -29,7 +29,7 @@
                                         >
                                             <option value=0>--- Тұтынушы таңдау ---</option>
                                             <option v-for="(u,index) in users" :key="index" :value=u.value>
-                                                {{'Тегі : ' + u.text+ ' ' +' Аты : ' +u.lastName + ' ' +' Тел : ' + u.phoneNumber}}
+                                                {{u.lastName + ' ' + u.text +' Тел : ' + u.phoneNumber}}
                                             </option>
                                         </select>
                                     </b-col>
@@ -207,13 +207,58 @@
                                 
                                 
                         </b-form-row>
-                        <b-form-row class="py-3">
-                            <b-col lg="12" class="text-right text-info font-weight-bold"
-                                style="text-decoration:underline !important;">
-                                Барлык бағасы : {{totalPriceOfKusokPvh}}
+                         <b-form-row v-if="totalPriceOfKusokPvh>0 && kusokObject.userId>0">
+                            <b-col lg="6">
+                                <label class="mr-sm-2" for="byCash">
+                                    <small>Картбен берген</small>
+                                </label>
+                                <input
+                                    class="form-sm-control w-100" 
+                                   
+                                    id="byCash"
+                                    v-model=kusokObject.takenCostByCard
+                                    type="number"
+                                    min=0
+                                    :max="
+                                        (totalPriceOfKusokPvh-kusokObject.takenCostByCash)<=0 ?
+                                        0 : totalPriceOfKusokPvh-kusokObject.takenCostByCash
+                                    "
+                                    oninput="(function(e){e.setCustomValidity(''); return !e.validity.valid && e.setCustomValidity(' ')})(this)"
+                                    oninvalid="this.setCustomValidity('Дайын жане карт аркылы берилген есеп косындысы жалпы сомадан артык болуга болмайды !!!')"
+                                />        
+                            </b-col> 
+                            <b-col lg="6">
+                                <label class="mr-sm-2" for="byCard">
+                                    <small>Дайын берген</small>
+                                </label>
+                                <input
+                                    id="byCard" 
+                                    type="number" 
+                                    class="form-sm-control w-100"
+                                    min=0
+                                    :max="
+                                        (totalPriceOfKusokPvh-kusokObject.takenCostByCard)<=0 ?
+                                        0 : totalPriceOfKusokPvh-kusokObject.takenCostByCard
+                                    " 
+                                    oninput="(function(e){e.setCustomValidity(''); return !e.validity.valid && e.setCustomValidity(' ')})(this)"
+                                    oninvalid="this.setCustomValidity('Дайын жане карт аркылы берилген есеп косындысы жалпы сомадан артык болуга болмайды !!!')"
+                                    v-model=kusokObject.takenCostByCash>
                             </b-col>
                         </b-form-row>
-                        <b-form-row>
+                        <b-form-row class="pt-3" v-if="totalPriceOfKusokPvh>0">
+                            <b-col lg="12" class="text-right text-info"
+                                style="text-decoration:underline !important;">
+                                Барлык бағасы #: <strong>{{totalPriceOfKusokPvh}}</strong>
+                               
+                            </b-col>
+                        </b-form-row>
+                        <b-form-row v-if="totalLoanOfKusokPvh>0" >
+                            <b-col lg="12" class="text-right text-danger"
+                                style="text-decoration:underline !important;">
+                                Барлык карызы #: <strong>{{totalLoanOfKusokPvh}}</strong>
+                            </b-col>
+                        </b-form-row>
+                        <b-form-row class="pt-2">
                              <b-col lg="4">
                                 <b-alert show variant="warning"  v-if="prematurePvh.length>0">
                                     <h6>Қажетті пвх</h6> 
@@ -610,6 +655,10 @@
             }
         },
         computed: {
+            totalLoanOfKusokPvh:function(){
+                return Number(this.totalPriceOfKusokPvh)-(Number(this.kusokObject.takenCostByCard)+ Number(this.kusokObject.takenCostByCash));
+                    
+            },
             mainValidation:function(){
                 if(this.relDetails.length==0){
                     return false;
@@ -629,6 +678,7 @@
                 }
                 return totalPrice;
             },
+            
             lastBalance:function(){
                 
                 return (wareHouseId,productId) => {

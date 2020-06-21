@@ -455,39 +455,39 @@
                     
                     <b-form-row>
                         <b-col lg="6" v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
-                            <label class="mr-sm-2" for="totalPrice">
+                            <label class="mr-sm-2" for="byCash">
                                 <small>Дайын берген</small>
                             </label>
                             <input
                                 class="d-block small-font" 
                                 style="width:100% !important;
                                 height : 25px !important;"
-                                id="totalPrice"
+                                id="byCash"
                                 v-model=deliveryObject.takenCostByCash
                                 type="number"
                                 min="0"
                                 oninput="(function(e){e.setCustomValidity(''); return !e.validity.valid && e.setCustomValidity(' ')})(this)"
                                 oninvalid="this.setCustomValidity('Дайын жане карт аркылы берилген есеп косындысы жалпы сомадан артык болуга болмайды !!!')"
                                 :max="
-                                    (totalPriceOfOrder-deliveryObject.takenCostByCard)<0 ?
+                                    (totalPriceOfOrder-deliveryObject.takenCostByCard)<=0 ?
                                     0 : totalPriceOfOrder-deliveryObject.takenCostByCard
                                 "
                             />    
                         </b-col>
                         <b-col lg="6" v-if="totalPriceOfOrder>0 && choosenProducts.length>0 && deliveryObject.userId>0">
-                            <label class="mr-sm-2" for="totalPrice">
+                            <label class="mr-sm-2" for="byCard">
                                 <small>Картбен берген</small>
                             </label>
                             <input
                                 class="d-block small-font" 
                                 style="width:100% !important;
                                 height : 25px !important;"
-                                id="totalPrice"
+                                id="byCard"
                                 v-model=deliveryObject.takenCostByCard
                                 type="number"
                                 min=0
                                 :max="
-                                    (totalPriceOfOrder-deliveryObject.takenCostByCash)<0 ?
+                                    (totalPriceOfOrder-deliveryObject.takenCostByCash)<=0 ?
                                     0 : totalPriceOfOrder-deliveryObject.takenCostByCash
                                 "
                                 oninput="(function(e){e.setCustomValidity(''); return !e.validity.valid && e.setCustomValidity(' ')})(this)"

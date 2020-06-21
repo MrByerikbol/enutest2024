@@ -105,13 +105,15 @@
         </b-col> -->
         <b-col lg="12" class="pb-2" v-if="isStatistic">
             <b-row>
-                <b-col lg="6"></b-col>
+                <b-col lg="2"></b-col>
                 <b-col lg="2" class="text-right"><strong>Тауар түрі</strong></b-col>
                 <b-col lg="2" class="text-right"><strong>Тауар саны</strong></b-col>
-                <b-col lg="2" class="text-right"><strong>Тауар сомасы</strong></b-col>
+                <b-col lg="2" class="text-right"><strong>Тауар</strong></b-col>
+                <b-col lg="2" class="text-right"><strong>Жумыс</strong></b-col>
+                <b-col lg="2" class="text-right"><strong>Барлығы</strong></b-col>
             </b-row>
             <b-row  v-for="(s,sIndex) in statisticInfo" :key="sIndex">
-                <b-col lg="6"></b-col>
+                <b-col lg="2"></b-col>
                 <b-col lg="2" class="text-right">
                     {{(s.catName=='PVH' || s.catName=='kusokPVH')
                      ? s.catName=='PVH' ? 'ПВХ' : ' КУСОК ПВХ' 
@@ -119,10 +121,19 @@
                 </b-col>
                 <b-col lg="2" class="text-right">{{s.productCount}}</b-col>
                 <b-col lg="2" class="text-right">{{s.totalOrderPrice}}</b-col>
+                <b-col lg="2" class="text-right">{{s.workPrice}}</b-col>
+                <b-col lg="2" class="text-right">{{s.workPrice+s.totalOrderPrice}}</b-col>
             </b-row>
             <b-row>
                 <b-col lg="12"><hr></b-col>
-                <b-col lg="12" class="text-right">Жалпы сомасы :<strong>{{genSum}}</strong></b-col>
+            </b-row>
+            <b-row>
+                
+                <b-col lg="4"></b-col>
+                <b-col lg="4" class="text-right text-info">Тауар # :<strong>{{productSum}}</strong></b-col>
+                <b-col lg="2" class="text-right text-danger">Жумыс # :<strong>{{workSum}}</strong></b-col>
+
+                <b-col lg="2" class="text-right">Барлық # :<strong>{{genSum}}</strong></b-col>
             </b-row>
         </b-col>
         <b-table 
@@ -155,6 +166,12 @@
                 </center>
                 
             </template>
+            <template v-slot:cell(orderDate)='regInfo'>
+                <div class="text-center">
+                    {{regInfo.item.orderDate}}<br>  
+                    <small><strong>{{regInfo.item.regUserInfo}}</strong></small>  
+                </div>
+            </template>
             <template v-slot:cell(delStatus)="row">
                 <span v-if="row.item.delStatus==0">Жаңа</span>
                 <span v-if="row.item.delStatus==1">Iстелуде</span>
@@ -167,7 +184,9 @@
                             <h6>ЛДСП лер</h6>
                         </b-col>
                     </b-row>
-                    <b-table striped :fields="listFields" hover table-variant="warning" :items="row.item.deliveryProducts">
+                    <b-table
+                     striped 
+                     :fields="listFields" responsive hover table-variant="warning" :items="row.item.deliveryProducts">
                         <template v-slot:cell(listActions)="row">
                             <center>
                                 <b-button 
@@ -178,24 +197,48 @@
                                 </b-button>
                             </center>
                         </template>
+                        
                         <template v-slot:cell(pvhCount)="row">
                             {{row.item.relDetails.length}}
                         </template>
                         <template v-slot:cell(isDone)="row">
                             {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
                         </template>
-                    
+                        <template v-slot:cell(listSlicers)="row">
+                            <span class="text-danger" v-if="row.item.listUsers.length==0">
+                            Кесушiлер тандамаган
+                            </span>
+                            <div style="clear:left;" class="w-100 ">
+                                <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                    v-for="(user,userIndex) in row.item.listUsers" 
+                                    :key="userIndex">
+                                    {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                                </b-badge>
+                            </div>
+                        </template>
                         <!-- pvh jagaaslt -->
                         <template v-slot:row-details="row">
                             <b-card>
                                 <h6>пвх - нууд</h6>
-                                <b-table striped hover :fields="pvhFieldsDone" table-variant="danger" 
-                                :items="row.item.relDetails">
-
-                                <template v-slot:cell(isDone)="row">
-                                    {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
-                                </template>
-                                
+                                <b-table striped hover responsive :fields="pvhFieldsDone" table-variant="danger" 
+                                    :items="row.item.relDetails">
+                                    <template v-slot:cell(totalPrice)="t">
+                                        {{t.item.totalPrice+(t.item.productCount*t.item.workPrice)}}
+                                    </template>
+                                    <template v-slot:cell(isDone)="row">
+                                        {{row.item.isDone==0 ? 'Iстелмеген' : 'Iстелген'}}
+                                    </template>
+                                    <template v-slot:cell(listGluers)="gluer">
+                                        <span class="text-danger" v-if="gluer.item.listUsers.length==0">
+                                            Жабсырушы тандамаган
+                                        </span>
+                                        <div style="clear:left;" class="w-100 ">
+                                            <b-badge :variant="user.isActive==1 ? 'primary' : 'danger' " class="ml-1" style="cursor:pointer;" 
+                                                v-for="(user,userIndex) in gluer.item.listUsers" :key="userIndex">
+                                                {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
+                                            </b-badge>
+                                        </div>
+                                    </template>
                                 </b-table>
                                 <b-row>
                                 <b-col lg="12" class="text-right py-2">
@@ -274,7 +317,7 @@
                     },
                     {
                         key: 'orderDate',
-                        label: 'Уақыт',
+                        label: 'Уақыт,Тiркеушi',
                         variant: 'info'
                     },
                     {
@@ -330,12 +373,17 @@
                     
                     },
                     {
+                        key: 'listSlicers',
+                        label: 'Кесушiлер',
+                        variant:"warning"
+                    },
+                    {
                         key: 'listActions',
                         label: 'Әрекеттер'
                     }
                 ],
                 
-                 pvhFieldsDone: [
+                pvhFieldsDone: [
                     {
                         key: 'catName',
                         label: 'Түрі'
@@ -366,6 +414,12 @@
                         key: 'isDone',
                         label: 'Статус'
                     
+                    },
+                    {
+                        key: 'listGluers',
+                        label: 'Жабсырушылар',
+                        variant:"primary"
+                    
                     }
                 ],
                 isBusy:false,
@@ -384,6 +438,8 @@
                     colorId :0,
                     delStatus:-1
                 },
+                productSum : 0,
+                workPriceSum :0,
                 genSum:0,
                 searching:false,
                 calculating:false
@@ -415,9 +471,16 @@
                 ctx,{headers:getHeader()})
                 .then(response=>{
                     this.statisticInfo=response.data;
-                    this.genSum = this.statisticInfo
+                    this.productSum = this.statisticInfo
                     .map(o=>o.totalOrderPrice)
                     .reduce((acc,c)=>acc+c);
+                    this.calculating=false;
+                    this.workSum = this.statisticInfo
+                    .map(o=>o.workPrice)
+                    .reduce((acc,c)=>acc+c);
+                    //eronhii niit dun 
+                    this.genSum=this.productSum+this.workSum;
+
                     this.calculating=false;
                 })
                 .catch(() => {

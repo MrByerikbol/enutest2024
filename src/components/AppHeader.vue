@@ -13,16 +13,16 @@
         </b-nav-item>
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') || hasRole('DELIVERY')" href="/#/deliveries">Тапсырыстар</b-nav-item>
 
-        <b-nav-item v-if="hasRole('ADMIN') 
+        <b-nav-item v-if="hasRole('ADMIN')  
           || hasRole('MANAGER')" href="javascript:void(0)" @click="doCalculation1">Есеп</b-nav-item>
           
-        <b-nav-item v-if="hasRole('ADMIN')" href="/#/users">Тұтнушылар</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR')" href="/#/users">Тұтнушылар</b-nav-item>
        
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/products">Тауарлар</b-nav-item>
         <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/warehouse">Қойма</b-nav-item>
         
         <b-nav-item v-if="hasRole('DELIVERY')" href="/#/deliverywarehouse">Қойма</b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN')" href="/#/deliveryreport">Ачот</b-nav-item>
+        <!-- <b-nav-item v-if="hasRole('ADMIN')" href="/#/deliveryreport">Ачот</b-nav-item> -->
 
       </b-navbar-nav>
 
