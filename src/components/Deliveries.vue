@@ -706,6 +706,24 @@ export default {
     }
   },
   methods:{
+    checkFirst(){
+      
+      this.cRoleName.roles.forEach(r=>{
+        if(r.roleName=='SLICER'){
+
+          window.location.href = "/#/slicer";         
+          return;
+        }
+        if(r.roleName=='GLUER'){
+          window.location.href = "/#/gluer";         
+          return;
+        }
+        if(r.roleName=='CLIENT'){
+          window.location.href = "/#/client";         
+          return;  
+        }
+      });
+    },
     sortChange(){
       this.refreshTables();
     },
@@ -727,42 +745,6 @@ export default {
         this.refreshTables();
       }
     },
-    completeThings(operationType,objectId,row){
-      let warn =confirm("Та үнэхээр итгэлтэй байна уу ?");
-      if(warn){
-        axios.post(apiDomain+'/admin/order/charge_off_order_products',{'operationType':operationType, 'objectId':objectId},{headers:getHeader()})
-        .then(response=>{
-          this.$bvToast.toast('Операция сәтті аяқталды.', {
-              title: 'Жетістік',
-              autoHideDelay: 5000,
-              variant:"success"
-          })
-          if(row && row!=null){
-            row.item.isDone=1;
-          }
-          //herev shine zahialgiin ali neg list yumuu pvh g complete hiivel refresh
-          if(this.tabIndex==0){
-            this.refreshTables();
-          }
-          else{
-            if(operationType==='completeOrder' || response.data==='complete'){
-              
-              this.refreshTables();  
-            }
-          }
-            
-        })
-        .catch(error => {
-            //console.log(error.message)
-            this.$bvToast.toast(error.message, {
-                title: 'Алдаа',
-                autoHideDelay: 5000,
-                variant:"danger"
-            })
-        }) 
-
-      } 
-    },
     clearBegin(){
       this.beginDate="";
       this.endDate=""
@@ -783,26 +765,7 @@ export default {
     
     
     
-    completeOrder(delId){
-      //alert(delId);
-      let warn = confirm("Сіз сенімдісіз бе ?");
-      if(warn){
-        let result = this.hasRole("OPERATOR");
-        let result1 = this.hasRole("MANAGER");
-        let result2 = this.hasRole("ADMIN");
-
-        if(result || result1 || result2){
-
-          this.changeStatus('done',delId);
-        }
-        else{
-          this.$bvToast.toast("Зөвхөн хүргэгчид энэ үйлдэлийг хийх боломжтой", {
-              title: 'Қате туралы ақпарат',
-              autoHideDelay: 5000
-          })  
-        }
-      }
-    },
+    
     ...mapActions([
         'setDeliveryFormObject',
         'setDeliveryRefs'
@@ -861,7 +824,7 @@ export default {
         if(this.tabIndex!=1)
           return ;
         ctx.orderType="progress";
-       ctx.sortType=this.sortType;
+        ctx.sortType=this.sortType;
         ctx.filter=this.filter;
         if(this.beginDate!=""){
            ctx.beginDate=moment(this.beginDate).format('YYYY-MM-DD')
@@ -951,57 +914,6 @@ export default {
       }
       
     },
-    changeStatus(type,delId){
-       let jsonParam = null;
-       if("ignore"===type){
-         jsonParam = new Object();
-         jsonParam.statusId=2;
-         jsonParam.delId=delId;
-       }
-       if("done"===type){
-         jsonParam = new Object();
-         jsonParam.statusId=1;
-         jsonParam.delId=delId;
-       }
-       if(jsonParam!=null){
-         jsonParam.description=this.deliveryDescription;
-
-         axios.post(apiDomain+'/admin/delivery/changestatus/',jsonParam,{headers:getHeader()})
-        .then(response=>{
-            let responseMsg=response.data;
-            if(responseMsg=='norole'){
-              this.$bvToast.toast("Та зөвхөн өөрийн оруулсан хүргэлт цуцлах боломжтой", {
-                  title: 'Қате туралы ақпарат',
-                  autoHideDelay: 5000
-              });
-              this.deliveryDescription="";
-              return ;
-
-            }
-            this.deliveryDescription="";
-            let alertMsg = null;
-            if("ignore"===type){
-              alertMsg="Жетістіктай цуцлагдлаа"
-            }
-            if("done"===type){
-              alertMsg="Жетістіктай хүргэлт хийгдлээ"
-            }
-            this.$bvToast.toast(alertMsg, {
-              title: 'Алдаа',
-              autoHideDelay: 5000
-            });
-            this.refreshTables();
-        })
-        .catch(error => {
-            //console.log(error.message)
-            this.$bvToast.toast(error.message, {
-                title: 'Алдаа',
-                autoHideDelay: 5000
-            })
-        }) 
-       }
-       
-    },
     refreshTables(){
       if(this.tabIndex==0){
         this.$refs.newOrderTable.refresh();
@@ -1043,11 +955,20 @@ export default {
       
     },
   },
-
+  created(){
+    this.checkFirst();
+  },
   computed:{
     ...mapState([
         'loginedUser'
     ]),
+    cRoleName : function(){
+     
+      return this.loginedUser;
+    }
+      
+      
+    
   }
 }
 </script>

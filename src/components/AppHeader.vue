@@ -43,6 +43,7 @@
           <!-- Using 'button-content' slot -->
           <template slot="button-content"><em>{{loginedUser.firstName}}</em></template>
           <b-dropdown-item v-if="hasRole('SLICER')" href="/#/slicer">Kесу</b-dropdown-item>
+          <b-dropdown-item v-if="hasRole('CLIENT')" href="/#/client">Тапсырыстарым</b-dropdown-item>
           <b-dropdown-item v-if="hasRole('GLUER')" href="/#/gluer">Жабсыру</b-dropdown-item>
           <b-dropdown-item v-if="hasRole('GLUER')" href="/#/kusokgluer">Бөлшек Жабсыру</b-dropdown-item>
           
@@ -94,6 +95,7 @@ export default {
       axios.get(apiDomain+'/admin/logout',{headers:getHeader()})
       .then(()=>{
           window.localStorage.removeItem("authUser");
+          window.localStorage.clear();
           this.$router.push({name:'Login'});
       })
       .catch(error => {
@@ -103,8 +105,7 @@ export default {
     },
     ...mapActions([
         'setDeliveryRefs',
-        'setDeliveryFormObject',
-        'setLoginedUser'
+        'setDeliveryFormObject'
     ]),
     newDelivery(){
       //alert("hey");
@@ -123,6 +124,7 @@ export default {
       }
         
     },
+   
     doCalculation1(){
       //alert("yes");
       let roleName1='ADMIN';
@@ -136,10 +138,6 @@ export default {
             autoHideDelay: 5000
         })  
       }
-    },
-    getLoginedUser(){
-     
-      this.setLoginedUser();  
     },
     hasRole(roleName){
       let roleNames = this.loginedUser.roles;
@@ -162,14 +160,10 @@ export default {
     }
   },
   created(){
-    
     this.setDeliveryRefs(1);
     this.setDeliveryRefs(2);
-
     this.setDeliveryRefs(9);
     this.setDeliveryRefs(10);
-    
-    this.getLoginedUser();
   },
   computed:{
     ...mapState([

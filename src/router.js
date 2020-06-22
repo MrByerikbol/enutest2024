@@ -17,6 +17,7 @@ import Slicer from '@/components/Slicer';
 import Gluer from '@/components/Gluer';
 import AfterAuth from '@/components/AfterAuth';
 import KusokGluer from '@/components/KusokGluer';
+import Client from '@/components/Client';
 Vue.use(Router);
 export default new Router({
    
@@ -107,6 +108,12 @@ export default new Router({
                     path: '/kusokgluer',
                     name: 'KusokGluer',
                     component: KusokGluer,
+                    meta:{requiresAuth:true}
+                },
+                {
+                    path: '/client',
+                    name: 'Client',
+                    component: Client,
                     meta:{requiresAuth:true}
                 }
                 

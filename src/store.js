@@ -3,8 +3,10 @@ import Vuex from 'vuex';
 import axios from 'axios';
 Vue.use(Vuex);
 import {apiDomain,getHeader} from "./config/config";
+import createPersistedState from 'vuex-persistedstate'
 
 export default new Vuex.Store({
+  plugins: [createPersistedState()],
   state: {
     shops:[],
     users:[],
@@ -12,7 +14,7 @@ export default new Vuex.Store({
     detailProducts:[],
     deliveryFormObject:{},
     kusokFormObject:{},
-    loginedUser:{},
+    loginedUser: JSON.parse(window.localStorage.getItem('loginedUser')),
     wareHouses:[],
     wareHouseProducts:[],
 
@@ -22,6 +24,7 @@ export default new Vuex.Store({
     workPricesm:[],
     listWorkPrices:[]
   },
+  
   getters: {
     
     getDeliveryFormObject(state){
@@ -108,19 +111,8 @@ export default new Vuex.Store({
       ) 
     },
     SET_LOGINED_USER(state){
-      //alert("came");
-      axios.post(apiDomain+'/admin/delivery/getlogineduser',{},{headers:getHeader()})
-      .then(response=>{
-        //alert("yeees");
-        state.loginedUser=response.data;
-      })
-      .catch(error => {
-          //console.log(error.message)
-          this.$bvToast.toast(error.message, {
-              title: 'алдаа',
-              autoHideDelay: 5000
-          })
-      }) 
+      //alert("yess");
+      state.loginedUser=JSON.parse(window.localStorage.getItem('loginedUser'));
     }
    
   },

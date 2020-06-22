@@ -16,7 +16,7 @@
                         {{'Жумыс саны : '+detail.productCount}}
                     </b-badge>
                     <b-badge  class="ml-1" >
-                        {{'Iстеген : '+detail.doneCount}}
+                        {{'Iстеген : '+detail.doneCount}} 
                     </b-badge>
 
                     <br v-if="detail.myUnconfirmedCount && detail.myUnconfirmedCount>0">
@@ -25,11 +25,24 @@
                         variant="success" class="ml-2 mt-1 float-right">
                         {{'Расталмаган : '+ detail.myUnconfirmedCount}}
                     </b-badge>
+                    <br v-if="isClient">
+                    <b-badge class="mr-1"  v-if="isClient">
+                        <strong>{{detail.workName}} </strong>
+                    </b-badge>
+                    <b-badge block  variant="success" v-if="isClient">
+                        ПВХ Багасы: <strong>{{detail.totalPrice}} </strong>
+                    </b-badge>
+                     <b-badge block class="ml-1" variant="success" v-if="isClient">
+                        Жумыс Багасы: <strong>{{detail.workPrice}} </strong>
+                    </b-badge>
+                    <b-badge block class="ml-1" variant="warning" v-if="isClient">
+                        Жалпы Багасы: <strong>{{detail.workPrice+detail.totalPrice}} </strong>
+                    </b-badge>
                 </b-button>
                 
             </div>
 
-            <div v-if="dStatus==1" class="float-left ml-1 margin-bottom-sm">
+            <div v-if="dStatus==1 && !isClient" class="float-left ml-1 margin-bottom-sm">
                
                 <b-dropdown size="sm" class="ml-2" right
                         id="dropdown-text"   variant="danger" text=" ПВХ жабыстыру">
@@ -75,6 +88,7 @@
                     v-for="(user,userIndex) in detail.listUsers" :key="userIndex">
                     {{user.relUserInfo + ' ('+user.confirmedDoneCount+')'}}    
                 </b-badge>
+                
             </div>
             <!-- 'listUsers','userId','salary' -->
             <GluerSalaryPeriod 
@@ -98,7 +112,10 @@ import Loading from './Loading';
 import GluerSalaryPeriod from './GluerSalaryPeriod';
 export default {
     name :"DelPvh",
-    props:['relDetails','dStatus','tableRefresher','showToast','userId','calcSalary','updateSalaryBalance'],
+    props:['relDetails',
+    'dStatus','tableRefresher',
+    'showToast','userId','calcSalary',
+    'updateSalaryBalance','isClient'],
     components:{
         Loading,
         GluerSalaryPeriod
