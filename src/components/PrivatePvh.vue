@@ -29,7 +29,7 @@
                                         >
                                             <option value=0>--- Тұтынушы таңдау ---</option>
                                             <option v-for="(u,index) in users" :key="index" :value=u.value>
-                                                {{u.lastName + ' ' + u.text +' Тел : ' + u.phoneNumber}}
+                                                {{u.text + ' ' + u.lastName +' Тел : ' + u.phoneNumber}}
                                             </option>
                                         </select>
                                     </b-col>

@@ -18,6 +18,7 @@ import Gluer from '@/components/Gluer';
 import AfterAuth from '@/components/AfterAuth';
 import KusokGluer from '@/components/KusokGluer';
 import Client from '@/components/Client';
+import ClientLoanPay from '@/components/ClientLoanPay';
 Vue.use(Router);
 export default new Router({
    
@@ -114,6 +115,12 @@ export default new Router({
                     path: '/client',
                     name: 'Client',
                     component: Client,
+                    meta:{requiresAuth:true}
+                },
+                {
+                    path: '/clientloan',
+                    name: 'ClientLoanPay',
+                    component: ClientLoanPay,
                     meta:{requiresAuth:true}
                 }
                 

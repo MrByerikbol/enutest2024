@@ -20,6 +20,8 @@
                         <option value=0>--Жана тапсырыстарым--</option>
                         <option value=1>--Істелудегi тапсырыстарым--</option>
                         <option value=2>--Істелген тапсырыстарым--</option>
+
+                    
                     </select>
                 </b-col>
             </b-row>    
@@ -55,6 +57,7 @@
             >
             </b-icon>  
         </b-col>
+   
         <b-table 
             small 
             ref="workTable"
@@ -65,7 +68,8 @@
             :current-page="currentPage"
             :per-page="perPage"
             :table-variant="tableVariant"
-            selected-variant="danger"    
+            selected-variant="danger"
+          
         >
             <template v-slot:table-busy>
             <div class="text-center text-info my-2">
@@ -180,6 +184,7 @@ import Datepicker from 'vuejs-datepicker';
 import Loading from './Loading';
 import DelListWork from './DelListWork';
 import DelPvh from './DelPvh';
+
 
 
 const moment = require('moment')

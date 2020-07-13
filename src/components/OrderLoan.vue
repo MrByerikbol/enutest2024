@@ -99,7 +99,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :table-variant="tableVariant"
-            :select-mode="selectMode"
+           
             selected-variant="danger"
         
             @row-selected="onShopSelected"
@@ -140,7 +140,7 @@
 <script>
 import axios from 'axios';
 import {mapState} from 'vuex';
-import {apiDomain,loginUrl,getHeader} from "../config/config";
+import {apiDomain,getHeader} from "../config/config";
 import Datepicker from 'vuejs-datepicker';
 const moment = require('moment')
 require('moment/locale/es')
@@ -224,7 +224,7 @@ export default {
           o.type='bay_order_loan';
 
           axios.post(apiDomain+'/admin/delivery/deleteref',o,{headers:getHeader()})
-            .then(response=>{
+            .then(()=>{
                 this.orderLoanForm={
                     loanId:0,
                     userId : 0,
@@ -276,7 +276,7 @@ export default {
                 return ;
           }
           axios.post(apiDomain+'/admin/order/postorderloan',this.orderLoanForm,{headers:getHeader()})
-            .then(response=>{
+            .then(()=>{
                 let alertMsg = "Операция сәтті аяқталды";
                 this.$bvToast.toast(alertMsg, {
                     title: 'Жетістік',
@@ -330,6 +330,7 @@ export default {
           //alert(JSON.stringify(result));
           return(result.items)
         }).catch(error => {
+          alert(error.message);
           this.isBusy = false
           return []
         })

@@ -44,6 +44,7 @@
           <template slot="button-content"><em>{{loginedUser.firstName}}</em></template>
           <b-dropdown-item v-if="hasRole('SLICER')" href="/#/slicer">Kесу</b-dropdown-item>
           <b-dropdown-item v-if="hasRole('CLIENT')" href="/#/client">Тапсырыстарым</b-dropdown-item>
+          <b-dropdown-item v-if="hasRole('CLIENT')" href="/#/clientloan">Несие</b-dropdown-item>
           <b-dropdown-item v-if="hasRole('GLUER')" href="/#/gluer">Жабсыру</b-dropdown-item>
           <b-dropdown-item v-if="hasRole('GLUER')" href="/#/kusokgluer">Бөлшек Жабсыру</b-dropdown-item>
           

@@ -55,6 +55,17 @@
             >
             </b-icon>  
         </b-col>
+        <b-col lg="12" v-if="slicerStatistic!=null">
+            <b-row v-for="(c,i) in slicerStatistic" :key="i">
+                <b-col lg="6" class="text-right">
+                    {{c.catName}}
+                </b-col>
+                <b-col lg="6" class="text-info">
+                    {{c.doneCount}}
+                </b-col>
+            </b-row>
+            
+        </b-col>
         <b-table 
             
             small 
@@ -264,7 +275,8 @@ export default {
                 deliveryId:-1,
                 isWait:-1,
                 waitingReason:""
-            }
+            },
+            slicerStatistic:null
         }
     },
     methods:{
@@ -497,7 +509,22 @@ export default {
             else{
                 ctx.endDate="";
             }
-      
+            //begining of the statistic
+            if(ctx.delStatus==2 && ctx.beginDate!=''
+                 && ctx.endDate!='' ){
+                axios.post(apiDomain+'/admin/work/slicer/getstatistic',ctx,{headers:getHeader()})
+                .then((res)=>{
+                    this.slicerStatistic=res.data;
+                })
+                .catch(error=>{
+                    this.slicerStatistic=null;
+                    alert(error.message);
+                })     
+            }
+            else{
+                this.slicerStatistic=null;
+            }
+            //end of the statistic
             this.isBusy = false
             let promise = axios.post(apiDomain+'/admin/work/slicer/newworklist',ctx,{headers:getHeader()});
             return promise.then((response) => {
