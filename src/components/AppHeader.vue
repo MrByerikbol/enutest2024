@@ -1,55 +1,30 @@
 <template>
   <div>
   <b-navbar toggleable="lg" type="dark" variant="info" class="fixed-top">
-    <b-navbar-brand href="#">Кесу Жүйесi</b-navbar-brand>
+    <b-navbar-brand href="#">{{$t('logoName')}}</b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
-      <b-navbar-nav>
-
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') " href="javascript:void(0)" @click="newDelivery">
-          Жаңа тапсырыс
-        </b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR') || hasRole('MANAGER') || hasRole('DELIVERY')" href="/#/deliveries">Тапсырыстар</b-nav-item>
-
-        <b-nav-item v-if="hasRole('ADMIN')  
-          || hasRole('MANAGER')" href="javascript:void(0)" @click="doCalculation1">Есеп</b-nav-item>
-          
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR')" href="/#/users">Тұтнушылар</b-nav-item>
-       
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/products">Тауарлар</b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('MANAGER')" href="/#/warehouse">Қойма</b-nav-item>
-        
-        <b-nav-item v-if="hasRole('DELIVERY')" href="/#/deliverywarehouse">Қойма</b-nav-item>
+      <b-navbar-nav>  
+        <b-nav-item v-if="hasRole('ADMIN') " href="/#/users">{{$t('mainMenu.users')}}</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN') " href="/#/documentcategorylist">{{$t('mainMenu.documentCategoryList')}}</b-nav-item>
         <!-- <b-nav-item v-if="hasRole('ADMIN')" href="/#/deliveryreport">Ачот</b-nav-item> -->
 
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-item v-if="hasRole('ADMIN') || hasRole('OPERATOR')"
-           href="javasript:void(0)" @click="showLoanModal">Несие тiркеу</b-nav-item>
-
-        <!-- <b-nav-item-dropdown text="Lang" right>
-          <b-dropdown-item href="#">EN</b-dropdown-item>
-          <b-dropdown-item href="#">ES</b-dropdown-item>
-          <b-dropdown-item href="#">RU</b-dropdown-item>
-          <b-dropdown-item href="#">FA</b-dropdown-item>
-        </b-nav-item-dropdown> -->
+        <b-nav-item-dropdown right :text="$t('mainMenu.currentLang')">
+          <b-dropdown-item href="javascript:void(0)"  v-for="locale in $i18n.locales()" :key="'i81n-' + locale"
+			      @click="$i18n.set(locale)" v-if="$i18n.locale() !== locale">{{locale}}</b-dropdown-item>
+          <!-- <b-dropdown-item href="javascript:void(0)" >RU</b-dropdown-item> -->
+          </b-nav-item-dropdown>
         
          
         <b-nav-item-dropdown right>
-          <!-- Using 'button-content' slot -->
-          <template slot="button-content"><em>{{loginedUser.firstName}}</em></template>
-          <b-dropdown-item v-if="hasRole('SLICER')" href="/#/slicer">Kесу</b-dropdown-item>
-          <b-dropdown-item v-if="hasRole('CLIENT')" href="/#/client">Тапсырыстарым</b-dropdown-item>
-          <b-dropdown-item v-if="hasRole('CLIENT')" href="/#/clientloan">Несие</b-dropdown-item>
-          <b-dropdown-item v-if="hasRole('GLUER')" href="/#/gluer">Жабсыру</b-dropdown-item>
-          <b-dropdown-item v-if="hasRole('GLUER')" href="/#/kusokgluer">Бөлшек Жабсыру</b-dropdown-item>
-          
-          <b-dropdown-item href="javascript:void(0)">Құпия сөз</b-dropdown-item>
-          <b-dropdown-item href="javascript:void(0)" @click="logOut">Жүйеден шығу</b-dropdown-item>
+          <!-- <b-dropdown-item href="javascript:void(0)">Құпия сөз</b-dropdown-item> -->
+          <b-dropdown-item href="javascript:void(0)" @click="logOut">{{$t('logOut')}}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
@@ -159,6 +134,7 @@ export default {
       }
       
     }
+    
   },
   created(){
     this.setDeliveryRefs(1);

@@ -56,7 +56,7 @@
 </template>
 <script>
   import axios from 'axios';
-  import {apiDomain,loginUrl} from "../config/config";
+  import {apiDomain,loginUrl,getHeader} from "../config/config";
   const cl = btoa("devglan-client:devglan-secret");
   const authUser = {};
   export default {
@@ -73,6 +73,14 @@
 
       methods:{
         handleLoginFormSubmit () {
+
+          // axios.get(apiDomain+'/login/setpassword',{},{headers:getHeader()})
+          // .then(response=>{
+          //   alert("zayada bi hairtai bsan ");
+
+          // });
+
+
           //alert("the form submit handled");
           axios.request({
             baseURL: apiDomain,

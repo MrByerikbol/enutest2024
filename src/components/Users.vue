@@ -1,211 +1,294 @@
 <template>
-  
-   
     <b-row>
       <b-col lg="12">
         <h3>
-          <span class="bd-content-title">Хэрэлэгчийн жагсаалт</span>
+          <span class="bd-content-title">{{$t('enu.userList.mainTitle')}}</span>
         </h3>
       </b-col>
-      <b-col lg="12" class="mt-3">
-      
-          <b-button variant="success" size="sm" class="mr-2" v-b-modal.userModal>Шинэ</b-button>
-          <b-button variant="info" v-if="selectedRows.length==1" size="sm" @click="updateRecord" class="mr-2">Засах</b-button>
-          <b-button variant="danger" v-if="selectedRows.length>0" size="sm" class="mr-2" @click="deleteRecord">Устгах</b-button>
-
+      <b-col lg="4" class="mt-3">
+        <DepartmentList/>  
       </b-col>
-      <b-col lg="6">
-        <b-form-group
-          label="Хайлт"
-          label-cols-sm="1"
-          label-align-sm="left"
-          label-size="sm"
-          label-for="filterInput"
-          class="mb-2 mt-3"
-        >
-          <b-input-group size="sm">
-            <b-form-input
-              v-model="filter"
-              type="search"
-              id="filterInput"
-              placeholder="Хайлт хийх утгаа оруулна уу"
-            ></b-form-input>
+      <b-col lg="8" class="mt-3">
+        <b-row>
+          <b-col lg="12">
+            <h5>
+                <span class="bd-content-title">{{$t('userPage.userList')}}</span>
+            </h5>
+          </b-col>
+          <b-col lg="12">
+              <b-button variant="success" size="sm" class="mr-2" v-b-modal.userModal>{{$t('system.newButton')}}</b-button>
+              <b-button variant="info" v-if="selectedRows.length==1" size="sm" @click="updateRecord" class="mr-2">{{$t('system.updateButton')}}</b-button>
+              <b-button variant="danger" v-if="selectedRows.length>0" size="sm" class="mr-2" @click="deleteRecord">{{$t('system.deleteButton')}}</b-button>
+          </b-col>
+          <b-col lg="6">
+            <b-form-group
+              :label="$t('system.defaultSearch')"
+              label-cols-sm="1"
+              label-align-sm="left"
+              label-size="sm"
+              label-for="filterInput"
+              class="mb-2 mt-3"
+            >
+              <b-input-group size="sm">
+                <b-form-input
+                  v-model="filter"
+                  type="search"
+                  id="filterInput"
+                  :placeholder="$t('system.searchText')"
+                ></b-form-input>
+                
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+          <b-col lg="6" class="pt-3 text-right">
+            <strong>{{$t('system.recordCountText')}}:</strong> {{totalRows}}  
+          </b-col>
+          <b-col lg="12">
+            <b-row class="pb-3">
+              <b-col lg="6">
+                  <select class="form-control-sm w-100"
+                      id="departmentId"
+                      v-model="departmentId"  
+                      @change="refreshTable()"
+                  >
+                    <option value=0>{{$t('comboChooseText')}}</option>
+
+                    <option v-for="(d,k) in departments" :key="k" :value="d.departmentId"> 
+                      {{$i18n.locale()=='kz' ? d.departmentName : d.departmentNameRu}}    
+                    </option>
+                  </select>
+
+                
+              </b-col>
+              <b-col lg="6">
+                <select class="form-control-sm w-100"
+                      id="departmentId"
+                      v-model="roleId"  
+                      @change="refreshTable()"
+                  >
+                    <option value=0>{{$t('comboChooseText')}}</option>
+
+                    <option v-for="(d,k) in roles" :key="k" :value="d.roleId"> 
+                      {{$i18n.locale()=='kz' ? d.roleDefination : d.roleDefinationRu}}    
+                    </option>
+                  </select>  
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-table 
+            ref="userTable"
+            striped hover selectable
+            :items="userProvider" 
+            :fields="fields"
+            :busy.sync="isBusy"
+            :current-page="currentPage"
+            :per-page="perPage"
             
-          </b-input-group>
-        </b-form-group>
-      </b-col>
-      <b-col lg="6" class="pt-3 text-right">
-        <strong>тоо:</strong> {{totalRows}}  
-      </b-col>
-      <b-table 
-        ref="userTable"
-        striped hover selectable
-        :items="userProvider" 
-        :fields="fields"
-        :busy.sync="isBusy"
-        :current-page="currentPage"
-        :per-page="perPage"
-        :table-variant="tableVariant"
-        :filter="filter"
-        :select-mode="selectMode"
-        selected-variant="danger"
-      
-        @row-selected="onUserSelected"
-        >
-        <template v-slot:cell(userId)="{ rowSelected }">
-          <template v-if="rowSelected">
-            <span aria-hidden="true">&check;</span>
-            <span class="sr-only">Selected</span>
-          </template>
-          <template v-else>
-            <span aria-hidden="true">&nbsp;</span>
-            <span class="sr-only">Not selected</span>
-          </template>
-        </template>
-        <template v-slot:table-busy>
-          <div class="text-center text-info my-2">
-            <b-spinner class="align-middle"></b-spinner>
-            <strong>Жүктелуде...</strong>
-          </div>
-        </template>
-
-     
-      </b-table>
-      <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-          align="fill"
-          size="sm"
-          class="my-0"
+            :filter="filter"
+            :select-mode="selectMode"
+            
+            selected-variant="danger"
           
-      ></b-pagination>
+            @row-selected="onUserSelected"
+            >
+            <template #head(lastName)="data">
+              <span class="text-info">{{$t(data.label)}}</span>
+            </template>
+            <template #head(firstName)="data">
+              <span class="text-info">{{$t(data.label)}}</span>
+            </template>
+            <template #head(userEmail)="data">
+              <span class="text-info">{{$t(data.label)}}</span>
+            </template>
+            <template #head(phoneNumber)="data">
+              <span class="text-info">{{$t(data.label)}}</span>
+            </template>
+            <template #head(roleName)="data">
+              <span class="text-info">{{$t(data.label)}}</span>
+            </template>
+            <template #head(departmentName)="data">
+              <span class="text-info">{{$t(data.label)}}</span>
+            </template>
+            <template v-slot:cell(departmentName)="row">
+                {{$i18n.locale()=='kz' ? row.item.departmentName : row.item.departmentNameRu}}
+            </template>
+            <template v-slot:cell(userId)="{ rowSelected }">
+              <template v-if="rowSelected">
+                <span aria-hidden="true">&check;</span>
+                <span class="sr-only">Selected</span>
+              </template>
+              <template v-else>
+                <span aria-hidden="true">&nbsp;</span>
+                <span class="sr-only">Not selected</span>
+              </template>
+            </template>
+            <template v-slot:table-busy>
+              <div class="text-center text-info my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Жүктелуде...</strong>
+              </div>
+            </template>
 
-      <b-modal id="userModal" title="Шинэ хэрэглэгч нэмэх" hide-footer>
-          <b-form v-on:submit.prevent="submitUser">
-                <b-form-row class="mb-3">
-                    <b-col sm="auto" md="12">
-                        <label for="userType">Хэрэглэгчийн төрөл</label>
-                        <select class="form-control"
-                            id="userType"
-                            v-model="userForm.userType"  
-                        >
-                          <option value=0>Систем</option>
-                          <option value=1> Тұтынушы </option>
-                        </select>
-                    </b-col>
-                    <b-col sm="auto" md="12" v-if="userForm.userType==1">
-                        <label for="loanLimit">Зээлийн хэмжээ</label>
-                        <input type="number" class="form-control"
-                            id="loanLimit"
-                            v-model="userForm.loanLimit"  
-                        />
-                         
-                    </b-col>
-                    <b-col sm="auto" md="12">
-                        <label for="lastName">Овог</label>
-                        <b-form-input
-                            id="lastName"
-                            v-model="userForm.lastName"
-                           
-                            required
-                            placeholder="Овог"
-                        ></b-form-input>
-                    </b-col>
-                    <b-col sm="auto" md="12">
-                        <label  for="firstName">Нэр</label>
-                        <b-form-input
-                            id="firstName"
-                            v-model="userForm.firstName"
-                          
-                            required
-                            placeholder="Нэр"
-                        ></b-form-input>
-                    </b-col>
-                    <b-col sm="auto" md="12">
-                        <label  for="userEmail">И-мэйл</label>
-                        <input
-                            class="form-control"
-                            id="userEmail"
-                            v-model="userForm.userEmail"
-                            type="email"
-                            required
-                            placeholder="И-мэйл"
-                        />
-                    </b-col>
-                    <b-col sm="auto" md="12">
-                        <label  for="userEmail">Утас</label>
-                        <b-form-input
-                            id="userPhone"
-                            v-model="userForm.userPhone"
-                            type="Text"
-                            required
-                            placeholder="Утас"
-                        ></b-form-input>
-                    </b-col>
-                    <b-col sm="auto" md="12">
-                        <label  for="userPassword">Нууц үг</label>
-                        <b-form-input
-                            id="userPassword"
-                            v-model="userForm.userPassword"
-                            type="password"
-                            required
-                            placeholder="Нууц үг"
-                        ></b-form-input>
-                    </b-col>
-                    <b-col sm="auto" md="12">
-                        <label  for="userRoleId">Хэрэглэгчийн эрх</label>
-                        <b-form-select
-                            id="userRoleId"
-                            v-model="userForm.userRoleId"
-                            :options="userRoles"
-                            required
-                            placeholder="Хэрэглэгчийн эрх"
-                        ></b-form-select>
-                    </b-col>
-                    
-                </b-form-row>
-                <b-button type="submit" variant="primary" class="mr-2">Шинэ хэрэглэгч үүсгэх</b-button>
-                <b-button type="reset" variant="danger">Арилгах</b-button>
-            </b-form>    
-        </b-modal>
+        
+          </b-table>
+          <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="fill"
+              size="sm"
+              class="my-0"
+              
+          ></b-pagination>
+
+          <b-modal id="userModal" :title="$t('userList.userModal')" @hidden="resetUserForm" @show="onModalShown" hide-footer size="xl">
+
+              <b-form v-on:submit.prevent="submitUser">
+                    <b-form-row class="mb-3">
+                        <b-col sm="auto" md="12">
+                            <label for="userType">{{$t('userList.userFormTypeText')}}</label>
+                            <select class="form-control"
+                                id="userType"
+                                v-model="userForm.departmentId"  
+                            >
+                              <option value=0>{{$t('comboChooseText')}}</option>
+
+                              <option v-for="(d,k) in departments" :key="k" :value="d.departmentId"> 
+                                {{$i18n.locale()=='kz' ? d.departmentName : d.departmentNameRu}}    
+                              </option>
+                            </select>
+                        </b-col>
+                        
+                        <b-col sm="auto" md="12">
+                            <label for="lastName">{{$t('userList.lastName')}}</label>
+                            <b-form-input
+                                id="lastName"
+                                v-model="userForm.lastName"
+                                required
+                                :placeholder="$t('userList.lastName')"
+                            ></b-form-input>
+                        </b-col>
+                        <b-col sm="auto" md="12">
+                            <label  for="firstName">{{$t('userList.firstName')}}</label>
+                            <b-form-input
+                                id="firstName"
+                                v-model="userForm.firstName"
+                                required
+                                :placeholder="$t('userList.firstName')"
+                            ></b-form-input>
+                        </b-col>
+                        <b-col sm="auto" md="12">
+                            <label  for="userEmail">{{$t('userList.email')}}</label>
+                            <input
+                                class="form-control"
+                                id="userEmail"
+                                v-model="userForm.userEmail"
+                                type="email"
+                                required
+                                :placeholder="$t('userList.email')"
+                            />
+                        </b-col>
+                        <b-col sm="auto" md="12">
+                            <label  for="userEmail">{{$t('userList.phoneNumber')}}</label>
+                            <b-form-input
+                                id="userPhone"
+                                v-model="userForm.userPhone"
+                                type="Text"
+                                required
+                                :placeholder="$t('userList.phoneNumber')"
+                            ></b-form-input>
+                        </b-col>
+                        <b-col sm="auto" md="12">
+                            <label  for="userPassword">{{$t('userList.userForm.password')}}</label>
+                            <b-form-input
+                                id="userPassword"
+                                v-model="userForm.userPassword"
+                                type="password"
+                                required
+                                :placeholder="$t('userList.userForm.password')"
+                            ></b-form-input>
+                        </b-col>
+                        <b-col sm="auto" md="12">
+                            <label  for="userRoleId">{{$t('userList.role')}}</label>
+                            <b-form-select
+                                id="userRoleId"
+                                v-model="userForm.userRoleId"
+                                :options="userRoles"
+                                required
+                                :placeholder="$t('userList.role')"
+                            ></b-form-select>
+                        </b-col>
+                        <b-col sm="auto" md="12" class="pt-2" v-if="parseInt(userForm.userRoleId)==12">
+                              <b>{{$t('userList.userForm.chooseCatText')}}</b>
+                              <b-form-checkbox
+                                v-model="allSelected"
+                                @change="toggleAll"
+                                :indeterminate="indeterminate"
+                                
+                              >
+                                <span class="text-info">{{ allSelected ? $t('system.unSelectAll') : $t('system.selectAll')}}</span>
+                              </b-form-checkbox>
+                              <b-form-group class="pl-3">
+                                  <b-form-checkbox-group id="docCats" switches stacked v-model="userForm.docCats">
+                                    <b-form-checkbox @input="checkBoxChange(c.docCatId)" v-for="(c,i) in docCats" :key="i" :value="c.docCatId">
+                                      {{$i18n.locale()=='kz' ? c.docCatName : c.docCatNameRu}}    
+                                    </b-form-checkbox>
+                                  </b-form-checkbox-group>
+                              </b-form-group>
+                        </b-col>
+                    </b-form-row>
+                    <b-button type="submit" variant="primary" class="mr-2">{{$t('system.submitButtonText')}}</b-button>
+                    <b-button type="reset" variant="danger">{{$t('system.cancelButtonText')}}</b-button>
+                </b-form>    
+            </b-modal>
+        </b-row>
+      </b-col>
     </b-row>
 
 </template>
 
 <script>
 import axios from 'axios';
-import {apiDomain,loginUrl,getHeader} from "../config/config";
+import {apiDomain,getHeader} from "../config/config";
+import DepartmentList from "@/components/enu/comps/DepartmentList";
 
+import Vue from 'vue'
 export default {
 
   name: 'Users',
+  components:{
+    DepartmentList
+  },
   data(){
     return {
       fields: [
           {
             key: 'userId',
-            label: 'Id',
+            label: 'ID'
           },
           {
             key: 'lastName',
-            label: 'Овог',
+            label: 'userList.lastName',
           },
           {
             key: 'firstName',
-            label: 'Нэр',
+            label: 'userList.firstName',
           },
           {
             key: 'userEmail',
-            label: 'Нэвтрэх нэр',
+            label: 'userList.email',
           },
           {
             key: 'phoneNumber',
-            label: 'Утас',
+            label: 'userList.phoneNumber',
+          },
+          {
+            key: 'departmentName',
+            label: 'userList.departmentName',
           },
           {
             key: 'roleName',
-            label: 'Эрх',
+            label: 'userList.role',
           }
       ],
       isBusy:false,
@@ -227,28 +310,73 @@ export default {
         userPassword:"",
         userRoleId:null,
         userType:0,
-        loanLimit:0
+        loanLimit:0,
+        departmentId : 0,
+        docCats:[]
       },
 
-      userRoles:[{value:null,text:'Хэрэглэгчийн эрх'}]
+      departments:[],
+      roles:[],
+      departmentId:0,
+      roleId:0,
+      userRoles:[{value:null,text:Vue.i18n.translate('comboChooseText')}],
+
+      docCats:[],
+      allSelected:false,
+      indeterminate:false,
+
     }
   },
   methods:{
+    toggleAll(){
+      if(this.allSelected){
+        this.userForm.docCats=[];
+      }
+      else{
+        this.docCats.forEach(d=>this.userForm.docCats.push(d.docCatId));
+      }
+    },
+    checkBoxChange(v){
+      let filtered = this.userForm.docCats.filter(dc=>parseInt(dc)==parseInt(v));
+
+      if(filtered.length>0){
+        
+        this.indeterminate=true;
+        if(this.docCats.length==this.userForm.docCats.length){
+          this.indeterminate=false;
+          this.allSelected=true;
+        }
+        if(this.userForm.docCats.length==0){
+          this.allSelected=false;
+          this.indeterminate=false;
+        }
+      }
+      else{
+        if(this.docCats.length==this.userForm.docCats.length){
+          this.indeterminate=false;
+          this.allSelected=true;
+        }
+        if(this.userForm.docCats.length==0){
+          this.allSelected=false;
+          this.indeterminate=false;
+        }
+      }
+    },
     deleteRecord(){
       let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
         if(this.selectedRows.length>0){
           axios.post(apiDomain+'/admin/deleterecord/',this.selectedRows,{headers:getHeader()})
-            .then(response=>{
-              this.$refs.userTable.refresh();  
-            })
-            .catch(error => {
-                //console.log(error.message)
-                this.$bvToast.toast(error.message, {
-                    title: 'алдаа',
-                    autoHideDelay: 5000
-                })
-            }) 
+          .then(()=>{
+            this.$refs.userTable.refresh();  
+          })
+          .catch(error => {
+              //console.log(error.message)
+              this.$bvToast.toast(error.message, {
+                  title: 'алдаа',
+                  autoHideDelay: 5000
+              })
+          }) 
         }
       }
       
@@ -273,32 +401,43 @@ export default {
       }
       
     },
+
+    resetUserForm(){
+      this.userForm={
+        userId:0,
+        lastName:"",
+        firstName:"",
+        userEmail:"",
+        userPhone:"",
+        userPassword:"",
+        userRoleId:null,
+        userType:0,
+        loanLimit:0,
+        departmentId:0
+      }
+    },
+    refreshTable(){
+      this.$refs.userTable.refresh();
+    },
     submitUser(evt){
           evt.preventDefault();
           axios.post(apiDomain+'/admin/core/postuser/',this.userForm,{headers:getHeader()})
             .then(response=>{
-                let alertMsg = "Хэрэглэгч Жетістіктай үүслээ";
+                let localVariant = "info";
+                let alertMsg = Vue.i18n.translate('system.successMsg');
                 if(response.data==='dublicated'){
-                  alertMsg='Хэрэглэгчийн и-мэйл давхардсан байна.'
+                  alertMsg=Vue.i18n.translate('system.dublicationMsg');
+                  localVariant="danger";
                 }
                 else{
                   this.$bvModal.hide('userModal')
-                  this.userForm={
-                        userId:0,
-                        lastName:"",
-                        firstName:"",
-                        userEmail:"",
-                        userPhone:"",
-                        userPassword:"",
-                        userRoleId:null,
-                        userType:0,
-                        loanLimit:0
-                  }
+                  
                   this.$refs.userTable.refresh()
                 }
-                
+                this.resetUserForm();
                 this.$bvToast.toast(alertMsg, {
-                    title: 'Жетістік',
+                    variant:localVariant,
+                    title: Vue.i18n.translate('system.successTitle'),
                     autoHideDelay: 5000
                 })
 
@@ -308,7 +447,9 @@ export default {
             .catch(error => {
                 //console.log(error.message)
                 this.$bvToast.toast(error.message, {
-                    title: 'Жетістік',
+                    variant:'danger',
+
+                    title: Vue.i18n.translate('system.errorTitle'),
                     autoHideDelay: 5000
                 })
             }
@@ -316,11 +457,14 @@ export default {
     },
 
     onUserSelected(items){
+      
       this.selectedRows=items;
     },
     userProvider(ctx){
         //alert("yes");
         this.isBusy = false
+        ctx.departmentId=this.departmentId;
+        ctx.roleId=this.roleId;
         let promise = axios.post(apiDomain+'/admin/delivery/userlist',ctx,{headers:getHeader()});
         return promise.then((response) => {
           const result = response.data;
@@ -328,7 +472,7 @@ export default {
           this.totalRows=result.recordCount;
           //alert(JSON.stringify(result));
           return(result.items)
-        }).catch(error => {
+        }).catch(() => {
           this.isBusy = false
           return []
         })
@@ -339,18 +483,44 @@ export default {
               if(refType==3){
                   this.userRoles=this.userRoles.concat(response.data);
               }
-              
+              if(refType==15){
+                  this.departments=response.data;
+              }
+              if(refType==16){
+                  this.roles=response.data;
+              }
           })
-          .catch(error => {
+          .catch(() => {
               //console.log(error.message)
               //alert("server dr aldaa uuslee");
           }
       ) 
+    },
+    getEnuRefs(refType){
+        axios.post(apiDomain+'/admin/enu/ref/getdatalist',{refType:refType},{headers:getHeader()})
+            .then(response=>{
+                if(refType=='docCat'){
+                    //alert(JSON.stringify(response.data));
+                    this.docCats=response.data;
+                }
+            })
+            .catch(() => {
+                //console.log(error.message)
+                //alert("server dr aldaa uuslee");
+            }
+        ) 
+    },
+    onModalShown(){
+      this.getRefs(15);
+      this.getEnuRefs("docCat");
     }
 
   },
   created(){
+    
     this.getRefs(3);
+    this.getRefs(15);
+    this.getRefs(16);
   }
 
 }

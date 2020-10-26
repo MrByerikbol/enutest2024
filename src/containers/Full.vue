@@ -1,11 +1,11 @@
 <template>
     <div class="app">
         <AppHeader/>
-        <b-container class="pt-5 mt-2">
+        <b-container class="pt-5 mt-2" fluid>
             <router-view></router-view>
         </b-container>
         <b-navbar toggleable="lg" type="dark" class="mt-5" variant="info">
-          <b-navbar-brand href="javascript:void(0)"><i><u>Байбесик апп version : 1.0</u></i> </b-navbar-brand>
+          <b-navbar-brand href="javascript:void(0)"><i>{{$t('logoName')}}</i> </b-navbar-brand>
         </b-navbar>
    </div>
 </template>

@@ -19,6 +19,7 @@ import AfterAuth from '@/components/AfterAuth';
 import KusokGluer from '@/components/KusokGluer';
 import Client from '@/components/Client';
 import ClientLoanPay from '@/components/ClientLoanPay';
+import DocumentCategoryList from '@/components/enu/comps/DocumentCategoryList';
 Vue.use(Router);
 export default new Router({
    
@@ -121,6 +122,12 @@ export default new Router({
                     path: '/clientloan',
                     name: 'ClientLoanPay',
                     component: ClientLoanPay,
+                    meta:{requiresAuth:true}
+                },
+                {
+                    path: '/documentcategorylist',
+                    name: 'DocumentCategoryList',
+                    component: DocumentCategoryList,
                     meta:{requiresAuth:true}
                 }
                 

@@ -1,11 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+// load vuex i18n module
+
 Vue.use(Vuex);
+
 import {apiDomain,getHeader} from "./config/config";
 import createPersistedState from 'vuex-persistedstate'
 
-export default new Vuex.Store({
+const store= new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
     shops:[],
@@ -133,3 +136,6 @@ export default new Vuex.Store({
     }
   }
 });
+
+
+export default store;

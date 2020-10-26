@@ -3,6 +3,10 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
+
+//import i18n from '@/plugins/i18n';
+
+
 //for the bootstrap vue
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -50,10 +54,53 @@ import { DropdownPlugin, TablePlugin } from 'bootstrap-vue'
 Vue.use(DropdownPlugin)
 Vue.use(TablePlugin)
 import store from './store'
-import router from './router'
+// initialize the vuex-i18 module
+import vuexI18n from 'vuex-i18n';
+// const langConfig = {
+// 	moduleName: 'langModule',
+// 	translateFilterName: 't'
+// }
+import axios from 'axios';
+import {apiDomain,getHeader} from "./config/config";
+Vue.use(vuexI18n.plugin, store, {
+	moduleName: 'i18n',
+	onTranslationNotFound (locale, key) {
 
+		return new Promise((resolve, reject) => {
+      axios.post(apiDomain+'/login/translations'
+      ,{locale: locale, key:key},{headers:getHeader()})
+			.then((result) => {
+
+				resolve(result.data);
+      })
+      .catch(()=>{
+        reject();
+      })
+		});
+
+	}}
+);
+// import predefined localizations
+import translationsKz from './i18n/kz.js';
+import translationsRu from './i18n/ru.js';
+
+
+
+// add translations
+Vue.i18n.add('kz', translationsKz);
+Vue.i18n.add('ru', translationsRu);
+
+
+
+// default locale is english
+Vue.i18n.set('kz');
+import router from './router'
+// synchronize the router with vuex
+import {sync} from 'vuex-router-sync';
+sync(store, router);
 
 new Vue({
+  // i18n,
   router,
   store,
   render: h => h(App),

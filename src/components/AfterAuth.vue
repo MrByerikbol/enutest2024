@@ -20,37 +20,19 @@
                      //alert("mina hota "+ window.localStorage.getItem("loginedUser"));
                      this.setLoginedUser();
                      result.roles.forEach(r => {
-                    if(r.roleName=='SLICER'){
-                            //this.$router.push({name:'Slicer'});
-                            window.location.href = "/#/slicer"; 
-                            return;
-                        }
-                        if(r.roleName=='GLUER'){
-                            //this.$router.push({name:'Gluer'});
-                            window.location.href = "/#/gluer";     
-                            return;
-                        }  
                         if(r.roleName=='ADMIN'){
                             //this.$router.push({name:'Deliveries'});
-                            window.location.href = "/#/deliveries";         
+                            window.location.href = "/#/users";         
                             return;
                         }
-                        if(r.roleName=='OPERATOR'){
-                            window.location.href = "/#/deliveries";    
-                            return;
-                        } 
-                        if(r.roleName=='CLIENT'){
-                            window.location.href = "/#/client";  
-                            return;  
-                        }             
                     });
                 })
                 .catch(error => {
                     //console.log(error.message)
-                    this.$bvToast.toast(error.message, {
-                        title: 'алдаа',
-                        autoHideDelay: 5000
-                    })
+                    // this.$bvToast.toast(error.message, {
+                    //     title: 'алдаа',
+                    //     autoHideDelay: 5000
+                    // })
                 })   
             }
         },
