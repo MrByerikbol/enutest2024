@@ -144,6 +144,7 @@
           <b-modal id="userModal" :title="$t('userList.userModal')" @hidden="resetUserForm" @show="onModalShown" hide-footer size="xl">
 
               <b-form v-on:submit.prevent="submitUser">
+                    
                     <b-form-row class="mb-3">
                         <b-col sm="auto" md="12">
                             <label for="userType">{{$t('userList.userFormTypeText')}}</label>
@@ -228,13 +229,21 @@
                               >
                                 <span class="text-info">{{ allSelected ? $t('system.unSelectAll') : $t('system.selectAll')}}</span>
                               </b-form-checkbox>
-                              <b-form-group class="pl-3">
-                                  <b-form-checkbox-group id="docCats" switches stacked v-model="userForm.docCats">
-                                    <b-form-checkbox @input="checkBoxChange(c.docCatId)" v-for="(c,i) in docCats" :key="i" :value="c.docCatId">
-                                      {{$i18n.locale()=='kz' ? c.docCatName : c.docCatNameRu}}    
-                                    </b-form-checkbox>
-                                  </b-form-checkbox-group>
-                              </b-form-group>
+  
+                              <b-row class="pl-3" v-for="(dc,k) in docCats" :key="k">
+                                  <b-col lg="12" >
+                                    <input
+                                      :id="'dc'+k" type="checkbox"
+                                      :value="parseInt(dc.docCatId)" 
+                                      @input="docCatChange(dc.docCatId,userForm.userId)"
+                                      @change="changeAllSelected"
+                                      v-model="userForm.docCats"
+                                    />
+                                    <label :for="'dc'+k">
+                                      {{dc.docCatName}}
+                                    </label>
+                                  </b-col>
+                              </b-row>
                         </b-col>
                     </b-form-row>
                     <b-button type="submit" variant="primary" class="mr-2">{{$t('system.submitButtonText')}}</b-button>
@@ -261,6 +270,7 @@ export default {
   },
   data(){
     return {
+      
       fields: [
           {
             key: 'userId',
@@ -328,40 +338,72 @@ export default {
     }
   },
   methods:{
+
+    docCatChange(d,dUserId){ 
+      if(d>0 && dUserId>0){
+        // let filtered=this.userForm.docCats.filter(db=>parseInt(db)==parseInt(d));
+        // //alert(filtered.length)
+        // let deleted=[];
+        // if(filtered.length==1 
+        //   && deleted.filter(r=>parseInt(r)==parseInt(d)).length==0){
+        //   //alert("the all condition");
+        //   let o = new Object();
+        //   let dIndexes = [];
+        //   dIndexes.push(d);
+
+        //   o.userId=dUserId;
+        //   let del = [];
+        //   del.push(d);
+        //   o.docCatId=del;
+
+
+        //   axios.post(apiDomain+'/admin/enu/ref/deletedoccatfromuser',o,{headers:getHeader()})
+        //   .then(()=>{
+        //     //alert("iishee ch ireed bna da barag");
+        //     deleted.push(d);
+        //   })
+        //   .catch(error => {
+        //       //console.log(error.message)
+        //       this.$bvToast.toast(error.message, {
+        //           title: 'алдаа',
+        //           autoHideDelay: 5000
+        //       })
+        //   }) 
+        // }
+      }
+    },
     toggleAll(){
       if(this.allSelected){
+        // let o = new Object();
+        
+        
+        // o.userId=this.userForm.userId;
+        // o.docCatId=this.userForm.docCats;
+
+        // if(parseInt(o.userId)>0 && o.docCatId.length>0){
+        //   axios.post(apiDomain+'/admin/enu/ref/deletedoccatfromuser',o,{headers:getHeader()})
+        //   .then(()=>{
+        //     //alert("iishee ch ireed bna da barag");
+        //   })
+        //   .catch(error => {
+        //       //console.log(error.message)
+        //       this.$bvToast.toast(error.message, {
+        //           title: 'алдаа',
+        //           autoHideDelay: 5000
+        //       })
+        //   });
+        // }
         this.userForm.docCats=[];
       }
       else{
-        this.docCats.forEach(d=>this.userForm.docCats.push(d.docCatId));
+        this.docCats.forEach(d=>{
+          if(this.userForm.docCats.filter(o=>parseInt(o)==parseInt(d)).length==0){
+            this.userForm.docCats.push(d.docCatId);   
+          }       
+       });
       }
     },
-    checkBoxChange(v){
-      let filtered = this.userForm.docCats.filter(dc=>parseInt(dc)==parseInt(v));
-
-      if(filtered.length>0){
-        
-        this.indeterminate=true;
-        if(this.docCats.length==this.userForm.docCats.length){
-          this.indeterminate=false;
-          this.allSelected=true;
-        }
-        if(this.userForm.docCats.length==0){
-          this.allSelected=false;
-          this.indeterminate=false;
-        }
-      }
-      else{
-        if(this.docCats.length==this.userForm.docCats.length){
-          this.indeterminate=false;
-          this.allSelected=true;
-        }
-        if(this.userForm.docCats.length==0){
-          this.allSelected=false;
-          this.indeterminate=false;
-        }
-      }
-    },
+    
     deleteRecord(){
       let warn = confirm("Сіз сенімдісіз бе ?");
       if(warn){
@@ -387,6 +429,7 @@ export default {
         if(userId>0){
           axios.get(apiDomain+'/admin/getuser/'+userId,{headers:getHeader()})
           .then(response=>{
+            //alert(JSON.stringify(response.data));
             this.userForm=response.data;
             this.$bvModal.show('userModal')    
           })
@@ -421,6 +464,10 @@ export default {
     },
     submitUser(evt){
           evt.preventDefault();
+          if(!this.userForm.docCats){
+            this.userForm.docCats=[];
+          }
+          
           axios.post(apiDomain+'/admin/core/postuser/',this.userForm,{headers:getHeader()})
             .then(response=>{
                 let localVariant = "info";
@@ -502,6 +549,7 @@ export default {
                 if(refType=='docCat'){
                     //alert(JSON.stringify(response.data));
                     this.docCats=response.data;
+                    this.docCats.forEach(d=>d.relId=0);
                 }
             })
             .catch(() => {
