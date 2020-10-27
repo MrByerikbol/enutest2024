@@ -9,8 +9,8 @@
       <b-navbar-nav>  
         <b-nav-item v-if="hasRole('ADMIN') " href="/#/users">{{$t('mainMenu.users')}}</b-nav-item>
         <b-nav-item v-if="hasRole('ADMIN') " href="/#/documentcategorylist">{{$t('mainMenu.documentCategoryList')}}</b-nav-item>
-        <!-- <b-nav-item v-if="hasRole('ADMIN')" href="/#/deliveryreport">Ачот</b-nav-item> -->
 
+        <b-nav-item v-if="hasRole('TEACHER') " href="/#/teacherdoclist">{{$t('mainMenu.fillDocument')}}</b-nav-item>
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
@@ -19,9 +19,7 @@
           <b-dropdown-item href="javascript:void(0)"  v-for="locale in $i18n.locales()" :key="'i81n-' + locale"
 			      @click="$i18n.set(locale)" v-if="$i18n.locale() !== locale">{{locale}}</b-dropdown-item>
           <!-- <b-dropdown-item href="javascript:void(0)" >RU</b-dropdown-item> -->
-          </b-nav-item-dropdown>
-        
-         
+          </b-nav-item-dropdown> 
         <b-nav-item-dropdown right>
           <!-- <b-dropdown-item href="javascript:void(0)">Құпия сөз</b-dropdown-item> -->
           <b-dropdown-item href="javascript:void(0)" @click="logOut">{{$t('logOut')}}</b-dropdown-item>

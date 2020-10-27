@@ -20,6 +20,7 @@ import KusokGluer from '@/components/KusokGluer';
 import Client from '@/components/Client';
 import ClientLoanPay from '@/components/ClientLoanPay';
 import DocumentCategoryList from '@/components/enu/comps/DocumentCategoryList';
+import TeacherDocList from '@/components/enu/comps/TeacherDocList';
 Vue.use(Router);
 export default new Router({
    
@@ -128,6 +129,12 @@ export default new Router({
                     path: '/documentcategorylist',
                     name: 'DocumentCategoryList',
                     component: DocumentCategoryList,
+                    meta:{requiresAuth:true}
+                },
+                {
+                    path: '/teacherdoclist',
+                    name: 'TeacherDocList',
+                    component: TeacherDocList,
                     meta:{requiresAuth:true}
                 }
                 

@@ -9,13 +9,19 @@ export default {
 		newRecord:'Новый рекорд',
 		confirmMsg:'Вы уверены ?',
 		selectAll:'Выбрать все',
-		unSelectAll:'Снять все'
+		unSelectAll:'Снять все',
+		status:'Статус'
 	},
 	comboChooseText:'--выберите--',
 	mainMenu: {
 		users: 'Пользователи',
 		currentLang:'Рус',
-		documentCategoryList:'Документ'
+		documentCategoryList:'Документ',
+		fillDocument : "Заполнение документа"
+	},
+	teacherModule:{
+		myDocuments : 'Мои документы',
+		newDocument : 'Заполнение нового документа'
 	},
 	userPage :{
 		userList:'Список пользователей'

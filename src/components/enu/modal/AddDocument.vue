@@ -115,7 +115,6 @@ export default {
                 }
             ) 
         },
-        
         onModalShow(){
             this.getRefs('block');
             this.getRefs('docCat');

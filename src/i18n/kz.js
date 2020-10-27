@@ -10,13 +10,19 @@ export default {
 		newRecord:"Жаңа жазба",
 		confirmMsg:'Сіз сенімдісіз бе ?',
 		selectAll:'Барлығын таңдаңыз',
-		unSelectAll:'Барлығын алып тастау'
+		unSelectAll:'Барлығын алып тастау',
+		status:'Статус'
 	},
 
 	mainMenu: {
 		users: 'Қолданушылар',
 		currentLang:'Каз',
-		documentCategoryList:'Құжат'
+		documentCategoryList:'Құжат',
+		fillDocument : 'Құжатты толтыру'
+	},
+	teacherModule:{
+		myDocuments : 'Менің құжаттарым',
+		newDocument : 'Жаңа құжатты толтыру'
 	},
 	userPage :{
 		userList:'Қолданушылар тізімі'

@@ -25,6 +25,12 @@
                             window.location.href = "/#/users";         
                             return;
                         }
+                        if(r.roleName=='TEACHER'){
+                            alert("keldi goy");
+                            this.$router.push({name:'TeacherDocList'});
+                            //window.location.href = "/#/teacherdoclist";         
+                            //return;
+                        }
                     });
                 })
                 .catch(error => {

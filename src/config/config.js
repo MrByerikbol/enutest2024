@@ -28,6 +28,7 @@ export const getMultipartHeader = function (){
   const tokenData = JSON.parse(window.localStorage.getItem("authUser"));
   
   const headers= {
+    'Accpet': 'application/json',
     'Content-Type': 'multipart/form-data',
     'Authorization':'Bearer ' + tokenData.access_token
   }
