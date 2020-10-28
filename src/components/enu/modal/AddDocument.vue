@@ -42,14 +42,25 @@
                     ></b-form-input>
                 </b-col>
                 <b-col sm="auto" md="12">
-                    <label for="maxValue">{{$t('enu.docCatList.maxPoint')}}</label>
-                    <b-form-input
-                        id="maxValue"
-                        v-model="documentForm.maxValue"
-                        type="number"
-                        required
-                        :placeholder="$t('enu.docCatList.maxPoint')"
-                    ></b-form-input>
+                    <b-row>
+                        <b-col lg="8">
+                            <label for="maxValue">{{$t('enu.docCatList.maxPoint')}}</label>
+                            <b-form-input
+                                id="maxValue"
+                                v-model="documentForm.maxValue"
+                                type="number"
+                                required
+                                :placeholder="$t('enu.docCatList.maxPoint')"
+                            ></b-form-input>
+                        </b-col>
+                        <b-col lg="4">
+                            <label for="isTeam">{{$t('enu.docCatForm.chooseIsTeam')}}</label>
+                            <b-form-checkbox
+                                id="isTeam"
+                                v-model="documentForm.isTeamF"
+                            ></b-form-checkbox>    
+                        </b-col>
+                    </b-row>
                 </b-col>
                 
             </b-form-row>
@@ -75,7 +86,9 @@ export default {
                docCatId : 0,
                docName : "",
                docNameRu:"",
-               maxValue:0
+               maxValue:0,
+               isTeamF :false,
+               isTeam:0
             },
             blocks:[],
             docCats:[]
@@ -84,11 +97,18 @@ export default {
     methods:{
         updateRecord(rData){
             this.documentForm=rData;
+            rData.isTeam==1 ? this.documentForm.isTeamF=true : this.documentForm.isTeamF=false;
             this.documentForm.maxValue = rData.maxPoint;
             this.$bvModal.show('documentModal');
         },
         submitForm(evt){
             evt.preventDefault();
+            if(this.documentForm.isTeamF){
+                this.documentForm.isTeam=1;
+            }
+            else{
+                this.documentForm.isTeam=0;
+            }
             if(this.documentForm.blockId==0 
                 || this.documentForm.docCatId==0 ){
 
@@ -143,7 +163,9 @@ export default {
                 docCatId : 0,
                 docName : "",
                 docNameRu:"",
-                maxValue:0
+                maxValue:0,
+                isTeamF:false,
+                isTeam:0
             }
         }
 

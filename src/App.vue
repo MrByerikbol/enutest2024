@@ -6,7 +6,5 @@
     name: 'app'
   }
 </script>
-<style scoped>
-  
-</style>
+
 

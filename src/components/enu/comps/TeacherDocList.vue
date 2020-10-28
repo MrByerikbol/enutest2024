@@ -102,13 +102,13 @@
                 ></b-pagination>
             </b-col>
         </b-row>
-        <AddDepartment :refreshRecordTable="refreshRecordTable"/>
+        <AddTeacherDocument :refreshRecordTable="refreshRecordTable"/>
     </b-col>    
 </template>
 
 <script>
 import {apiDomain,getHeader} from "@/config/config";
-import AddDepartment from "@/components/enu/modal/AddDepartment";
+import AddTeacherDocument from "@/components/enu/modal/AddTeacherDocument";
 import {EventBus} from '@/EventBus.js';
 import axios from 'axios';
 import Vue from 'vue';
@@ -116,7 +116,7 @@ export default {
     name : "TeacherDocList",
 
     components:{
-        AddDepartment
+        AddTeacherDocument
     },
     data(){
         return{
@@ -234,6 +234,3 @@ export default {
     }
 }
 </script>
-<style scoped>
-
-</style>
