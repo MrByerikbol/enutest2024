@@ -6,7 +6,7 @@ export default {
 		successTitle:"Успех",
 		successMsg:"Успешно завершено",
 		dublicationMsg:'Повторяющаяся запись !!!',
-		newRecord:'Новый рекорд',
+		newRecord:'Новая запись',
 		confirmMsg:'Вы уверены ?',
 		selectAll:'Выбрать все',
 		unSelectAll:'Снять все',
