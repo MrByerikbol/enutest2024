@@ -41,7 +41,115 @@
                     
                     selected-variant="danger"
                     @row-selected="onSelected">
-                    
+                    <!-- block ashatin icon -->
+                    <template #head(blockActions)="data">
+                        <span class="text-info pl-2"><b-icon icon="chevron-compact-down" font-scale="1.5"></b-icon></span>
+                    </template>
+                    <template v-slot:cell(blockActions)="row">
+                        <b-button @click="row.toggleDetails" 
+                            variant="outline-info"  size="sm" >
+                           <b-icon icon="chevron-compact-down" font-scale="1.5"></b-icon>
+                        </b-button>
+                    </template>
+                    <!-- blocktin ishindegi document categoyalari  -->
+                     <template v-slot:row-details="row">
+                        <b-card>
+                            <b-row>
+                                <b-col lg="12">
+                                    <h6>{{$t('enu.teacherDocListSunDocCatListTitle')}}</h6>
+                                </b-col>
+                            </b-row>
+                            <b-table striped :fields="docCatFields" hover
+                                table-variant="warning" :items="row.item.docCats">
+
+                                <template #head(docCatActions)="data">
+                                    <span class="text-info pl-2"><b-icon icon="chevron-compact-down" font-scale="1.5"></b-icon></span>
+                                </template>
+                                <template v-slot:cell(docCatActions)="row">
+                                    <b-button @click="row.toggleDetails" 
+                                        variant="outline-info"  size="sm" >
+                                        <b-icon icon="chevron-compact-down" font-scale="1.5"></b-icon>
+                                    </b-button>    
+                                </template>
+                                <!-- docCatName name --> 
+                                <template #head(docCatName)="data">
+                                    <span class="text-info">{{$t(data.label)}}</span>
+                                </template>
+                                <template v-slot:cell(docCatName)="row">
+                                    {{$i18n.locale()=='kz' ? row.item.docCatName : row.item.docCatNameRu}}
+                                </template>
+                            
+                                <!-- maximum point -->
+                                <template #head(maxPoint)="data">
+                                    <span class="text-info">{{$t(data.label)}}</span>
+                                </template>
+                                <!-- planned point -->
+                                <template #head(plannedPoint)="data">
+                                    <span class="text-info">{{$t(data.label)}}</span>
+                                </template>
+                                <!-- taken point -->
+                                <template #head(takenPoint)="data">
+                                    <span class="text-info">{{$t(data.label)}}</span>
+                                </template>
+                               
+                                
+                                <!-- categordin bashanda shigatin docummentter -->
+                                <template v-slot:row-details="row">
+                                    <b-card>
+                                        <h6>{{$t('enu.documentList.title')}}</h6>
+                                        <b-table striped :fields="docFields" hover
+                                            table-variant="success" :items="row.item.docs">
+                                            <!-- docCatName name --> 
+                                            <template #head(docName)="data">
+                                                <span class="text-info">{{$t(data.label)}}</span>
+                                            </template>
+                                            <template v-slot:cell(docName)="row">
+                                                {{$i18n.locale()=='kz' ? row.item.docName : row.item.docNameRu}}
+                                            </template>
+                                        
+                                            <!-- maximum point -->
+                                            <template #head(maxPoint)="data">
+                                                <span class="text-info">{{$t(data.label)}}</span>
+                                            </template>
+                                            <!-- planned point -->
+                                            <template #head(plannedPoint)="data">
+                                                <span class="text-info">{{$t(data.label)}}</span>
+                                            </template>
+                                            <!-- taken point -->
+                                            <template #head(takenPoint)="data">
+                                                <span class="text-info">{{$t(data.label)}}</span>
+                                            </template>
+                                            <!-- docCatName name --> 
+                                            <template #head(docActions)="data">
+                                                <span class="text-info">{{$t(data.label)}}</span>
+                                            </template>
+                                            <template v-slot:cell(docActions)="row">
+                                                <b-button variant="danger" size="sm" class="float-left"
+                                                     @click="showConfirmModal(row.item.teacherDocRelId)">{{$t('system.deleteButton')}}</b-button>
+
+                                                <b-button variant="info" size="sm" class="float-left" 
+                                                     @click="downloadDoc(row.item.teacherDocRelId,row.item.fileName)">
+
+                                                     {{$t('enu.teacherDocList.downloadDocument')}}
+                                                </b-button>
+                                               
+                                            </template>
+                                        </b-table>
+                                        <b-row>
+                                            <b-col lg="12" class="text-right py-2">
+                                                <b-button size="sm" variant="warning" @click="row.toggleDetails">{{$t('enu.system.closeSubDocument')}}</b-button>
+                                            </b-col>
+                                        </b-row>
+                                    </b-card>
+                                </template>
+                            </b-table>
+                            <b-row>
+                                <b-col lg="12" class="text-right py-2">
+                                    <b-button size="sm" variant="info" @click="row.toggleDetails">{{$t('enu.system.closeSubCategory')}}</b-button>
+                                </b-col>
+                            </b-row>
+                        </b-card>
+                    </template>
                     <!-- block name --> 
                     <template #head(blockName)="data">
                         <span class="text-info">{{$t(data.label)}}</span>
@@ -49,22 +157,13 @@
                     <template v-slot:cell(blockName)="row">
                         {{$i18n.locale()=='kz' ? row.item.blockName : row.item.blockNameRu}}
                     </template>
-                    <!-- doc cat name --> 
-                    <template #head(docCatName)="data">
-                        <span class="text-info">{{$t(data.label)}}</span>
-                    </template>
-                    <template v-slot:cell(docCatName)="row">
-                        {{$i18n.locale()=='kz' ? row.item.docCatName : row.item.docCatNameRu}}
-                    </template>
-                    <!-- doc name --> 
-                    <template #head(docName)="data">
-                        <span class="text-info">{{$t(data.label)}}</span>
-                    </template>
-                    <template v-slot:cell(docName)="row">
-                        {{$i18n.locale()=='kz' ? row.item.docName : row.item.docNameRu}}
-                    </template>
+                   
                     <!-- maximum point -->
                     <template #head(maxPoint)="data">
+                        <span class="text-info">{{$t(data.label)}}</span>
+                    </template>
+                    <!-- planned point -->
+                    <template #head(plannedPoint)="data">
                         <span class="text-info">{{$t(data.label)}}</span>
                     </template>
                     <!-- taken point -->
@@ -100,6 +199,15 @@
                     class="my-0"
                     
                 ></b-pagination>
+                <b-modal ref="confirm-modal" hide-footer :title="$t('system.confirmMsg')" @hide="hideModal">
+                    <b-overlay :show="delOverlay" rounded="sm">
+                        <!-- <div class="d-block text-center">
+                            <h3>{{$t('system.confirmMsg')}}</h3>
+                        </div> -->
+                        <b-button class="mt-3" size="sm" variant="outline-danger" block @click="deleteDocument">Ok</b-button>
+                        <b-button class="mt-2" size="sm" variant="outline-warning" block @click="hideModal">Cancel</b-button>
+                    </b-overlay>
+                </b-modal>
             </b-col>
         </b-row>
         <AddTeacherDocument :refreshRecordTable="refreshRecordTable"/>
@@ -109,9 +217,9 @@
 <script>
 import {apiDomain,getHeader} from "@/config/config";
 import AddTeacherDocument from "@/components/enu/modal/AddTeacherDocument";
-import {EventBus} from '@/EventBus.js';
+//import {EventBus} from '@/EventBus.js';
 import axios from 'axios';
-import Vue from 'vue';
+//import Vue from 'vue';
 export default {
     name : "TeacherDocList",
 
@@ -120,20 +228,31 @@ export default {
     },
     data(){
         return{
-            fields: [
-                // {
-                //     key: 'teacherDocRelId',
-                //     label: 'ID'
-                // },
-
+            docCatFields:[
                 {
-                    key: 'blockName',
-                    label: 'enu.documentCategory.blockListName',
+                    key: 'docCatActions',
+                    
                 },
+
                 {
                     key: 'docCatName',
                     label: 'enu.teacherDocList.categoryName',
                 },
+                {
+                    key: 'maxPoint',
+                    label: 'enu.blockForm.maxPoint',
+                },
+                {
+                    key: 'plannedPoint',
+                    label: 'enu.teacherDocList.plannedPoint',
+                },
+               
+                {
+                    key: 'takenPoint',
+                    label: 'enu.teacherDocList.takenPoint',
+                }
+            ],
+            docFields:[
                 {
                     key: 'docName',
                     label: 'enu.docForm.docName',
@@ -142,6 +261,39 @@ export default {
                     key: 'maxPoint',
                     label: 'enu.blockForm.maxPoint',
                 },
+                {
+                    key: 'plannedPoint',
+                    label: 'enu.teacherDocList.plannedPoint',
+                },
+               
+                {
+                    key: 'takenPoint',
+                    label: 'enu.teacherDocList.takenPoint',
+                }, 
+                {
+                    key: 'docActions',
+                    label: 'enu.teacherDocList.docActions',
+                }
+            ],
+            fields: [
+                {
+                    key: 'blockActions',
+                    
+                },
+
+                {
+                    key: 'blockName',
+                    label: 'enu.documentCategory.blockListName',
+                },
+                {
+                    key: 'maxPoint',
+                    label: 'enu.blockForm.maxPoint',
+                },
+                {
+                    key: 'plannedPoint',
+                    label: 'enu.teacherDocList.plannedPoint',
+                },
+               
                 {
                     key: 'takenPoint',
                     label: 'enu.teacherDocList.takenPoint',
@@ -156,59 +308,64 @@ export default {
             perPage: 20, 
             filter:"",
             selectedRows:[],
+            delTeacherDocRelId :null,
+            delOverlay:false
         }
     },
     methods:{
-        deleteRecord(){
-            let warn = confirm(Vue.i18n.translate('system.confirmMsg'));
-
-            if(warn){
-                if(this.selectedRows.length>0){
-                    let o = new Object();
-
-                    o.selectedRows=this.selectedRows;
-                    o.type='enu_department';
-                    axios.post(apiDomain+'/admin/delivery/deleteref',o,{headers:getHeader()})
-                    .then(()=>{
-                        this.refreshRecordTable();
-                    
-                    })
-                    .catch(error => {
-                        //console.log(error.message)
-                        this.$bvToast.toast(error.message, {
-                            title: 'алдаа',
-                            autoHideDelay: 5000
-                        })
-                    }) 
+        downloadDoc(teacherDocRelId,fileName){
+            //alert("here ");
+            axios.post(apiDomain+'/admin/enu/kpibuisness/downloaddoc',
+                {
+                    'teacherDocRelId':teacherDocRelId
+                },
+                {
+                  responseType: 'blob', // important
+                  headers:getHeader()
                 }
-            }
-        
+            )
+            .then((response) => {
+                //alert(JSON.stringify(response.data));
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', fileName);
+
+                document.body.appendChild(link);
+                link.click();
+            });
+        },
+        hideModal() {
+            //alert("hide detected");
+            this.delTeacherDocRelId=null;
+            this.$refs['confirm-modal'].hide();
+        },
+        deleteDocument() {
+            //alert("do something "+this.delTeacherDocRelId);  
+            this.delOverlay=true;
+            axios.post(apiDomain+'/admin/enu/kpibuisness/deltedoc',
+            {'teacherDocRelId':this.delTeacherDocRelId},
+            {headers:getHeader()})
+            .then(()=>{
+                this.delOverlay=false;
+                this.$refs.recordTable.refresh(); 
+                this.hideModal();   
+            })
+            .catch(error => {
+                this.delOverlay=false;
+                alert(error.message);
+            });
+            
+        },
+        showConfirmModal(teacherDocRelId){
+            this.$refs['confirm-modal'].show();
+            this.delTeacherDocRelId=teacherDocRelId;
         },
         onSelected(items){
             this.selectedRows=items;
         },
 
-        updateRecord(){
-            if(this.selectedRows.length==1){
-                let id = this.selectedRows[0].departmentId;
-                if(id && id>0){
-                    axios.post(apiDomain+'/admin/enu/ref/getref',{refType:'department',refId:id},{headers:getHeader()})
-                    .then(response=>{
-                        let rData = response.data;
-                        EventBus.$emit('updateDepartment',rData);
-                        
-                    })
-                    .catch(error => {
-                        //console.log(error.message)
-                        this.$bvToast.toast(error.message, {
-                            title: 'алдаа',
-                            autoHideDelay: 5000
-                        })
-                    }) 
-                }
-            }
-        
-        },
+       
 
         recordProvider(ctx){
             //alert("yes");

@@ -20,7 +20,7 @@
 			      @click="$i18n.set(locale)" v-if="$i18n.locale() !== locale">{{locale}}</b-dropdown-item>
           <!-- <b-dropdown-item href="javascript:void(0)" >RU</b-dropdown-item> -->
           </b-nav-item-dropdown> 
-        <b-nav-item-dropdown right>
+        <b-nav-item-dropdown right :text="loginedUser.firstName">
           <!-- <b-dropdown-item href="javascript:void(0)">Құпия сөз</b-dropdown-item> -->
           <b-dropdown-item href="javascript:void(0)" @click="logOut">{{$t('logOut')}}</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -59,8 +59,8 @@ export default {
           this.statisticData=response.data;
 
       })
-      .catch(error => {
-          alert(error.message)    
+      .catch(() => {
+          //alert(error.message)    
       })
     },
     logOut : function(){
@@ -70,10 +70,10 @@ export default {
       .then(()=>{
           window.localStorage.removeItem("authUser");
           window.localStorage.clear();
-          this.$router.push({name:'Login'});
+          this.$router.push({name:'Home'});
       })
-      .catch(error => {
-          alert(error.message);    
+      .catch(() => {
+          
       })
        
     },

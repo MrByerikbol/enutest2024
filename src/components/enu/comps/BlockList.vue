@@ -94,7 +94,7 @@ import axios from 'axios';
 import Vue from 'vue';
 export default {
     props:['clearForm'],
-    name : "DepartmentList",
+    name : "BlockList",
     data(){
         return{
             fields: [

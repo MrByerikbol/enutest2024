@@ -43,7 +43,7 @@ export default {
       .catch(()=>{
         //alert("this is error section");
         //console.log(error);
-        this.$router.push({name:'Login'});
+        this.$router.push({name:'Home'});
       })
     }
 

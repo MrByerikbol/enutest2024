@@ -26,7 +26,7 @@
                             return;
                         }
                         if(r.roleName=='TEACHER'){
-                            alert("keldi goy");
+                            //alert("keldi goy");
                             this.$router.push({name:'TeacherDocList'});
                             //window.location.href = "/#/teacherdoclist";         
                             //return;

@@ -49,6 +49,7 @@
                                 id="maxValue"
                                 v-model="documentForm.maxValue"
                                 type="number"
+                                step="any" 
                                 required
                                 :placeholder="$t('enu.docCatList.maxPoint')"
                             ></b-form-input>

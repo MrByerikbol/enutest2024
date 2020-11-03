@@ -31,6 +31,7 @@
                                 id="maxValue"
                                 v-model="blockForm.maxValue"
                                 type="number"
+                                step="any" 
                                 required
                                 :placeholder="$t('enu.blockForm.maxPoint')"
                             ></b-form-input>

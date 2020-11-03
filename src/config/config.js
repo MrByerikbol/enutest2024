@@ -1,5 +1,5 @@
-export const  apiDomain = "http://localhost:8080";
-//export const apiDomain="";
+//export const  apiDomain = "http://localhost:8080";
+export const apiDomain="";
 
 export const loginUrl = apiDomain+"/oauth/token";
 export const getHeader = function(){
@@ -20,6 +20,7 @@ export const getXlsHeader = function(){
   const headers= {
     'Accept': 'application/vnd.openxmlformats-officedocument'
            + '.spreadsheetml.sheet',
+
     'Authorization':'Bearer ' + tokenData.access_token
   }
   return headers;

@@ -39,6 +39,7 @@
                         v-model="documentCategoryForm.docCount"
                         type="number"
                         required
+                        step="any" 
                         :placeholder="$t('enu.docCatList.insertableDocCount')"
                     ></b-form-input>
                 </b-col>

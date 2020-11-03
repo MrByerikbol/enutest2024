@@ -48,12 +48,32 @@
                             <b-col lg="3">
                                 <label id="docId">{{$t('enu.docForm.docName')}}</label>
 
-                                <select  v-model="teacherForm.docDetails.docId" id="docId" class="form-control-sm w-100">
+                                <!-- <select  v-model="teacherForm.docDetails.docId" id="docId" class="form-control-sm w-100">
                                     <option value=0>{{$t('comboChooseText')}}</option>
                                     <option v-for="(dc,k) in docs.filter(d=>d.docCatId==teacherForm.docDetails.docCatId)" :key="k" :value="dc.docId">
                                         {{$i18n.locale()=='kz' ? dc.docName : dc.docNameRu}}
                                     </option>
-                                </select>    
+                                </select> -->
+                                <model-list-select v-if="lang=='kz'"
+                                    :list="docs.filter(d=>d.docCatId==teacherForm.docDetails.docCatId)"
+                                    option-value="docId"
+                                    option-text="docName"
+                                   
+                                    v-model="selectedDoc"
+                                    :placeholder="$t('enu.docForm.docName')"
+                                    :isDisabled="teacherForm.docDetails.docCatId==0 ? true : false"
+                                >
+                                </model-list-select>    
+                                <model-list-select v-if="lang=='ru'"
+                                    :list="docs.filter(d=>d.docCatId==teacherForm.docDetails.docCatId)"
+                                    option-value="docId"
+                                    option-text="docNameRu"
+                                   
+                                    v-model="selectedDoc"
+                                    :placeholder="$t('enu.docForm.docName')"
+                                    :isDisabled="teacherForm.docDetails.docCatId==0 ? true : false"
+                                >
+                                </model-list-select>    
                             </b-col>    
                             <b-col lg="4" class="pt-4">
                                 <b-form-file
@@ -66,7 +86,7 @@
                                     :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
                                 ></b-form-file>    
                             </b-col>
-                            <b-col lg="12" v-if="docs.filter(d=> d.isTeam==1 && parseInt(d.docId)==parseInt(this.teacherForm.docDetails.docId)).length>0">
+                            <b-col lg="12" v-if="docs.filter(d=> d.isTeam==1 && parseInt(d.docId)==parseInt(this.selectedDoc.docId)).length>0">
 
                                 <label for="teamCount">{{$t('enu.teacherForm.teamInputMsg')}}</label>
                                 <b-form-input
@@ -107,10 +127,14 @@ import {apiDomain,getHeader,getMultipartHeader} from "@/config/config";
 import axios from 'axios';
 import Vue from "vue";
 import {EventBus} from '@/EventBus.js';
+import { ModelListSelect } from 'vue-search-select';
 export default {
     name : "AddTeacherDocument",
 
     props:['refreshRecordTable'],
+    components:{
+        ModelListSelect
+    },
     data(){
         return{
             teacherForm:{
@@ -129,12 +153,13 @@ export default {
             docCats:[],
             docs:[],
             docCountInformation:null,
-            overlayShow:false
+            overlayShow:false,
+            selectedDoc:{}
         }
     },
 
     methods:{
-        
+      
         getDocCountInformation(docCatId){
             if(docCatId>0){
                 axios.post(apiDomain+'/admin/enu/kpibuisness/getdocumentcountformation',{docCatId:docCatId},
@@ -154,16 +179,16 @@ export default {
             if(type=='block'){
                 if(parseInt(this.teacherForm.docDetails.blockId)==0){
                     this.teacherForm.docDetails.docCatId=0;
-                    this.teacherForm.docDetails.docId=0;
+                    this.selectedDoc={};
                 }
             }
             if(type=='docCat'){
                 if(parseInt(this.teacherForm.docDetails.docCatId)==0){
-                    this.teacherForm.docDetails.docId=0;
+                    this.selectedDoc={};
                 }
                 else{
                     this.getDocCountInformation(parseInt(this.teacherForm.docDetails.docCatId));
-                    this.teacherForm.docDetails.docId=0;
+                    this.selectedDoc={};
                 }
             }
         },
@@ -176,7 +201,16 @@ export default {
         },
         submitForm(evt){
             
-            evt.preventDefault();   
+            evt.preventDefault(); 
+            if(!this.selectedDoc.docId || parseInt(this.selectedDoc.docId)==0){
+                 this.$bvToast.toast(Vue.i18n.translate('enu.teacherDocForm.fillAllError'), {
+                    variant:'danger',
+                    title: Vue.i18n.translate('system.errorTitle'),
+                    autoHideDelay: 5000
+                })    
+                return ;    
+            }
+            this.teacherForm.docDetails.docId=this.selectedDoc.docId;  
             if(parseInt(this.teacherForm.docDetails.blockId)==0
                 || parseInt(this.teacherForm.docDetails.docCatId)==0 
                 || parseInt(this.teacherForm.docDetails.docId)==0
@@ -225,7 +259,7 @@ export default {
                         }
                     },
                     this.docCountInformation=null;
-
+                    this.selectedDoc={};
                     this.overlayShow=false;
                 }
                 else{
@@ -281,6 +315,7 @@ export default {
                 }
             },
             this.docCountInformation=null;
+            this.selectedDoc={};
         },
         getRefs(refType){
             axios.post(apiDomain+'/admin/enu/ref/getdatalist',{refType:refType},{headers:getHeader()})
@@ -308,6 +343,11 @@ export default {
         var vm = this;
 
         EventBus.$on("updateDepartment", (rData)=> vm.updateRecord(rData));
+    },
+    computed:{
+        lang:function(){
+            return Vue.i18n.locale();
+        }
     }
     
     
@@ -318,16 +358,11 @@ export default {
     .custom-file-input:lang(en) ~ .custom-file-label::after {
         content: 'Файл';
     }
-    option {
-        /* wrap text in compatible browsers */
-        -moz-white-space: pre-wrap;
-        -o-white-space: pre-wrap;
-        white-space: pre-wrap;
-        /* hide text that can't wrap with an ellipsis */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        /* add border after every option */
-        border-bottom: 1px solid #DDD;
-    }
+   select {
+    max-width: 100%;
+    white-space: normal;
+    /* For Firefox: */
+    text-overflow: ellipsis;
+}
 </style>
 

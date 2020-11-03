@@ -1,129 +1,38 @@
 <template>
-     <!-- .auth -->
-    <main class="auth auth-floated">
-      <!-- form -->
-      <form class="auth-form" v-on:submit.prevent="handleLoginFormSubmit">
-        <div class="mb-4">
-          <div class="mb-3">
-            <img class="rounded" src="assets/apple-touch-icon.png" alt="" height="72">
-          </div>
-          <h1 class="h3"> Кіру </h1>
-        </div>
-        <!-- <p class="text-left mb-4"> Шинэ хэрэглэгч бүртгүүлэх <a href="auth-signup.html">Бүртгүүлэх</a></p> -->
-        <!-- .form-group -->
-        <div class="form-group mb-4">
-          <label class="d-block text-left" for="inputUser">Тұтнушы аты</label> 
-          <input 
-            type="text" 
-            id="inputUser" 
-            class="form-control form-control-lg" 
-            required="" 
-            v-model="login.username"
-            autofocus="">
-        </div><!-- /.form-group -->
-        <!-- .form-group -->
-        <div class="form-group mb-4">
-          <label class="d-block text-left" for="inputPassword">Құпия сөз</label>
-          <input 
-            type="password" 
-            id="inputPassword" 
-            class="form-control form-control-lg"
-            required=""
-            v-model="login.password"
-            >
-        </div><!-- /.form-group -->
-        <!-- .form-group -->
-        <div class="form-group mb-4">
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Кіру</button>
-        </div><!-- /.form-group -->
-        <!-- .form-group -->
-        <div class="form-group text-center">
-          <div class="custom-control custom-control-inline custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="remember-me"> 
-            <label class="custom-control-label" for="remember-me">Ескерту</label>
-          </div>
-        </div><!-- /.form-group -->
-        <!-- recovery links -->
-        <p class="py-2">
-          <a href="auth-recovery-username.html" class="link">Паролімді ұмытып</a> <span class="mx-2">·</span> 
-        </p><!-- /recovery links -->
-        <!-- copyright -->
-        <p class="mb-0 px-3 text-muted text-center"> © 2020 Барлық құқықтар қорғалған.<a href="#!">Қызмет көрсету шарттары</a> 
-        </p>
-      </form><!-- /.auth-form -->
-     
-    </main><!-- /.auth -->
+ <div class="app"> 
+   <LandingHeader/>
+ 
+    <b-container  fluid>
+         <b-row class="pt-5 mt-5"> 
+            <b-col lg="8" class="pt-5">
+              <router-view></router-view>
+
+            </b-col>
+            <b-col lg="4" class="pt-5">
+              <h4>{{$t('enu.landing.departmentsText')}}</h4>
+              <DepartmentList/>
+            </b-col>
+      </b-row>  
+    </b-container>
+    
+   <LandingFooter/>
+ </div>
 </template>
+
 <script>
-  import axios from 'axios';
-  import {apiDomain,loginUrl,getHeader} from "../config/config";
-  const cl = btoa("devglan-client:devglan-secret");
-  const authUser = {};
+  import LandingHeader from "@/components/enu/landing/LandingHeader";
+  import DepartmentList from "@/components/enu/landing/DepartmentList";
+  import LandingFooter from "@/components/enu/landing/LandingFooter";
   export default {
-       name : "Login",
-       data(){
-        return {
-          login:{
-            username:'',
-            
-            password:''
-          }
-        }
-      },
-
-      methods:{
-        handleLoginFormSubmit () {
-
-          // axios.get(apiDomain+'/login/setpassword',{},{headers:getHeader()})
-          // .then(response=>{
-          //   alert("zayada bi hairtai bsan ");
-
-          // });
-
-
-          //alert("the form submit handled");
-          axios.request({
-            baseURL: apiDomain,
-            url: loginUrl,
-            withCredentials: true,
-            method: "post",
-
-            crossdomain: true,
-            data: "username="+this.login.username+"&password="+this.login.password+"&grant_type=password",
-
-            headers: {
-              'Authorization': 'Basic ' +cl,
-              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-            }
-          }).then(response=> {
-            if(response.status===200){
-              authUser.access_token=response.data.access_token;
-              authUser.refresh_token = response.data.refresh_token;
-
-              window.localStorage.setItem('authUser',JSON.stringify(authUser));
-              this.$router.push({name:'AfterAuth'});
-                 
-            }
-
-
-
-          }).catch(function (error) {
-            //console.log(error);
-
-            if(error.response.status===400){
-              alert("Сіз енгізген ақпарат дұрыс емес.");
-            }
-            else {
-              //alert("Алдаа үүслээ та дахин оролдоно уу .");
-              console.log("Server de hatelikter shihti");
-
-            }
-
-          });
-        }
-      }        
+    components:{
+      LandingHeader,
+      DepartmentList,
+      LandingFooter
+    },
+    name:"Login"
   }
 </script>
+
 <style scoped>
 
 </style>
