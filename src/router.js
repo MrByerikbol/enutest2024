@@ -11,6 +11,7 @@ import TeacherDocList from '@/components/enu/comps/TeacherDocList';
 
 import Home from '@/components/enu/landing/Home';
 import ContactUs from '@/components/enu/landing/ContactUs';
+import TeacherFillDoc from '@/components/enu/comps/TeacherFillDoc';
 Vue.use(Router);
 export default new Router({
    
@@ -63,8 +64,13 @@ export default new Router({
                     name: 'TeacherDocList',
                     component: TeacherDocList,
                     meta:{requiresAuth:true}
+                },
+                {
+                    path: '/teacherfilldoc',
+                    name: 'TeacherFillDoc',
+                    component: TeacherFillDoc,
+                    meta:{requiresAuth:true}
                 }
-                
             ]
         }
     ]

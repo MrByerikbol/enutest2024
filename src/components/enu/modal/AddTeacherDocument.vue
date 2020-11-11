@@ -233,6 +233,30 @@ export default {
 
             //main for checker 
             var formData = new FormData();
+            
+            if(this.teacherForm.docDetails.docFile.name &&
+                this.teacherForm.docDetails.docFile.name!=null){
+                let checker = this.teacherForm.docDetails.docFile.name.split(".");
+
+                if(checker.length!=2){
+                    this.$bvToast.toast(Vue.i18n.translate('wrongFile'), {
+                        toaster:'b-toaster-top-center',
+                        variant:'danger',
+                        title: Vue.i18n.translate('system.errorTitle'),
+                        autoHideDelay: 5000,
+                      
+                    })   
+                    return ;
+                }
+            }
+            else{
+                this.$bvToast.toast(Vue.i18n.translate('enu.teacherDocForm.noFileError'), {
+                    variant:'danger',
+                    title: Vue.i18n.translate('system.errorTitle'),
+                    autoHideDelay: 5000
+                })   
+                 return ;    
+            }
             formData.append("docFile", this.teacherForm.docDetails.docFile);
             formData.append("docDetails",JSON.stringify(this.teacherForm));
             this.overlayShow=true;    

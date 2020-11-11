@@ -2,7 +2,7 @@
     <b-row>
         <b-col lg="12">
             <b-button block  :disabled="calculating || beginDate=='' || endDate==''" @click="getCurrentCalculationInfo">
-                {{calculating ? 'Жүктелнуде...' : 'Есеп акбаратын алу'}}
+                {{calculating ? 'Жүктелуде...' : 'Есеп ақпаратын алу'}}
             </b-button>
         </b-col>
         <b-col lg="12" v-if="calcInfo!=null">

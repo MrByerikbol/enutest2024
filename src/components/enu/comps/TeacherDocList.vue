@@ -5,11 +5,20 @@
                 <span class="bd-content-title">{{$t('teacherModule.myDocuments')}}</span>
             </h4>
         </b-col>
-        <b-col lg="6" class="mb-3">
-        
-            <b-button variant="success" size="sm" class="mr-2" block v-b-modal.modal>{{$t('teacherModule.newDocument')}}</b-button>
-            
+        <b-col lg="12">
+            <b-row>
+                <b-col lg="6" class="mb-3">
+                    <b-button variant="outline-success" size="sm" class="mr-2" block disabled>{{$t('teacherModule.newDocument')}}</b-button>
+                </b-col>
+                <b-col lg="6" class="mb-3">
+                    <b-button @click="toFillDoc" variant="outline-info" size="sm" class="mr-2" block>
+                        <!-- {{$t('enu.teacherDocList.yearPlanning')}} -->
+                        {{$t('enu.teacherDocList.fillDocH1Title')}}
+                    </b-button>
+                </b-col>
+            </b-row>
         </b-col>
+        
         <b-row>
             <b-col lg="8">
                 <b-form-input
@@ -313,6 +322,9 @@ export default {
         }
     },
     methods:{
+        toFillDoc(){
+            this.$router.push({name:"TeacherFillDoc"});
+        },
         downloadDoc(teacherDocRelId,fileName){
             //alert("here ");
             axios.post(apiDomain+'/admin/enu/kpibuisness/downloaddoc',

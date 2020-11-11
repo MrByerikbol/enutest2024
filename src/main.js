@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-search-select/dist/VueSearchSelect.css' 
 import {BootstrapVue,IconsPlugin} from 'bootstrap-vue'
+import VueAnalytics from 'vue-analytics'
 Vue.use(IconsPlugin)
 Vue.use(BootstrapVue)
 
@@ -62,6 +63,16 @@ import vuexI18n from 'vuex-i18n';
 // }
 import axios from 'axios';
 import {apiDomain,getHeader} from "./config/config";
+import VueHtmlToPaper from "vue-html-to-paper";
+const options = {
+  name: "_blank",
+  specs: ["fullscreen=yes", "titlebar=yes", "scrollbars=yes"],
+  styles: [
+    "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
+    "https://unpkg.com/kidlat-css/css/kidlat.css"
+  ]
+};
+Vue.use(VueHtmlToPaper, options);
 Vue.use(vuexI18n.plugin, store, {
 	moduleName: 'i18n',
 	onTranslationNotFound (locale, key) {
@@ -99,7 +110,10 @@ import router from './router'
 import {sync} from 'vuex-router-sync';
 sync(store, router);
 
-new Vue({
+new Vue(
+  //VueAnalytics,
+  {
+  //id: 'BEST-ENU-X',
   // i18n,
   router,
   store,
