@@ -43,8 +43,8 @@
                                     
                                     <td colspan="6">
                                         <span class="font-weight-bold">
-                                            {{i+1 +'.'+ $i18n.locale()=='kz' 
-                                                ? r.categoryName : r.categoryNameRu}}</span>    
+                                            {{$i18n.locale()=='kz' 
+                                                ? i+1 +'.'+r.categoryName : i+1 +'.'+r.categoryNameRu}}</span>    
                                     </td>      
                                 </tr>
                                 <tr v-for="(d,di) in r.dFocs" :key="di">
@@ -52,19 +52,19 @@
                                     <td>{{$i18n.locale()=='kz' ? d.docName : d.docNameRu}}</td>
                                     <td>{{$i18n.locale()=='kz' ? d.docDescription : d.docDescriptionRu}}</td>
                                     <td>
-                                        <textarea v-if="!isPrint" v-model="fDocCats[i].dFocs[di].formDescription"
+                                        <textarea  v-model="fDocCats[i].dFocs[di].formDescription"
                                              class="form-control"></textarea>
                                        
                                     </td>
                                     <td>
                                        
-                                        <datepicker v-if="!isPrint" format="dd-MM-yyyy"
+                                        <datepicker format="dd-MM-yyyy"
                                             :clear-button="true"
                                             v-model="fDocCats[i].dFocs[di].beginDate"
                                         ></datepicker>
                                     </td>
                                     <td>
-                                        <datepicker v-if="!isPrint" format="dd-MM-yyyy"
+                                        <datepicker  format="dd-MM-yyyy"
                                             :clear-button="true"
                                             v-model="fDocCats[i].dFocs[di].endDate"
                                         ></datepicker>
@@ -73,7 +73,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="text-right font-weight-bold">
+                        <div class="text-right font-weight-bold d-none show-print">
                             {{$t('enu.teacherDocList.FillDocSignature')+'______________________________________________________'}}
                         </div>
                     </div>
@@ -273,11 +273,20 @@ export default {
 }
 </script>
 <style scoped>
+    
     @media print
-{    
-    .no-print, .no-print *
-    {
-        display: none !important;
+    {    
+        .no-print, .no-print *
+        {
+            display: none !important;
+        }
     }
-}
+     @media print
+    {    
+        .show-print, .show-print *
+        {
+            display: block !important;
+            width:100% !important;
+        }
+    }
 </style>

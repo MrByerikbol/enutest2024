@@ -8,7 +8,7 @@
         <b-col lg="12">
             <b-row>
                 <b-col lg="6" class="mb-3">
-                    <b-button variant="outline-success" size="sm" class="mr-2" block disabled>{{$t('teacherModule.newDocument')}}</b-button>
+                    <b-button disabled size="sm" class="mr-2" block>{{$t('teacherModule.newDocument')}}</b-button>
                 </b-col>
                 <b-col lg="6" class="mb-3">
                     <b-button @click="toFillDoc" variant="outline-info" size="sm" class="mr-2" block>
@@ -128,6 +128,11 @@
                                             <template #head(takenPoint)="data">
                                                 <span class="text-info">{{$t(data.label)}}</span>
                                             </template>
+                                            <template v-slot:cell(takenPoint)="row">
+                                                <span class="text-danger">{{row.item.docStatus==1 ? 
+                                                    row.item.plannedPoint : '0'}}</span>
+                                            </template>
+                                            
                                             <!-- docCatName name --> 
                                             <template #head(docActions)="data">
                                                 <span class="text-info">{{$t(data.label)}}</span>

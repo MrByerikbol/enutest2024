@@ -18,8 +18,7 @@
         <b-nav-item-dropdown right :text="$t('mainMenu.currentLang')">
           <b-dropdown-item href="javascript:void(0)"  v-for="locale in $i18n.locales()" :key="'i81n-' + locale"
 			      @click="$i18n.set(locale)" v-if="$i18n.locale() !== locale">{{locale}}</b-dropdown-item>
-          <!-- <b-dropdown-item href="javascript:void(0)" >RU</b-dropdown-item> -->
-          </b-nav-item-dropdown> 
+        </b-nav-item-dropdown> 
         <b-nav-item-dropdown right :text="loginedUser.firstName">
           <!-- <b-dropdown-item href="javascript:void(0)">Құпия сөз</b-dropdown-item> -->
           <b-dropdown-item href="javascript:void(0)" @click="logOut">{{$t('logOut')}}</b-dropdown-item>

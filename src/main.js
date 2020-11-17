@@ -73,6 +73,7 @@ const options = {
   ]
 };
 Vue.use(VueHtmlToPaper, options);
+
 Vue.use(vuexI18n.plugin, store, {
 	moduleName: 'i18n',
 	onTranslationNotFound (locale, key) {
@@ -94,15 +95,9 @@ Vue.use(vuexI18n.plugin, store, {
 // import predefined localizations
 import translationsKz from './i18n/kz.js';
 import translationsRu from './i18n/ru.js';
-
-
-
 // add translations
 Vue.i18n.add('kz', translationsKz);
 Vue.i18n.add('ru', translationsRu);
-
-
-
 // default locale is english
 Vue.i18n.set('kz');
 import router from './router'

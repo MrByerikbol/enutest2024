@@ -547,14 +547,13 @@
             })
             .catch(function (error) {
                 //console.log(error);
-
+                //alert(JSON.stringify(error));
                 if(error.response.status===400){
-                alert("Сіз енгізген ақпарат дұрыс емес.");
+                    alert("Сіз енгізген ақпарат дұрыс емес.");
                 }
                 else {
                     //alert("Алдаа үүслээ та дахин оролдоно уу .");
                     console.log("Server de hatelikter shihti");
-
                 }
           });
         }
