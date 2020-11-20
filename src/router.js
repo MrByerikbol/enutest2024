@@ -12,6 +12,7 @@ import TeacherDocList from '@/components/enu/comps/TeacherDocList';
 import Home from '@/components/enu/landing/Home';
 import ContactUs from '@/components/enu/landing/ContactUs';
 import TeacherFillDoc from '@/components/enu/comps/TeacherFillDoc';
+import TestCategoryList from '@/components/enu/comps/ttest/TestCategoryList';
 Vue.use(Router);
 export default new Router({
    
@@ -69,6 +70,13 @@ export default new Router({
                     path: '/teacherfilldoc',
                     name: 'TeacherFillDoc',
                     component: TeacherFillDoc,
+                    meta:{requiresAuth:true}
+                },
+
+                {
+                    path: '/ttestref',
+                    name: 'TestCategoryList',
+                    component: TestCategoryList,
                     meta:{requiresAuth:true}
                 }
             ]

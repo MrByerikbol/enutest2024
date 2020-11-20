@@ -7,10 +7,10 @@
 
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav>  
-        <b-nav-item v-if="hasRole('ADMIN') " href="/#/users">{{$t('mainMenu.users')}}</b-nav-item>
-        <b-nav-item v-if="hasRole('ADMIN') " href="/#/documentcategorylist">{{$t('mainMenu.documentCategoryList')}}</b-nav-item>
+        <b-nav-item v-if="hasRole('ADMIN') " href="/#/users">{{$t('enu.ttest.testRefMainTitle')}}</b-nav-item>
+        <!-- <b-nav-item v-if="hasRole('ADMIN') " href="/#/documentcategorylist">{{$t('mainMenu.documentCategoryList')}}</b-nav-item>
 
-        <b-nav-item v-if="hasRole('TEACHER') " href="/#/teacherdoclist">{{$t('mainMenu.fillDocument')}}</b-nav-item>
+        <b-nav-item v-if="hasRole('TEACHER') " href="/#/teacherdoclist">{{$t('mainMenu.fillDocument')}}</b-nav-item> -->
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->

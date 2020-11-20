@@ -1,5 +1,5 @@
 export default {
-	logoName:'Лучший преподаватель',
+	logoName:'СИСТЕМА ОНЛАЙН ТЕСТА',
 	logOut:'Выйти',
 	system:{
 		errorTitle:'ошибка',
@@ -10,7 +10,8 @@ export default {
 		confirmMsg:'Вы уверены ?',
 		selectAll:'Выбрать все',
 		unSelectAll:'Снять все',
-		status:'Статус'
+		status:'Статус',
+		serverError:"Произошла ошибка на сервере !!!. Попробуй еще раз."
 	},
 	comboChooseText:'--выберите--',
 	mainMenu: {

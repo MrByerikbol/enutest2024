@@ -22,15 +22,10 @@
                      result.roles.forEach(r => {
                         if(r.roleName=='ADMIN'){
                             //this.$router.push({name:'Deliveries'});
-                            window.location.href = "/#/users";         
+                            window.location.href = "/#/ttestref";         
                             return;
                         }
-                        if(r.roleName=='TEACHER'){
-                            //alert("keldi goy");
-                            this.$router.push({name:'TeacherDocList'});
-                            //window.location.href = "/#/teacherdoclist";         
-                            //return;
-                        }
+                        
                     });
                 })
                 .catch(error => {

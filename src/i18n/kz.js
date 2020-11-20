@@ -1,5 +1,5 @@
 export default {
-	logoName:'Үздік оқытушы',
+	logoName:'ОНЛАЙН ТЕСТ ЖҮЙЕСІ',
 	comboChooseText:'--Таңдау--',
 	logOut:'Жүйеден шығу',
 	system:{
@@ -11,7 +11,8 @@ export default {
 		confirmMsg:'Сіз сенімдісіз бе ?',
 		selectAll:'Барлығын таңдаңыз',
 		unSelectAll:'Барлығын алып тастау',
-		status:'Статус'
+		status:'Статус',
+		serverError:"Серверде қате пайда болды !!!. Қайтадан байқап көріңіз."
 	},
 
 	mainMenu: {
