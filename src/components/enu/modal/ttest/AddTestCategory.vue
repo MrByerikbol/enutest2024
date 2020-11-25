@@ -43,6 +43,16 @@
                         :placeholder="$t('enu.ttest.catForm.additionalPoint')"
                     ></b-form-input>
                 </b-col>
+                <b-col sm="auto" md="12">
+                    <label for="orderIndex">{{$t('enu.ttest.catForm.orderIndex')}}</label>
+                    <b-form-input
+                        id="orderIndex"
+                        v-model="testCategoryForm.orderIndex"
+                        type="number"
+                        required    
+                        :placeholder="$t('enu.ttest.catForm.orderIndex')"
+                    ></b-form-input>
+                </b-col>
             </b-form-row>
             <b-button type="submit" variant="primary" class="mr-2">{{$t('system.submitButtonText')}}</b-button>
             <b-button type="reset" variant="danger">{{$t('system.cancelButtonText')}}</b-button>
@@ -65,7 +75,8 @@ export default {
                catName : "",
                catNameRu:"",
                additionalPoint:0,
-               groupId :0
+               groupId :0,
+               orderIndex :0
             },
             groups:[]
         }
@@ -78,6 +89,7 @@ export default {
             this.testCategoryForm.catNameRu=rData.catNameRu;
             this.testCategoryForm.additionalPoint=rData.additionalPoint;
             this.testCategoryForm.groupId=rData.groupId;
+            this.testCategoryForm.orderIndex=rData.orderIndex;
             
             this.$bvModal.show('modal');
         },
@@ -136,7 +148,8 @@ export default {
                catName : "",
                catNameRu:"",
                additionalPoint:0,
-               groupId :0
+               groupId :0,
+               orderIndex:0
             }
         }
 

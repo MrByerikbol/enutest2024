@@ -12,17 +12,17 @@
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>  
                     <b-nav-item href="/#/home">
-                        <span class="text-uppercase text-light h5">{{$t('enu.landing.mainMenu.top100')}}</span>
+                        <span class="text-uppercase text-light h5">{{$t('enu.landing.mainMenu.systemName')}}</span>
                     </b-nav-item>
                    
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
-                     <b-nav-item class="ml-auto" href="/#/contactus">
+                     <!-- <b-nav-item class="ml-auto" href="/#/contactus">
                         <span class="text-uppercase text-light h5">{{$t('enu.system.contactUsTxt')}}</span>
-                    </b-nav-item>
-                    <b-button size="info" class="mr-2" v-b-modal.loginModal>{{$t('system.loginTxt')}}</b-button>
+                    </b-nav-item> -->
+                    <b-button size="info" class="mr-2 ml-auto" v-b-modal.loginModal>{{$t('system.loginTxt')}}</b-button>
                     <b-button size="danger" class="mr-2" v-b-modal.userModal>{{$t('system.regTxt')}}</b-button>
                     <b-nav-item-dropdown right :text="$t('mainMenu.currentLang')">
                     <b-dropdown-item href="javascript:void(0)"  v-for="locale in $i18n.locales()" :key="'i81n-' + locale"
@@ -37,7 +37,7 @@
             <b-form v-on:submit.prevent="submitUser">
                 
                 <b-form-row class="mb-3">
-                    <b-col sm="auto" md="12">
+                    <!-- <b-col sm="auto" md="12">
                         <label for="userType">{{$t('userList.userFormTypeText')}}</label>
                         <select class="form-control"
                             id="userType"
@@ -49,7 +49,7 @@
                             {{$i18n.locale()=='kz' ? d.departmentName : d.departmentNameRu}}    
                             </option>
                         </select>
-                    </b-col>
+                    </b-col> -->
                     
                     <b-col sm="auto" md="12">
                         <label for="lastName">{{$t('userList.lastName')}}</label>
@@ -78,7 +78,7 @@
                             :placeholder="$t('enu.teacherForm.thirdName')"
                         ></b-form-input>
                     </b-col>
-                    <b-col sm="auto" md="12">
+                    <!-- <b-col sm="auto" md="12">
 
                         <label for="positionId">{{$t('enu.landing.teacherForm.workPosition')}}</label>
                         <select class="form-control"
@@ -91,7 +91,7 @@
                             {{$i18n.locale()=='kz' ? d.positionName : d.positionNameRu}}    
                             </option>
                         </select>
-                    </b-col>
+                    </b-col> -->
                     <b-col sm="auto" md="12">
                         <label  for="dateOfBirth">{{$t('enu.landing.teacherForm.dateOfBirth')}}</label>
                        
@@ -100,7 +100,7 @@
                             class="w-100 form-control-sm"
                             v-model="userForm.dateOfBirth" :placeholder="$t('enu.landing.teacherForm.dateOfBirth')"></datepicker>
                     </b-col>
-                    <b-col sm="auto" md="12">
+                    <!-- <b-col sm="auto" md="12">
                         <label  for="isFifteen">{{$t('enu.landing.teacherForm.dateOfPositionShort')}}</label>
                         <select class="form-control"
                             id="isFifteen"
@@ -109,9 +109,9 @@
                             <option value=0>{{$t('enu.teacherForm.isFifteen2')}}</option>
                             <option value=1>{{$t('enu.teacherForm.isFifteen1')}}</option>
                         </select>
-                    </b-col>
+                    </b-col> -->
                    
-                    <b-col sm="auto" md="12">
+                    <!-- <b-col sm="auto" md="12">
                         <label for="educationDegreeId">{{$t('enu.landing.teacherForm.degree')}}</label>
 
                         <select class="form-control"
@@ -125,7 +125,7 @@
                             </option>
                         </select>
                         
-                    </b-col>
+                    </b-col> -->
                      <b-col sm="auto" md="12">
                         <label  for="educationInfo">{{$t('enu.landing.teacherForm.education')}}</label>
                         <b-form-textarea
@@ -135,7 +135,7 @@
                             :placeholder="$t('enu.landing.teacherForm.education')"
                         ></b-form-textarea>
                     </b-col>
-                    <b-col sm="auto" md="12">
+                    <!-- <b-col sm="auto" md="12">
                         <label  for="constAdress">{{$t('enu.landing.teacherForm.adress')}}</label>
                         <b-form-textarea
                             id="constAdress"
@@ -143,8 +143,8 @@
                             required
                             :placeholder="$t('enu.landing.teacherForm.adress')"
                         ></b-form-textarea>
-                    </b-col>
-                    <b-col sm="auto" md="12">
+                    </b-col> -->
+                    <!-- <b-col sm="auto" md="12">
                         <label  for="prize">{{$t('enu.landing.teacherForm.prise')}}</label>
                         <b-form-textarea
                             id="prize"
@@ -152,7 +152,7 @@
                             required
                             :placeholder="$t('enu.landing.teacherForm.prise')"
                         ></b-form-textarea>
-                    </b-col>
+                    </b-col> -->
                     <b-col sm="auto" md="12">
                         <label  for="userEmail">{{$t('userList.email')}}</label>
                         <input
@@ -299,12 +299,12 @@
                 //begining of the form submission
                 userForm:{
                     thirdName : "",
-                    positionId:0,
+                    positionId:1,
                     dateOfBirth:"",
                     workExperience:"",
                     isFifteen:0,
                     educationInfo:"",
-                    educationDegreeId:0,
+                    educationDegreeId:1,
                     constAdress:"",
 
 
@@ -324,7 +324,7 @@
                     userRoleId:7,
                     userType:0,
                     loanLimit:0,
-                    departmentId : 0,
+                    departmentId : 5,
                     docCats:[],
                     reuserPassword:""
                 },
@@ -337,35 +337,9 @@
         methods:{
              submitUser(evt){
                 evt.preventDefault();
-                if(this.userForm.departmentId==0){
-                    this.$bvToast.toast(Vue.i18n.translate('enu.teacherForm.missingDepartmentMsg'), {
-                        variant:'danger',
-
-                        title: Vue.i18n.translate('system.errorTitle'),
-                        autoHideDelay: 5000
-                    })
-                    return ;
-                }
+                
                 if(this.userForm.dateOfBirth==""){
                     this.$bvToast.toast(Vue.i18n.translate('enu.teacherForm.missingDateOfBirthTxt'), {
-                        variant:'danger',
-
-                        title: Vue.i18n.translate('system.errorTitle'),
-                        autoHideDelay: 5000
-                    })
-                    return ;
-                }
-                if(this.userForm.positionId==0){
-                    this.$bvToast.toast(Vue.i18n.translate('enu.teacherForm.missingPositionTxt'), {
-                        variant:'danger',
-
-                        title: Vue.i18n.translate('system.errorTitle'),
-                        autoHideDelay: 5000
-                    })
-                    return ;
-                }
-                if(this.userForm.educationDegreeId==0){
-                    this.$bvToast.toast(Vue.i18n.translate('enu.teacherForm.missingDegreeTxt'), {
                         variant:'danger',
 
                         title: Vue.i18n.translate('system.errorTitle'),
@@ -450,12 +424,12 @@
             resetUserForm(){
                 this.userForm={
                     thirdName : "",
-                    positionId:0,
+                    positionId:1,
                     dateOfBirth:"",
                     workExperience:"",
                     isFifteen:0,
                     educationInfo:"",
-                    educationDegreeId:0,
+                    educationDegreeId:1,
                     constAdress:"",
 
 
@@ -465,6 +439,7 @@
                     idCardDate:"",
 
                     prize:"",
+
                     userId:0,
                     lastName:"",
                     firstName:"",
@@ -474,8 +449,7 @@
                     userRoleId:7,
                     userType:0,
                     loanLimit:0,
-                   
-                    departmentId : 0,
+                    departmentId : 5,
                     docCats:[],
                     reuserPassword:""
                 }
@@ -536,18 +510,11 @@
                 if(response.status===200){
                     authUser.access_token=response.data.access_token;
                     authUser.refresh_token = response.data.refresh_token;
-
                     window.localStorage.setItem('authUser',JSON.stringify(authUser));
-                    this.$router.push({name:'AfterAuth'});
-                    
+                    this.$router.push({name:'AfterAuth'});   
                 }
-
-
-
             })
             .catch(function (error) {
-                //console.log(error);
-                //alert(JSON.stringify(error));
                 if(error.response.status===400){
                     alert("Сіз енгізген ақпарат дұрыс емес.");
                 }
@@ -555,9 +522,8 @@
                     //alert("Алдаа үүслээ та дахин оролдоно уу .");
                     console.log("Server de hatelikter shihti");
                 }
-          });
+            });
         }
       }        
     } 
-    
 </script>

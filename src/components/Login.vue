@@ -4,14 +4,14 @@
  
     <b-container  fluid>
          <b-row class="pt-5 mt-5"> 
-            <b-col lg="8" class="pt-5">
+            <b-col lg="12" class="pt-5">
               <router-view></router-view>
 
             </b-col>
-            <b-col lg="4" class="pt-5">
+            <!-- <b-col lg="4" class="pt-5">
               <h4>{{$t('enu.landing.departmentsText')}}</h4>
               <DepartmentList/>
-            </b-col>
+            </b-col> -->
       </b-row>  
     </b-container>
     

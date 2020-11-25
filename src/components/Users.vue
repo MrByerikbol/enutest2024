@@ -112,6 +112,29 @@
             <template v-slot:cell(departmentName)="row">
                 {{$i18n.locale()=='kz' ? row.item.departmentName : row.item.departmentNameRu}}
             </template>
+            <template v-slot:cell(userAction)="row">
+                <b-button
+                  @click="blockUser(row.item.userId)"
+                  variant="outline-danger" class="mr-2 mb-2">
+                  {{row.item.isBlocked==1 ? 'Unblock' : 'Block'}}
+                </b-button>
+                <b-button
+                  @click="compExam(row.item.userId)"
+                  variant="outline-info" class="mr-2 mb-2">
+                  {{row.item.isExamComp==1 ? 'Uncomplete' : 'Complete'}}
+                </b-button>
+                 <b-button
+                  @click="canShow(row.item.userId)"
+                  variant="outline-success" class="mr-2 mb-2">
+                  {{row.item.canShow==1 ? 'Can not show' : 'Can show'}}
+                </b-button>
+                <b-button 
+                  variant="outline-info" 
+                  class="mr-2" 
+                  @click="reportTest(row.item.userId,row.item.lastName+' '+row.item.firstName+' '+row.item.thirdName)" v-b-modal.reportModal>
+                  Report
+                </b-button>
+            </template>
             <template v-slot:cell(userId)="{ rowSelected }">
               <template v-if="rowSelected">
                 <span aria-hidden="true">&check;</span>
@@ -250,6 +273,17 @@
                     <b-button type="reset" variant="danger">{{$t('system.cancelButtonText')}}</b-button>
                 </b-form>    
             </b-modal>
+
+
+
+             <b-modal id="reportModal" 
+                title="report" 
+                @hidden="resetUserForm" 
+                @show="onModalShown" 
+                hide-footer size="huge">
+
+                <TtestReport :reports="reports" :userInfo="reportUserInfo"/>   
+            </b-modal>
         </b-row>
       </b-col>
     </b-row>
@@ -260,13 +294,15 @@
 import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import DepartmentList from "@/components/enu/comps/DepartmentList";
+import TtestReport from "@/components/TtestReport";
 
 import Vue from 'vue'
 export default {
 
   name: 'Users',
   components:{
-    DepartmentList
+    DepartmentList,
+    TtestReport
   },
   data(){
     return {
@@ -299,7 +335,13 @@ export default {
           {
             key: 'roleName',
             label: 'userList.role',
+          },
+
+          {
+            key: 'userAction',
+            label: 'Action',
           }
+
       ],
       isBusy:false,
       totalRows:0,
@@ -334,11 +376,78 @@ export default {
       docCats:[],
       allSelected:false,
       indeterminate:false,
+      reports:[],
+      reportUserInfo:""
 
     }
   },
   methods:{
+    blockUser(quserId){
+      axios.post(apiDomain+'/admin/enu/ttest/buisness/blockuser',{userId:quserId},{headers:getHeader()})
+      .then(response=>{
+        if(response.data=='success')
+          this.$refs.userTable.refresh();     
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
+    compExam(quserId){
+      axios.post(apiDomain+'/admin/enu/ttest/buisness/compexam',{userId:quserId},{headers:getHeader()})
+      .then(response=>{
+        if(response.data=='success')
+          this.$refs.userTable.refresh();     
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
+    
+    canShow(quserId){
+      axios.post(apiDomain+'/admin/enu/ttest/buisness/canshow',{userId:quserId},{headers:getHeader()})
+      .then(response=>{
+        if(response.data=='success')
+          this.$refs.userTable.refresh();     
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
 
+    reportTest(quserId,userInfo){
+      axios.post(apiDomain+'/admin/enu/ttest/buisness/testreport',{userId:quserId},{headers:getHeader()})
+      .then(response=>{
+        this.reportUserInfo=userInfo;
+        this.reports=response.data;  
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
     docCatChange(d,dUserId){ 
       if(d>0 && dUserId>0){
         // let filtered=this.userForm.docCats.filter(db=>parseInt(db)==parseInt(d));

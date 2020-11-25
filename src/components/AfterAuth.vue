@@ -22,7 +22,13 @@
                      result.roles.forEach(r => {
                         if(r.roleName=='ADMIN'){
                             //this.$router.push({name:'Deliveries'});
-                            window.location.href = "/#/ttestref";         
+                            //ttestref
+                            window.location.href = "/#/users";         
+                            return;
+                        }
+                        if(r.roleName=='TEACHER'){
+                            //this.$router.push({name:'Deliveries'});
+                            window.location.href = "/#/exam";         
                             return;
                         }
                         

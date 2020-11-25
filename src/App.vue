@@ -6,5 +6,12 @@
     name: 'app'
   }
 </script>
+<style>
+   @media print {
+        @page {
+            size: landscape;
+        }
+    }
+</style>
 
 
