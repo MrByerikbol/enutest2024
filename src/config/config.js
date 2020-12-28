@@ -1,5 +1,5 @@
-//export const  apiDomain = "https://localhost:443";
-export const apiDomain="";
+export const  apiDomain = "https://localhost:443";
+//export const apiDomain="";
 
 export const loginUrl = apiDomain+"/oauth/token";
 export const getHeader = function(){
@@ -29,7 +29,7 @@ export const getMultipartHeader = function (){
   const tokenData = JSON.parse(window.localStorage.getItem("authUser"));
   
   const headers= {
-    'Accpet': 'application/json',
+    'Accept': 'application/json',
     'Content-Type': 'multipart/form-data',
     'Authorization':'Bearer ' + tokenData.access_token
   }

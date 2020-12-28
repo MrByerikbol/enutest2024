@@ -20,6 +20,25 @@
               <b-button variant="info" v-if="selectedRows.length==1" size="sm" @click="updateRecord" class="mr-2">{{$t('system.updateButton')}}</b-button>
               <b-button variant="danger" v-if="selectedRows.length>0" size="sm" class="mr-2" @click="deleteRecord">{{$t('system.deleteButton')}}</b-button>
           </b-col>
+          <b-col lg="12">
+              <b-row class="mt-2">
+                <b-col lg="4">
+                  <select class="form-control" v-model="groupId">
+                    <option v-for="(g,i) in groups" :key="i" :value="g.groupId">{{$i18n.locale()=='kz' ? g.groupName : g.groupNameRu}}</option>
+                  </select>
+                </b-col>
+                <b-col lg="4">
+                  <datepicker format="dd-MM-yyyy"
+                    :clear-button="true"
+                    v-model="reportDate"
+                    placeholder="Choose Date"></datepicker>
+                </b-col>
+                
+                <b-col lg="4">
+                  <b-button @click="getMainReport" block variant="outline-success" v-b-modal.reportListModal>Main Exam Report</b-button>
+                </b-col>
+              </b-row>
+          </b-col>
           <b-col lg="6">
             <b-form-group
               :label="$t('system.defaultSearch')"
@@ -131,7 +150,7 @@
                 <b-button 
                   variant="outline-info" 
                   class="mr-2" 
-                  @click="reportTest(row.item.userId,row.item.lastName+' '+row.item.firstName+' '+row.item.thirdName)" v-b-modal.reportModal>
+                  @click="reportTest(row.item.userId,row.item.lastName+' '+row.item.firstName+' ' + row.item.thirdName)" v-b-modal.reportModal>
                   Report
                 </b-button>
             </template>
@@ -278,11 +297,15 @@
 
              <b-modal id="reportModal" 
                 title="report" 
-                @hidden="resetUserForm" 
-                @show="onModalShown" 
                 hide-footer size="huge">
 
                 <TtestReport :reports="reports" :userInfo="reportUserInfo"/>   
+            </b-modal>
+            <b-modal id="reportListModal" 
+                title="Main Exam Report"
+              
+                hide-footer size="huge">
+                <ReportList :reports="reportList" :currentGroup="currentGroup" :examDate="formattedExamDate"/>   
             </b-modal>
         </b-row>
       </b-col>
@@ -295,14 +318,18 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import DepartmentList from "@/components/enu/comps/DepartmentList";
 import TtestReport from "@/components/TtestReport";
-
+import ReportList from "@/components/ReportList";
+import Datepicker from 'vuejs-datepicker';
+const moment = require('moment')
 import Vue from 'vue'
 export default {
 
   name: 'Users',
   components:{
     DepartmentList,
-    TtestReport
+    TtestReport,
+    ReportList,
+    Datepicker
   },
   data(){
     return {
@@ -377,11 +404,19 @@ export default {
       allSelected:false,
       indeterminate:false,
       reports:[],
-      reportUserInfo:""
+      reportList:[],
+      reportDate:null,
+      
+      reportUserInfo:"",
+      groups:[],
+      groupId:0,
+      currentGroup:{},
+      formattedExamDate:""
 
     }
   },
   methods:{
+    
     blockUser(quserId){
       axios.post(apiDomain+'/admin/enu/ttest/buisness/blockuser',{userId:quserId},{headers:getHeader()})
       .then(response=>{
@@ -433,10 +468,43 @@ export default {
     },
 
     reportTest(quserId,userInfo){
-      axios.post(apiDomain+'/admin/enu/ttest/buisness/testreport',{userId:quserId},{headers:getHeader()})
+      this.reportUserInfo="";
+      this.reports=[];
+
+      let examDate = "no-date";
+      if(this.reportDate!=null){
+        examDate=moment(this.reportDate).format('YYYY-MM-DD');
+      }
+      
+      axios.post(apiDomain+'/admin/enu/ttest/buisness/testreport',{userId:quserId,examDate:examDate},{headers:getHeader()})
       .then(response=>{
         this.reportUserInfo=userInfo;
         this.reports=response.data;  
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
+    getMainReport(){
+      this.formattedExamDate=moment(this.reportDate).format('YYYY-MM-DD');
+      if(this.reportDate==null){
+        alert("Please choose exam date !!!");
+        return ;
+      }
+      let dateStr = this.reportDate==null ? 'no-date': moment(this.reportDate).format('YYYY-MM-DD');
+      this.currentGroup=this.groups.filter(g=>parseInt(g.groupId)==this.groupId)[0];
+
+      axios.get(apiDomain+'/admin/enu/ttest/buisness/getmainreport/'+this.groupId+'/'+dateStr+'',{headers:getHeader()})
+      .then(response=>{
+
+        this.reportList=response.data;  
+
       })
       .catch(() => {
               this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
@@ -678,6 +746,15 @@ export default {
     this.getRefs(3);
     this.getRefs(15);
     this.getRefs(16);
+    axios.post(apiDomain+'/admin/enu/ref/getdatalist',{refType:'ttestCategory'},{headers:getHeader()})
+        .then(response=>{
+            this.groups=response.data;
+        })
+        .catch(() => {
+            //console.log(error.message)
+            //alert("server dr aldaa uuslee");
+        }
+    ) 
   }
 
 }

@@ -9,7 +9,7 @@
             <tr>
                 <td style="width:50%;">
                     <strong>Ескертпе:</strong>&nbsp;<strong>I
-                            топ</strong>&nbsp;«Құрылымдық&nbsp;бөлімшелер&nbsp;басшыларының&nbsp;және&nbsp;оқытушылар&nbsp;құрамының&nbsp;лауазымдар<br>
+                            топ</strong>&nbsp;«Құрылымдық&nbsp;бөлімшелер&nbsp;басшыларының&nbsp;және&nbsp;оқытушылар&nbsp;құрамының&nbsp;лауазымдары<br>
                     
                     <strong>Барлығы</strong><strong>&nbsp;8</strong><strong>0&nbsp;сұрақ</strong><strong>(120
                             минут),&nbsp;өту&nbsp;балл –&nbsp;</strong><strong>4</strong><strong>0</strong>

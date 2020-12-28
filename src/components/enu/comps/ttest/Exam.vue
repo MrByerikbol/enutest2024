@@ -182,6 +182,7 @@ export default {
                             this.isBlocked=true;
                         }
                         if(response.data=='examCompleted'){
+                            //alert("yess");
                             this.$bvToast.toast(Vue.i18n.translate('enu.ttest.examModuleCompleted'), {
                                 toaster:'b-toaster-top-center',
                                 variant:'danger',
