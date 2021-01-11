@@ -11,7 +11,9 @@ export default {
 		selectAll:'Выбрать все',
 		unSelectAll:'Снять все',
 		status:'Статус',
-		serverError:"Произошла ошибка на сервере !!!. Попробуй еще раз."
+		serverError:"Произошла ошибка на сервере !!!. Попробуй еще раз.",
+		yes:"Да",
+		no:"Нет"
 	},
 	comboChooseText:'--выберите--',
 	mainMenu: {
@@ -34,5 +36,14 @@ export default {
 	examNotPassed:"Не сдал",
 	examResult:'Результаты экзамена',
 	examDate:'Дата экзамена',
-	userInfo:"Фио"
+	userInfo:"Фио",
+
+	comExam:'Закончить тест',
+	unComExam:'Начать тест',
+
+	blockUser : "Заблокировать",
+	unBlockUser : "Разблокировать",
+	canShow:"Cкрытый",
+	canNotShow:"Показано",
+	haveFactor:"Есть ли у категории факторы ?"
 }

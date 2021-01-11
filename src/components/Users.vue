@@ -135,17 +135,17 @@
                 <b-button
                   @click="blockUser(row.item.userId)"
                   variant="outline-danger" class="mr-2 mb-2">
-                  {{row.item.isBlocked==1 ? 'Unblock' : 'Block'}}
+                  {{row.item.isBlocked==1 ? $t('unBlockUser') : $t('blockUser')}}
                 </b-button>
                 <b-button
                   @click="compExam(row.item.userId)"
                   variant="outline-info" class="mr-2 mb-2">
-                  {{row.item.isExamComp==1 ? 'Uncomplete' : 'Complete'}}
+                  {{row.item.isExamComp==1 ? $t('unComExam') : $t('comExam')}}
                 </b-button>
                  <b-button
                   @click="canShow(row.item.userId)"
                   variant="outline-success" class="mr-2 mb-2">
-                  {{row.item.canShow==1 ? 'Can not show' : 'Can show'}}
+                  {{row.item.canShow==1 ? $t('canNotShow') : $t('canShow')}}
                 </b-button>
                 <b-button 
                   variant="outline-info" 
