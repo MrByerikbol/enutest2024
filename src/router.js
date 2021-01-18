@@ -15,6 +15,8 @@ import TeacherFillDoc from '@/components/enu/comps/TeacherFillDoc';
 import TestCategoryList from '@/components/enu/comps/ttest/TestCategoryList';
 import PTestCategoryList from '@/components/enu/comps/ptest/PTestCategoryList';
 import Exam from '@/components/enu/comps/ttest/Exam';
+import PExam from '@/components/enu/comps/ptest/PExam';
+import TestWelcome from '@/components/enu/comps/TestWelcome';
 Vue.use(Router);
 export default new Router({
    
@@ -92,6 +94,18 @@ export default new Router({
                     path: '/exam',
                     name: 'Exam',
                     component: Exam,
+                    meta:{requiresAuth:true}
+                },
+                {
+                    path: '/pexam',
+                    name: 'PExam',
+                    component: PExam,
+                    meta:{requiresAuth:true}
+                },
+                {
+                    path: '/testwelcome',
+                    name: 'TestWelcome',
+                    component: TestWelcome,
                     meta:{requiresAuth:true}
                 }
             ]

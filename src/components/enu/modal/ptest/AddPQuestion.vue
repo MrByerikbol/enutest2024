@@ -7,6 +7,8 @@
                     <b-col sm="auto" md="12">
                         <label for="catId">{{$t('enu.ttest.questionList.chooseCategoryTxt')}}</label>
                         <select id="catId"
+                            @change="questionForm.factorId=0"
+
                             v-model="questionForm.catId" class="form-control">
                             <option value=0>{{$t('comboChooseText')}}</option>
                             <option v-for="(c,k) in testCats" 
@@ -15,6 +17,22 @@
                             </option>
                         </select>
                     </b-col>
+
+                    <b-col sm="auto" md="12" v-if="
+                        factors.filter(f=>Number(f.catId)==Number(questionForm.catId)).length>0
+                    ">
+                       <label for="factorId">{{$t('enu.ptest.factorForm.name')}}</label>
+                        <select id="factorId"
+                            v-model="questionForm.factorId" class="form-control">
+                            <option value=0>{{$t('comboChooseText')}}</option>
+                            <option v-for="(f,fi) in factors.filter(f=>Number(f.catId)==Number(questionForm.catId))" 
+                                :key="fi" :value=f.factorId>
+                                {{$i18n.locale()=='kz' ? f.factorName : f.factorNameRu}}
+
+                            </option>
+                        </select>
+                    </b-col>
+
                     <b-col sm="auto" md="12">
                         <label for="question">{{$t('enu.ttest.questionForm.enterQuestionTxt')}}</label>
                         <b-form-textarea
@@ -25,12 +43,12 @@
                         ></b-form-textarea>
                     </b-col>
                     <b-col sm="auto" md="12">
-                        <label for="question">{{$t('enu.ttest.questionForm.enterQuestionTxt')}}</label>
+                        <label for="questionRu">{{$t('enu.ttest.questionForm.enterQuestionRuTxt')}}</label>
                         <b-form-textarea
-                            id="question"
+                            id="questionRu"
                             v-model="questionForm.questionRu"
                             required
-                            :placeholder="$t('enu.ttest.questionForm.enterQuestionTxt')"
+                            :placeholder="$t('enu.ttest.questionForm.enterQuestionRuTxt')"
                         ></b-form-textarea>
                     </b-col>
 
@@ -50,13 +68,18 @@
                         <b-button @click="addAnswerField" size="sm" block variant="outline-success my-3">{{$t('enu.ttest.questionForm.addField')}}</b-button>
 
                         <b-row v-for="(a,index) in questionForm.testAnswers" :key="index">
-                            <b-col lg="4">
+                            <b-col lg="3">
                                 <span class="text-info w-100">{{$t('enu.test.questionForm.enterAnswer')}}</span>
                                 <b-form-textarea class="mt-2" v-model="questionForm.testAnswers[index].answer"></b-form-textarea>
                             </b-col>
-                            <b-col lg="4">
+                            <b-col lg="3">
                                 <span class="text-info w-100">{{$t('enu.test.questionForm.enterAnswerRu')}}</span>
                                 <b-form-textarea class="mt-2" v-model="questionForm.testAnswers[index].answerRu"></b-form-textarea>
+                            </b-col>
+                            <b-col lg="2">
+                                <span class="text-info w-100">{{$t('enu.ptest.questionForm.answerPoint')}}</span>
+                                <input type="number" 
+                                    class="form-control mt-2" v-model="questionForm.testAnswers[index].answerPoint"/>
                             </b-col>
                             <b-col lg="2">
                                 <span class="text-info w-100">{{$t('enu.test.questionForm.isAnswerCorrect')}}</span>
@@ -111,12 +134,14 @@ export default {
                 question : "",
                 questionRu:"",
                 point:0,
-                testAnswers:[]
+                testAnswers:[],
+                factorId : 0
             },
             testCats:[],
             delAnswerId : null,
             delOverlay:false,
-            delIndex:-1
+            delIndex:-1,
+            factors:[]
             
         }
     },
@@ -169,7 +194,8 @@ export default {
                     answerId:0,
                     answer:"",
                     answerRu:"",
-                    isCorrect:0
+                    isCorrect:0,
+                    answerPoint:0
                 }
             )
         },
@@ -181,10 +207,15 @@ export default {
             this.questionForm.questionRu=rData.questionRu;
             this.questionForm.point=rData.point;
             this.questionForm.testAnswers=rData.testAnswers;
+            this.questionForm.factorId=rData.factorId;
             this.$bvModal.show('questionModal');
         },
         submitForm(evt){
             evt.preventDefault();
+            if(Number(this.questionForm.point==0)){
+                alert("Test upaidi engizniz !!!");
+                return ;
+            }
             if(this.questionForm.catId==0){
                 this.$bvToast.toast(Vue.i18n.translate('enu.ttest.questionFor.chooseCategory'), {
                     toaster:'b-toaster-top-center',
@@ -221,7 +252,18 @@ export default {
                 return;
             }
                 
+            if(this.factors.filter(f=>Number(f.catId)==Number(this.questionForm.catId)).length>0){
+                if(Number(this.questionForm.factorId==0)){
+                    this.$bvToast.toast(Vue.i18n.translate('enu.test.questionform.allField'), {
+                        toaster:'b-toaster-top-center',
+                        variant:'danger',
+                        title: Vue.i18n.translate('system.errorTitle'),
+                        autoHideDelay: 5000
+                    });
 
+                    return;
+                }
+            }
             axios.post(apiDomain+'/admin/enu/ptest/savequestion',this.questionForm,{headers:getHeader()})
             .then((res)=>{
                 if(res.data=='success'){
@@ -268,7 +310,8 @@ export default {
                 question : "",
                 questionRu:"",
                 point:0,
-                testAnswers:[]
+                testAnswers:[],
+                factorId:0
             }
         },
         getRefs(refType){
@@ -276,6 +319,15 @@ export default {
                 .then(response=>{
                     if(refType=='pCategory'){
                         this.testCats=response.data;
+                         axios.get(apiDomain+'/admin/enu/ptest/getfactorlist',{headers:getHeader()})
+                        .then(response=>{
+                            this.factors=response.data;
+                        })
+                        .catch(() => {
+                            //console.log(error.message)
+                            //alert("server dr aldaa uuslee");
+                            }
+                        ) 
                     }
                 })
                 .catch(() => {

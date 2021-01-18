@@ -5,31 +5,11 @@
             <h3>
                 <span class="bd-content-title">{{$t('enu.test.examModulTitle')}}</span>
             </h3>
-
         </b-col>
         
         <b-col lg="12" v-if="!isBlocked">
             <b-row>
-                <b-col lg="5">
-                   <h5 class="w-100 d-block text-info">
-                        <label for="blockName">{{$t('enu.ttest.catForm.chooseGroup')}}</label>   
-                    </h5> 
-                   <basic-select v-if="$i18n.locale()=='kz'"
-                        :options="testGroups"
-                        :selected-option="selectedGroup"
-                        placeholder="select item"
-                        @select="selectGroup"
-                    >
-                    </basic-select>
-                    <basic-select v-if="$i18n.locale()=='ru'"
-                        :options="testGroupsRu"
-                        :selected-option="selectedGroup"
-                        placeholder="select item"
-                        @select="selectGroup"
-                    >
-                    </basic-select>
-                </b-col>
-                <b-col lg="5">
+                <b-col lg="9">
                     <h5 class="w-100 d-block text-info">
                         <label for="catName">{{$t('enu.ttest.questionList.chooseCategoryTxt')}}</label>   
                     </h5>
@@ -38,7 +18,6 @@
                         :selected-option="selectedCat"
                         placeholder="select item"
                         @select="selectCat"
-                        :isDisabled="!selectedGroup.value"
                     >
                     </basic-select>  
                      <basic-select v-if="$i18n.locale()=='ru'"
@@ -46,11 +25,10 @@
                         :selected-option="selectedCat"
                         placeholder="select item"
                         @select="selectCat"
-                        :isDisabled="!selectedGroup.value"
                     >
                     </basic-select>    
                 </b-col>
-                <b-col v-if="timer!=null" lg="2">
+                <b-col v-if="timer!=null" lg="3">
                     <h5 class="w-100 d-block text-info">
                         <label for="catName">{{$t('enu.test.examModule.examTime')}}</label>   
                     </h5>
@@ -124,8 +102,7 @@ export default {
             testGroups:[],
             testGroupsRu:[],
             selectedGroup:{},
-            testCats:[],
-            testCatsRu:[],
+            
             selectedCat:{},
             catOptions:[],
             catOptionsRu:[],
@@ -142,8 +119,17 @@ export default {
         overExam(){
             let conf = confirm(Vue.i18n.translate('system.confirmMsg'));
             if(conf){
-                axios.post(apiDomain+'/admin/enu/ttest/buisness/loginedcomp',{userId:'beku'},{headers:getHeader()})
+                axios.post(apiDomain+'/admin/enu/ptest/buisness/loginedcomp',{userId:'beku'},{headers:getHeader()})
                 .then(response=>{
+                    if(response.data=='canNotComp'){
+                        //alert("yess");
+                        this.$bvToast.toast(Vue.i18n.translate('error.unFilled.Question'),{
+                            toaster:'b-toaster-top-center',
+                            variant:'danger',
+                            title: Vue.i18n.translate('system.errorTitle'),
+                            autoHideDelay: 5000
+                        })
+                    }
                     if(response.data=='success'){
                          let alertMsg = Vue.i18n.translate('system.successMsg');
                          this.$bvToast.toast(alertMsg, {
@@ -156,8 +142,8 @@ export default {
                         
                 })
                 .catch((err) => {
-                        
-                        this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                        //console.error(err.message);
+                        this.$bvToast.toast(Vue.i18n.translate('system.serverError') + " "+err.message , {
                             toaster:'b-toaster-top-center',
                             variant:'danger',
                             title: Vue.i18n.translate('system.errorTitle'),
@@ -176,7 +162,7 @@ export default {
             
             if(qquestionId && qanswerId){
                 if(parseInt(qanswerId)>0){
-                     axios.post(apiDomain+'/admin/enu/ttest/buisness/postanswer',{questionId:qquestionId,answerId:qanswerId},{headers:getHeader()})
+                     axios.post(apiDomain+'/admin/enu/ptest/buisness/postanswer',{questionId:qquestionId,answerId:qanswerId},{headers:getHeader()})
                     .then(response=>{
                         if(response.data=='userBlocked'){
                             this.isBlocked=true;
@@ -236,16 +222,7 @@ export default {
             });
             clearInterval(this.timer)
         },
-        selectGroup(group){
-            this.selectedGroup=group;
-            if(Vue.i18n.locale()=='kz'){
-                this.catOptions=this.testCats.filter(c=>parseInt(c.groupId)==parseInt(this.selectedGroup.value));
-            }
-            else{
-                this.catOptionsRu=this.testCatsRu.filter(c=>parseInt(c.groupId)==parseInt(this.selectedGroup.value));
-            }
-            
-        },
+       
         selectCat(cat){
             this.selectedCat=cat;
             if(this.isExamBegan){
@@ -260,7 +237,7 @@ export default {
             this.isExamBegan=true;
             if(this.selectedCat!=null){
                 if(parseInt(this.selectedCat.value)>0){
-                    axios.get(apiDomain+'/admin/enu/ttest/buisness/choosecat/'+this.selectedCat.value+'/'+this.selectedGroup.value+'',
+                    axios.get(apiDomain+'/admin/enu/ptest/buisness/choosecat/'+this.selectedCat.value,
                     {headers:getHeader()})
                     .then(response=>{
                         this.hideModal();
@@ -278,16 +255,17 @@ export default {
                             this.questions=[];
                             this.isBlocked=true;
                         }
-                        if(response.data.transactionResult=='testBegan'){
-                            this.questions=[];
-                            this.$bvToast.toast(Vue.i18n.translate('enu.ttest.examModuleBegan'), {
-                                toaster:'b-toaster-top-center',
-                                variant:'danger',
-                                title: Vue.i18n.translate('system.errorTitle'),
-                                autoHideDelay: 5000
-                            })
-                        }
-                        if(response.data.transactionResult=='success'){
+                        // if(response.data.transactionResult=='testBegan'){
+                        //     this.questions=[];
+                        //     this.$bvToast.toast(Vue.i18n.translate('enu.ttest.examModuleBegan'), {
+                        //         toaster:'b-toaster-top-center',
+                        //         variant:'danger',
+                        //         title: Vue.i18n.translate('system.errorTitle'),
+                        //         autoHideDelay: 5000
+                        //     })
+                        // }
+                        if(response.data.transactionResult=='success' || 
+                            response.data.transactionResult=='testBegan'){
                             this.questions=response.data.questions;
                             if(this.time==null){
                                 this.time=parseInt(response.data.leftTime);
@@ -320,25 +298,16 @@ export default {
         },
         getRef(refType){
             axios.post(apiDomain+'/admin/enu/ref/getdatalist',{refType:refType},{headers:getHeader()})
+
             .then(response=>{
-                if(refType=='category'){
+                if(refType=='pCategory'){
                     response.data.forEach(c => {
-                        this.testCats.push({'value':c.catId,'text':c.catName,'groupId':c.groupId});    
+                        this.catOptions.push({'value':c.catId,'text':c.catName,'groupId':c.groupId});    
                     });    
                     response.data.forEach(c => {
-                        this.testCatsRu.push({'value':c.catId,'text':c.catNameRu,'groupId':c.groupId});    
+                        this.catOptionsRu.push({'value':c.catId,'text':c.catNameRu,'groupId':c.groupId});    
                     });    
                 }
-                if(refType=='ttestCategory'){
-                    response.data.forEach(c => {
-                        this.testGroups.push({'value':c.groupId,'text':c.groupName});    
-                    });
-                    response.data.forEach(c => {
-                        this.testGroupsRu.push({'value':c.groupId,'text':c.groupNameRu});    
-                    });
-                    
-                }
-                
             })
             .catch(() => {
                     this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
@@ -352,8 +321,7 @@ export default {
         }
     },
     created(){
-        this.getRef("category");
-        this.getRef("ttestCategory");
+        this.getRef("pCategory");
     },
     computed:{
         timeLeft(){

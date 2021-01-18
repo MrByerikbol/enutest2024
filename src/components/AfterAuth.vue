@@ -28,7 +28,7 @@
                         }
                         if(r.roleName=='TEACHER'){
                             //this.$router.push({name:'Deliveries'});
-                            window.location.href = "/#/exam";         
+                            window.location.href = "/#/testwelcome";         
                             return;
                         }
                         

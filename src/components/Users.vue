@@ -153,6 +153,12 @@
                   @click="reportTest(row.item.userId,row.item.lastName+' '+row.item.firstName+' ' + row.item.thirdName)" v-b-modal.reportModal>
                   Report
                 </b-button>
+                <b-button 
+                  variant="outline-warning" 
+                  class="mr-2" 
+                  @click="reportPTest(row.item.userId)" v-b-modal.reportPModal>
+                  P Report
+                </b-button>
             </template>
             <template v-slot:cell(userId)="{ rowSelected }">
               <template v-if="rowSelected">
@@ -301,6 +307,12 @@
 
                 <TtestReport :reports="reports" :userInfo="reportUserInfo"/>   
             </b-modal>
+            <b-modal id="reportPModal" 
+                title="P Test Report" 
+                hide-footer size="huge">
+
+                <PtestReport :report="pReport"/>   
+            </b-modal>
             <b-modal id="reportListModal" 
                 title="Main Exam Report"
               
@@ -318,6 +330,7 @@ import axios from 'axios';
 import {apiDomain,getHeader} from "../config/config";
 import DepartmentList from "@/components/enu/comps/DepartmentList";
 import TtestReport from "@/components/TtestReport";
+import PtestReport from "@/components/PtestReport";
 import ReportList from "@/components/ReportList";
 import Datepicker from 'vuejs-datepicker';
 const moment = require('moment')
@@ -329,7 +342,8 @@ export default {
     DepartmentList,
     TtestReport,
     ReportList,
-    Datepicker
+    Datepicker,
+    PtestReport
   },
   data(){
     return {
@@ -411,7 +425,8 @@ export default {
       groups:[],
       groupId:0,
       currentGroup:{},
-      formattedExamDate:""
+      formattedExamDate:"",
+      pReport:{}
 
     }
   },
@@ -455,6 +470,30 @@ export default {
       .then(response=>{
         if(response.data=='success')
           this.$refs.userTable.refresh();     
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
+
+    reportPTest(quserId){
+      this.reportUserInfo="";
+      this.reports=[];
+
+      let examDate = "no-date";
+      if(this.reportDate!=null){
+        examDate=moment(this.reportDate).format('YYYY-MM-DD');
+      }
+      
+      axios.post(apiDomain+'/admin/enu/ptest/buisness/testreport',{userId:quserId,examDate:examDate},{headers:getHeader()})
+      .then(response=>{
+          this.pReport=response.data;  
       })
       .catch(() => {
               this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {

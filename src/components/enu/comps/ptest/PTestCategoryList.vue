@@ -15,6 +15,8 @@
                 <b-button variant="success" size="sm" class="mr-2" v-b-modal.modal>{{$t('system.newButton')}}</b-button>
                 <b-button variant="info" v-if="selectedRows.length==1" size="sm" @click="updateRecord" class="mr-2">{{$t('system.updateButton')}}</b-button>
                 <b-button variant="danger" v-if="selectedRows.length>0" size="sm" class="mr-2" @click="deleteRecord">{{$t('system.deleteButton')}}</b-button>
+
+                <b-button size="sm" class="float-right" v-b-modal.factorModal>{{$t('enu.ptest.factorForm.factorButtonText')}}</b-button>
             </b-col>
             <b-row>
                 <b-col lg="8">
@@ -99,6 +101,7 @@
                     ></b-pagination>
                 </b-col>
                 <AddPTestCategory :refreshRecordTable="refreshRecordTable"/>               
+                <AddTestFactor/>               
             </b-row>
             
         </b-col>
@@ -113,6 +116,7 @@
 <script>
 import {apiDomain,getHeader} from "@/config/config";
 import AddPTestCategory from "@/components/enu/modal/ptest/AddPTestCategory"
+import AddTestFactor from "@/components/enu/modal/ptest/AddTestFactor"
 import PQuestionList from "@/components/enu/comps/ptest/PQuestionList"
 import {EventBus} from '@/EventBus.js';
 import axios from 'axios';
@@ -122,7 +126,8 @@ export default {
     name : "TestCategoryList",
     components:{
         AddPTestCategory,
-        PQuestionList
+        PQuestionList,
+        AddTestFactor
     },
     data(){
 

@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal" :title="$t('system.newRecord')" hide-footer size="lg"  @hidden="clearForm">
+    <b-modal id="modal" :title="$t('system.newRecord')" hide-footer size="huge"  @hidden="clearForm">
         <b-form v-on:submit.prevent="submitForm">
             <b-form-row class="mb-3">
                  
@@ -14,13 +14,13 @@
                     ></b-form-input>
                 </b-col>
                 <b-col sm="auto" md="12">
-                    <label for="catNameRu">{{$t('enu.ttest.catForm.catName')}}</label>
+                    <label for="catNameRu">{{$t('enu.ttest.catForm.catNameRu')}}</label>
                     <b-form-input
                         id="catNameRu"
                         v-model="testCategoryForm.catNameRu"
                         type="text"
                         required
-                        :placeholder="$t('enu.ttest.catForm.catName')"
+                        :placeholder="$t('enu.ttest.catForm.catNameRu')"
                     ></b-form-input>
                 </b-col>
                 <b-col sm="auto" md="12">
@@ -40,9 +40,55 @@
                         :placeholder="$t('enu.ttest.catForm.orderIndex')"
                     ></b-form-input>
                 </b-col>
+
+                <!-- begining of the test category points -->
+                <b-col sm="auto" md="12">
+                    <h5 for="point">{{$t('enu.ptest.categoryForm.pointDesc')}}</h5>
+                    <b-button @click="addDetailField" size="sm" block variant="outline-success my-3">{{$t('enu.ttest.questionForm.addField')}}</b-button>
+
+                    <b-row v-for="(a,index) in testCategoryForm.categoryPoints" :key="index">
+                        <b-col lg="12" class="pt-2">
+                            <b-row>
+                                <b-col lg="6">
+                                    <select v-model="testCategoryForm.categoryPoints[index].gender" class="form-control">
+                                        <option value=0>{{$t("enu.ptest.catpoint.general")}}</option>
+                                        <option value=1>{{$t("enu.ptest.catpoint.male")}}</option>
+                                        <option value=2>{{$t("enu.ptest.catpoint.female")}}</option>
+                                    </select>
+                                </b-col>
+                            </b-row>
+                        </b-col>
+                        <b-col lg="2">
+                            <span class="text-info w-100">{{$t('enu.ptest.factorForm.fromPoint')}}</span>
+                            <input type="number" class="form-control mt-2"
+                                v-model="testCategoryForm.categoryPoints[index].fromPoint"/>
+                        </b-col>
+                        <b-col lg="2">
+                            <span class="text-info w-100">{{$t('enu.ptest.factorForm.toPoint')}}</span>
+                            <input type="number" class="form-control mt-2"
+                                v-model="testCategoryForm.categoryPoints[index].endPoint"/>
+                        </b-col>
+
+                        <b-col lg="3">
+                            <span class="text-info w-100">{{$t('enu.ptest.factorForm.description')}}</span>
+                            <b-form-textarea class="mt-2" v-model="testCategoryForm.categoryPoints[index].description"></b-form-textarea>
+                        </b-col>
+                        <b-col lg="3">
+                            <span class="text-info w-100">{{$t('enu.ptest.factorForm.descriptionRu')}}</span>
+                            <b-form-textarea class="mt-2" v-model="testCategoryForm.categoryPoints[index].descriptionRu"></b-form-textarea>
+                        </b-col>
+
+                        <b-col lg="2" class="text-center">
+                            <span class="d-block text-info w-100 ">{{$t('system.deleteButton')}}</span>
+                            <b-button size="sm" @click="removeField(index)" variant="danger" class="mt-2">
+                                <b-icon icon="x-circle"></b-icon>
+                            </b-button>
+                        </b-col>
+                    </b-row>
+                </b-col>
             </b-form-row>
             <b-button type="submit" variant="primary" class="mr-2">{{$t('system.submitButtonText')}}</b-button>
-            <b-button type="reset" variant="danger">{{$t('system.cancelButtonText')}}</b-button>
+            <b-button  @click="clearForm" variant="danger">{{$t('system.cancelButtonText')}}</b-button>
         </b-form>    
     </b-modal>
 </template>
@@ -63,16 +109,29 @@ export default {
                catNameRu:"",
                additionalPoint:0,
                orderIndex :0,
-               haveFactor:0
-
-
+               haveFactor:0,
+               categoryPoints:[]
             },
             groups:[]
         }
     },
     methods:{
+        addDetailField(){
+            this.testCategoryForm.categoryPoints.push({
+
+                catPointId:0,
+                fromPoint:0,
+                endPoint:0,
+                description:"",
+                gender:0,
+                descriptionRu:""
+            });
+        },
+
+        removeField(index){
+            this.testCategoryForm.categoryPoints.splice(index,1);
+        },
         updateRecord(rData){
-            //alert(rData.blockId);
             this.testCategoryForm.catId=rData.catId;
             this.testCategoryForm.catName=rData.catName
             this.testCategoryForm.catNameRu=rData.catNameRu;
@@ -80,7 +139,7 @@ export default {
             
             this.testCategoryForm.orderIndex=rData.orderIndex;
             this.testCategoryForm.haveFactor=rData.haveFactor;
-            
+            this.testCategoryForm.categoryPoints=rData.categoryPoints;
             this.$bvModal.show('modal');
         },
         submitForm(evt){
@@ -118,7 +177,8 @@ export default {
                catNameRu:"",
                additionalPoint:0,
                orderIndex:0,
-               haveFactor:0
+               haveFactor:0,
+               categoryPoints:[]
             }
         }
 

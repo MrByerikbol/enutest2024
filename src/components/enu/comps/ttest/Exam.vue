@@ -103,8 +103,8 @@
             <!-- <div class="d-block text-center">
                 <h3>{{$t('system.confirmMsg')}}</h3>
             </div> -->
-            <b-button class="mt-3" size="sm" variant="outline-danger" block @click="beginExam">Ok</b-button>
-            <b-button class="mt-2" size="sm" variant="outline-warning" block @click="hideModal">Cancel</b-button>
+            <b-button class="mt-3" size="lg" variant="outline-danger" block @click="beginExam">Ok</b-button>
+            <b-button class="mt-2" size="lg" variant="outline-warning" block @click="hideModal">Cancel</b-button>
         </b-modal>
     </b-row>
 
@@ -152,6 +152,15 @@ export default {
                             title: Vue.i18n.translate('system.successTitle'),
                             autoHideDelay: 5000
                         });  
+                    }
+                    if(response.data=='canNotComp'){
+                        //alert("yess");
+                        this.$bvToast.toast(Vue.i18n.translate('error.unFilled.Question'),{
+                            toaster:'b-toaster-top-center',
+                            variant:'danger',
+                            title: Vue.i18n.translate('system.errorTitle'),
+                            autoHideDelay: 5000
+                        })
                     }
                         
                 })

@@ -46,6 +46,31 @@ export default {
 	unBlockUser : "Бұғаттан шығару",
 	canShow:"Жасырулы",
 	canNotShow:"Көрсетулi",
-	haveFactor:"Санаттың факторлары бар ма ?"
+	haveFactor:"Санаттың факторлары бар ма ?",
+	"enu.ptest.factorForm.ditNotEnterFactorDetail":"Сіз фактор туралы егжей-тегжейлі мәлімет толтырған жоқсыз",
+
+	"enu.ptest.factorForm.fromPoint":"Бастапқы балды енгізіңіз.",
+	"enu.ptest.factorForm.toPoint":"Қорытынды баллды енгізіңіз.",
+
+	"enu.ptest.factorForm.factorName":"Фактор атауын енгізіңіз.",
+	"enu.ptest.factorForm.factorNameRu":"Фактордың орысша атауын енгізіңіз.",
+	"enu.ptest.factorForm.description":"Сипаттаманы енгізіңіз.",
+	"enu.ptest.factorForm.descriptionRu":"Орыс сипаттамасын енгізіңіз.",
+	"enu.ptest.factorForm.factorDetail":"Фактордың егжей-тегжейлерін енгізіңіз",
+
+	"enu.ptest.factorForm.factorButtonText":"Фактор туралы ақпарат",
+	"enu.ptest.factorForm.factorCategory":"Санат",
+	"enu.ptest.factorForm.name":"Фактор атауы",
+	"enu.ptest.factorForm.nameRu":"Фактордың орысша атауы",
+	"enu.ptest.questionForm.answerPoint":"Жауап ұпайы",
+	"enu.ptest.categoryForm.pointDesc":"Ұпай сипаттамасын енгізіңіз.",
+	"enu.ptest.categoryForm.pointDescRu":"Орысша сипаттаманы енгізіңіз.",
+	"error.unFilled.Question":"Сізде толтырылмаған жауаптар бар !!!",
+	"welcome.traditional":"Дәстүрлі тест жүйесі.",
+	"welcome.pys":"Психологиялық тест жүйесі",
+	"enu.ptest.catpoint.general":"жалпы",
+	"enu.ptest.catpoint.male":"әйел",
+	"enu.ptest.catpoint.female":"ер",
+	"defination":"Анықтама"
 
 }

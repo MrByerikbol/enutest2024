@@ -74,6 +74,9 @@
                         <template v-slot:cell(question)="row">
                             {{$i18n.locale()=='kz' ? row.item.question : row.item.questionRu}}
                         </template>
+                        <template v-slot:cell(factorName)="row">
+                            {{$i18n.locale()=='kz' ? row.item.factorName : row.item.factorNameRu}}
+                        </template>
                         <template #head(point)="data">
                             <span class="text-info">{{$t(data.label)}}</span>
                         </template>
@@ -147,6 +150,11 @@ export default {
                     variant:'success'
                 },
                 {
+                    key: 'factorName',
+                    label: 'FACTOR',
+                    variant:'info'
+                },
+                {
                     key: 'point',
                     label: 'enu.ttest.questionList.testPoint',
                     
@@ -179,8 +187,8 @@ export default {
                         delIndexes.push(r.questionId);
                     })
                     o.indexes=delIndexes;
-                    o.name='enu_document_category';
-                    o.unique='doc_cat_id';
+                    o.name='enu_ptest_question';
+                    o.unique='question_id';
 
                     axios.post(apiDomain+'/admin/enu/ref/deleterecords',o,{headers:getHeader()})
                     .then(()=>{
