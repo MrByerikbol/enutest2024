@@ -27,14 +27,23 @@
                     <option v-for="(g,i) in groups" :key="i" :value="g.groupId">{{$i18n.locale()=='kz' ? g.groupName : g.groupNameRu}}</option>
                   </select>
                 </b-col>
-                <b-col lg="4">
+                <b-col lg="3">
                   <datepicker format="dd-MM-yyyy"
                     :clear-button="true"
                     v-model="reportDate"
                     placeholder="Choose Date"></datepicker>
                 </b-col>
-                
-                <b-col lg="4">
+                <b-col lg="2">
+                  <div role="group" class="btn-group btn-group-sm">
+                    <button type="button" @click="getExamDays(1)" aria-pressed="true" autocomplete="off" class="btn btn-primary active">
+                      Exam days
+                    </button>
+                    <button type="button" @click="getExamDays(2)" aria-pressed="true" autocomplete="off" class="btn btn-info active">
+                      P Exam days
+                    </button>
+                  </div>
+                </b-col>
+                <b-col lg="3">
                   <b-button @click="getMainReport" block variant="outline-success" v-b-modal.reportListModal>Main Exam Report</b-button>
                 </b-col>
               </b-row>
@@ -62,6 +71,11 @@
           <b-col lg="6" class="pt-3 text-right">
             <strong>{{$t('system.recordCountText')}}:</strong> {{totalRows}}  
           </b-col>
+
+          <b-col lg="12" v-if="examDays.length>0" class="my-2">
+            <b-button size="sm" variant="info" @click="setReportDate(d.examDate)" class="mr-2" v-for="(d,di) in examDays" :key="di">{{d.examDate}}</b-button>
+          </b-col>
+
           <b-col lg="12">
             <b-row class="pb-3">
               <b-col lg="6">
@@ -426,12 +440,35 @@ export default {
       groupId:0,
       currentGroup:{},
       formattedExamDate:"",
-      pReport:{}
+      pReport:{},
+      examDays:[]
 
     }
   },
   methods:{
-    
+    setReportDate(reportDate){
+      this.reportDate=reportDate;
+    },
+    getExamDays(type){
+      //1 bolsa traditional
+      //2 bolsa p test
+      let endPointUrl = type==1 ? ""+apiDomain+"/admin/enu/ttest/buisness/examdays"  : ""+apiDomain+"/admin/enu/ptest/buisness/examdays";
+      axios.get(endPointUrl,{headers:getHeader()})
+      .then(response=>{
+        this.examDays=response.data;  
+      })
+      .catch((error) => {
+        
+              this.$bvToast.toast(error.message, {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )         
+      
+    },
     blockUser(quserId){
       axios.post(apiDomain+'/admin/enu/ttest/buisness/blockuser',{userId:quserId},{headers:getHeader()})
       .then(response=>{
@@ -485,7 +522,7 @@ export default {
     reportPTest(quserId){
       this.reportUserInfo="";
       this.reports=[];
-
+      this.pReport={};
       let examDate = "no-date";
       if(this.reportDate!=null){
         examDate=moment(this.reportDate).format('YYYY-MM-DD');
@@ -532,6 +569,11 @@ export default {
     },
     getMainReport(){
       this.formattedExamDate=moment(this.reportDate).format('YYYY-MM-DD');
+      this.reportList=[];
+      if(this.groupId==0){
+        alert("Please choose group of exam");
+        return ;
+      }
       if(this.reportDate==null){
         alert("Please choose exam date !!!");
         return ;

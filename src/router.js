@@ -7,8 +7,6 @@ import Users from '@/components/Users';
 import AfterAuth from '@/components/AfterAuth';
 import DocumentCategoryList from '@/components/enu/comps/DocumentCategoryList';
 import TeacherDocList from '@/components/enu/comps/TeacherDocList';
-
-
 import Home from '@/components/enu/landing/Home';
 import ContactUs from '@/components/enu/landing/ContactUs';
 import TeacherFillDoc from '@/components/enu/comps/TeacherFillDoc';
