@@ -9,6 +9,7 @@
         </b-col>
         
         <b-col lg="12" v-if="!isBlocked">
+           
             <b-row>
                 <b-col lg="5">
                    <h5 class="w-100 d-block text-info">
@@ -59,6 +60,7 @@
                     </span>
                 </b-col>
             </b-row>
+            
             <b-row>
                 <b-col lg="12" class="text-right">
                     <b-button
@@ -68,6 +70,18 @@
                         {{$t('enu.ttest.examModule.overExam')}}
                     </b-button>
                 </b-col>
+            </b-row>
+            <b-row v-if="notFully">
+                <b-alert show variant="danger" class="w-100 my-2">
+                    <h5 class="alert-heading">{{$t('notFully')}}</h5>
+                    <hr>
+                    <p v-for="(c,ci) in notFullyCats.unCats" :key="ci">
+                        {{$i18n.locale()=='kz' ? c.catName + " : " + "("+c.questionCount+")"
+                         : c.catNameRu + " : " + "("+c.questionCount+")"}}
+                    </p>
+                   
+                    
+                </b-alert>
             </b-row>
         </b-col>
         <b-col lg="12" v-if="!isBlocked">
@@ -132,7 +146,9 @@ export default {
             time: null, //in seconds
             timer: null,
             isBlocked:false,
-            isExamBegan:false
+            isExamBegan:false,
+            notFully:false,
+            notFullyCats:{}
         }
     },
     components:{BasicSelect},
@@ -152,15 +168,24 @@ export default {
                             title: Vue.i18n.translate('system.successTitle'),
                             autoHideDelay: 5000
                         });  
+                        this.notFully=false;
+                        this.notFullyCats={};
                     }
-                    if(response.data=='canNotComp'){
+                    else{
                         //alert("yess");
-                        this.$bvToast.toast(Vue.i18n.translate('error.unFilled.Question'),{
-                            toaster:'b-toaster-top-center',
-                            variant:'danger',
-                            title: Vue.i18n.translate('system.errorTitle'),
-                            autoHideDelay: 5000
-                        })
+                        
+                        
+                        if(!response.data.mainResult){
+                            this.$bvToast.toast(Vue.i18n.translate('error.unFilled.Question'),{
+                                toaster:'b-toaster-top-center',
+                                variant:'danger',
+                                title: Vue.i18n.translate('system.errorTitle'),
+                                autoHideDelay: 5000
+                            });
+                            this.notFully=true;
+                            this.notFullyCats=response.data;
+                        }
+                        
                     }
                         
                 })

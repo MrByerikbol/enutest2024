@@ -24,6 +24,7 @@
                     </b-nav-item> -->
                     <b-button size="info" class="mr-2 ml-auto" v-b-modal.loginModal>{{$t('system.loginTxt')}}</b-button>
                     <b-button size="danger" class="mr-2" v-b-modal.userModal>{{$t('system.regTxt')}}</b-button>
+                    <b-button size="warning" class="mr-2" v-b-modal.studentRegForm>{{$t('studentRegButton')}}</b-button>
                     <b-nav-item-dropdown right :text="$t('mainMenu.currentLang')">
                     <b-dropdown-item href="javascript:void(0)"  v-for="locale in $i18n.locales()" :key="'i81n-' + locale"
                         @click="$i18n.set(locale)" v-if="$i18n.locale() !== locale">{{locale}}</b-dropdown-item>
@@ -37,19 +38,7 @@
             <b-form v-on:submit.prevent="submitUser">
                 
                 <b-form-row class="mb-3">
-                    <!-- <b-col sm="auto" md="12">
-                        <label for="userType">{{$t('userList.userFormTypeText')}}</label>
-                        <select class="form-control"
-                            id="userType"
-                            v-model="userForm.departmentId"  
-                        >
-                            <option value=0>{{$t('comboChooseText')}}</option>
-
-                            <option v-for="(d,k) in departments" :key="k" :value="d.departmentId"> 
-                            {{$i18n.locale()=='kz' ? d.departmentName : d.departmentNameRu}}    
-                            </option>
-                        </select>
-                    </b-col> -->
+                   
                     
                     <b-col sm="auto" md="12">
                         <label for="lastName">{{$t('userList.lastName')}}</label>
@@ -69,7 +58,7 @@
                             :placeholder="$t('userList.firstName')"
                         ></b-form-input>
                     </b-col>
-                     <b-col sm="auto" md="12">
+                    <b-col sm="auto" md="12">
                         <label  for="firstName">{{$t('enu.teacherForm.thirdName')}}</label>
                         <b-form-input
                             id="thirdName"
@@ -78,20 +67,7 @@
                             :placeholder="$t('enu.teacherForm.thirdName')"
                         ></b-form-input>
                     </b-col>
-                    <!-- <b-col sm="auto" md="12">
-
-                        <label for="positionId">{{$t('enu.landing.teacherForm.workPosition')}}</label>
-                        <select class="form-control"
-                            id="positionId"
-                            v-model="userForm.positionId"  
-                        >
-                            <option value=0>{{$t('comboChooseText')}}</option>
-
-                            <option v-for="(d,k) in workPositions" :key="k" :value="d.positionId"> 
-                            {{$i18n.locale()=='kz' ? d.positionName : d.positionNameRu}}    
-                            </option>
-                        </select>
-                    </b-col> -->
+                    
                     <b-col sm="auto" md="12">
                         <label  for="dateOfBirth">{{$t('enu.landing.teacherForm.dateOfBirth')}}</label>
                        
@@ -100,32 +76,9 @@
                             class="w-100 form-control-sm"
                             v-model="userForm.dateOfBirth" :placeholder="$t('enu.landing.teacherForm.dateOfBirth')"></datepicker>
                     </b-col>
-                    <!-- <b-col sm="auto" md="12">
-                        <label  for="isFifteen">{{$t('enu.landing.teacherForm.dateOfPositionShort')}}</label>
-                        <select class="form-control"
-                            id="isFifteen"
-                            v-model="userForm.isFifteen"
-                        >
-                            <option value=0>{{$t('enu.teacherForm.isFifteen2')}}</option>
-                            <option value=1>{{$t('enu.teacherForm.isFifteen1')}}</option>
-                        </select>
-                    </b-col> -->
+                  
                    
-                    <!-- <b-col sm="auto" md="12">
-                        <label for="educationDegreeId">{{$t('enu.landing.teacherForm.degree')}}</label>
-
-                        <select class="form-control"
-                            id="educationDegreeId"
-                            v-model="userForm.educationDegreeId"  
-                        >
-                            <option value=0>{{$t('comboChooseText')}}</option>
-
-                            <option v-for="(d,k) in educations" :key="k" :value="d.educationDegreeId"> 
-                            {{$i18n.locale()=='kz' ? d.educationName : d.educationNameRu}}    
-                            </option>
-                        </select>
-                        
-                    </b-col> -->
+                  
                      <b-col sm="auto" md="12">
                         <label  for="educationInfo">{{$t('enu.landing.teacherForm.education')}}</label>
                         <b-form-textarea
@@ -135,24 +88,7 @@
                             :placeholder="$t('enu.landing.teacherForm.education')"
                         ></b-form-textarea>
                     </b-col>
-                    <!-- <b-col sm="auto" md="12">
-                        <label  for="constAdress">{{$t('enu.landing.teacherForm.adress')}}</label>
-                        <b-form-textarea
-                            id="constAdress"
-                            v-model="userForm.constAdress"
-                            required
-                            :placeholder="$t('enu.landing.teacherForm.adress')"
-                        ></b-form-textarea>
-                    </b-col> -->
-                    <!-- <b-col sm="auto" md="12">
-                        <label  for="prize">{{$t('enu.landing.teacherForm.prise')}}</label>
-                        <b-form-textarea
-                            id="prize"
-                            v-model="userForm.prize"
-                            required
-                            :placeholder="$t('enu.landing.teacherForm.prise')"
-                        ></b-form-textarea>
-                    </b-col> -->
+                   
                     <b-col sm="auto" md="12">
                         <label  for="userEmail">{{$t('userList.email')}}</label>
                         <input
@@ -277,18 +213,22 @@
                 
             </b-form>    
         </b-modal>
+        <StudentReg></StudentReg>
     </div> 
 </template>
 <script>
   import axios from 'axios';
   import {apiDomain,loginUrl,getHeader} from "@/config/config";
   import Vue from 'vue'
+  import StudentReg from '@/components/enu/landing/StudentReg'
   const cl = btoa("devglan-client:devglan-secret");
   import Datepicker from 'vuejs-datepicker';
+    
+
   const moment = require('moment')
   const authUser = {};
     export default {
-        components:{Datepicker},
+        components:{Datepicker,StudentReg},
         name:"LandingHeader" ,
         data(){
             return {

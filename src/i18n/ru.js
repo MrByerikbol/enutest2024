@@ -67,5 +67,13 @@ export default {
 	"enu.ptest.catpoint.general":"генеральный",
 	"enu.ptest.catpoint.male":"мужской",
 	"enu.ptest.catpoint.female":"женский пол",
-	"defination":"Определение"
+	"defination":"Определение",
+	"notFully":"Вы не полностью ответили на вопросы следующей категории !!!",
+	"studentRegButton":"Регистрация абитуриента",
+
+	"studentPhoto":"фотокарточка размером 3 x 4 сантиметра",
+	"studentPasswordPhoto":"копию документа, удостоверяющего личность",
+	"studentEnt":"сертификат ЕНТ (при его наличии)",
+	"studentMakeRequest":"Өтініш беру"
+	
 }

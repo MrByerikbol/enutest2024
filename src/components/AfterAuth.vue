@@ -20,6 +20,7 @@
                      //alert("mina hota "+ window.localStorage.getItem("loginedUser"));
                      this.setLoginedUser();
                      result.roles.forEach(r => {
+                        //alert(r.roleName)
                         if(r.roleName=='ADMIN'){
                             //this.$router.push({name:'Deliveries'});
                             //ttestref
@@ -30,6 +31,12 @@
                             //this.$router.push({name:'Deliveries'});
                             window.location.href = "/#/testwelcome";         
                             return;
+                        }
+                        // eger student bolsa tura test tabsiratin jerge baradi
+                        if(r.roleName=='STUDENT'){
+                            //alert("osi jerge keldi");
+                            window.location.href="/#/studentwelcome"
+                            return ;
                         }
                         
                     });

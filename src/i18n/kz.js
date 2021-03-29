@@ -71,6 +71,14 @@ export default {
 	"enu.ptest.catpoint.general":"жалпы",
 	"enu.ptest.catpoint.male":"әйел",
 	"enu.ptest.catpoint.female":"ер",
-	"defination":"Анықтама"
+	"defination":"Анықтама",
+	"notFully":"Сіз төменднгі санаттағы сұрақтарға толық жауап берген жоқсыз !!!",
+
+	"studentRegButton":"Талапкерді тіркеу",
+
+	"studentPhoto":"3 x 4 сантиметр көлеміндегі фотосурет",
+	"studentPasswordPhoto":"жеке басын куәландыратын құжаттың көшірмесі",
+	"studentEnt":"ҰБТ сертификаты (бар болған жағдайда)",
+	"studentMakeRequest":"Өтініш беру"
 
 }

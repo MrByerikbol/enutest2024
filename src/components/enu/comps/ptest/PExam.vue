@@ -334,7 +334,6 @@ export default {
             return String(this.time % 60).padStart(2, '0')
         }    
     }
-
 }
 </script>
 <style scoped>
