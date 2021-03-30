@@ -75,10 +75,14 @@ export default {
 	"studentPasswordPhoto":"копию документа, удостоверяющего личность",
 	"studentEnt":"сертификат ЕНТ (при его наличии)",
 	"studentMakeRequest":"Өтініш беру",
+<<<<<<< HEAD
 
 	"studentTakenPoint":"Ваш результат:",
 	"studentResult":"Результат вашего экзамена:",
 	"studentPassed":"Вы успешно сдали экзамен",
 	"studentFailed":"Ты провалил экзамен"
+=======
+	"studentMakeSigning":"Қол қою"
+>>>>>>> bb266b6de0b983620b559584d4a5ab09a4ec6ed7
 	
 }

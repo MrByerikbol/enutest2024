@@ -1,11 +1,11 @@
 <template>
     <b-row>
         <b-col lg="12">
-            <b-modal size="lg" id="studentRegForm" 
+            <b-modal size="lg" id="studentRegForm"
                 :title="$t('userList.userModal')" hide-footer>
                 <b-form v-on:submit.prevent="handleStudentReg">
                     <b-form-row class="mb-3">
-                        
+
                         <b-col sm="auto" md="12">
                             <label for="lastName">{{$t('userList.lastName')}}</label>
                             <b-form-input
@@ -29,7 +29,7 @@
                             <b-form-input
                                 id="thirdName"
                                 v-model="userForm.thirdName"
-                                
+
                                 :placeholder="$t('enu.teacherForm.thirdName')"
                             ></b-form-input>
                         </b-col>
@@ -70,36 +70,36 @@
                             <b-form-file
                                 class="mt-2"
                                 size="sm"
-                                
+
                                 v-model="userForm.studentPhoto"
                                 :state="Boolean(userForm.studentPhoto)"
                                 :placeholder="$t('enu.teacherDocForm.chooseFile')"
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
-                            ></b-form-file>  
+                            ></b-form-file>
                         </b-col>
                         <b-col sm="auto" lg="12" md="12">
                             <label  for="studentPassworPhoto">{{$t('studentPassworPhoto')}}</label>
                             <b-form-file
                                 class="mt-2"
                                 size="sm"
-                                
+
                                 v-model="userForm.studentPasswordPhoto"
                                 :state="Boolean(userForm.studentPasswordPhoto)"
                                 :placeholder="$t('enu.teacherDocForm.chooseFile')"
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
-                            ></b-form-file>  
+                            ></b-form-file>
                         </b-col>
                         <b-col sm="auto" lg="12" md="12">
                             <label  for="studentEnt">{{$t('studentEnt')}}</label>
                             <b-form-file
                                 class="mt-2"
                                 size="sm"
-                                
+
                                 v-model="userForm.studentEnt"
                                 :state="Boolean(userForm.studentEnt)"
                                 :placeholder="$t('enu.teacherDocForm.chooseFile')"
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
-                            ></b-form-file>  
+                            ></b-form-file>
                         </b-col>
                         <b-col sm="auto" md="12">
                             <label  for="userPassword">{{$t('userList.userForm.password')}}</label>
@@ -125,12 +125,15 @@
                     <b-button type="submit"  variant="primary" class="mr-2">
                         {{$t('studentMakeRequest')}}
                     </b-button>
-                    
-                </b-form>    
+
+                </b-form>
             </b-modal>
 
              <b-modal size="lg"  ref="requestModal"
                 :title="$t('studentMakeRequest')" hide-footer @shown="testBase">
+               <b-button type="submit"  variant="primary" class="mr-2" v-on:click="sign(base64Source)">
+                 {{$t('studentMakeSigning')}}
+               </b-button>
                 <div class="w-100" id="docContainer">
                     <div class=WordSection1>
                         <table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 align=left
@@ -264,18 +267,44 @@
                         <p class=MsoNormal style='text-align:justify'>
                             <i><span lang=RU style='font-size:10.0pt'>(қолы/подпись)</span></i></p>
                         <p class=MsoNormal style='text-align:justify'><b><span lang=RU>&nbsp;</span></b></p>
-
                     </div>
                 </div>
-              
             </b-modal>
+          <b-modal size="lg"  ref="qrModal"
+                   :title="$t('studentMakeSigning')" hide-footer @shown="saveSign">
+            <div class="w-100" id="qrContainer" ref="qrContainer">
+              <div class=WordSection1>
+                <div class="row">
+                  <p class=MsoNormal style='text-align:justify;text-indent:35.45pt'><span
+                    lang=KZ>Өтінішіңіз сәтті қабылданды, тест тапсыру уақыты жайлы сіз көрсеткен контактілерге хабарландыру жіберіледі.
+                    Тіркелу барысында көрсеткен құпия сөз бен электронды пошта адресі арқылы жүйеге кіріп тест тапсыра аласыз.</span></p>
+                </div>
+                <div class="row">
+                  <p class=MsoNormal style='text-align:justify;text-indent:35.45pt'><span
+                      lang=KZ>Заявление успешно принято. На указанные вами контакты будет сообщено от сроках сдачи теста.
+                    Вы можете авторизоваться в системе по указанному при регистрации пароля и адреса электронной почты</span></p>
+                </div>
+                <div class="row">
+                  <qr-component v-for="qrValue in qrValues" :key="qrValue.length" :value="qrValue"/>
+                </div>
+              </div>
+                </div>
+          </b-modal>
         </b-col>
     </b-row>
 </template>
 <script>
-    const moment = require('moment')
+  import {NCALayerClient} from "ncalayer-js-client";
+  import {apiDomain,getHeader} from "@/config/config";
+  import axios from 'axios';
+  import QrComponent from "@/components/enu/landing/QrComponent";
+
+  const moment = require('moment')
     export default {
         name:"StudentReg",
+      components:{
+        QrComponent
+      },
         data(){
             return{
                 userForm:{
@@ -291,15 +320,88 @@
                     studentPhoto:null,
                     studentPasswordPhoto:null,
                     studentEnt:null
-                }
+                },
+                qrValues: [],
+              CMSSignature: null,
+              base64Source: null,
+
             }
         },
         methods:{
             handleStudentReg(){
-              
+
                 this.$refs['requestModal'].show();
-                
+
             },
+          saveSign(){
+            let qrContainer = this.$refs.qrContainer
+            let qrHtml = qrContainer.outerHTML;
+            let additionalQrStr = ` <html xmlns="http://www.w3.org/1999/xhtml" lang="kz">
+                                    <head>
+                                    <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+                                    </head>
+                                    <body>`;
+            let qrHTML = additionalQrStr.concat(qrHtml).concat("</body></html>");
+            let encodedQr = btoa(unescape(encodeURIComponent(qrHTML)))
+            console.log(encodedQr)
+            console.log(decodeURIComponent(escape(window.atob(encodedQr))))
+            this.addSignature(this.CMSSignature, this.base64Source, encodedQr, this.userForm.passwordNumber, '265')
+          },
+          async sign(base64Source) {
+            let NCALaClient = new NCALayerClient()
+            try {
+              await NCALaClient.connect();
+            } catch (error) {
+              this.$bvToast.toast(error.message, {
+                title: 'Не удалось подключиться к NCALayer!',
+                autoHideDelay: 5000
+              })
+              return
+            }
+
+            try {
+              this.CMSSignature = await NCALaClient.createCAdESFromBase64('PKCS12', base64Source, 'SIGNATURE', false)
+              this.qrValues = this.CMSSignature.match(/.{1,1200}/g)
+              this.handleSignatureQr()
+            } catch (error) {
+              this.$bvToast.toast(error.message, {
+                title: 'Не удалось подписать документ!',
+                autoHideDelay: 5000
+              })
+            }
+          },
+          handleSignatureQr() {
+            this.$refs['qrModal'].show();
+          },
+          addSignature(signature, base64Source, base64qr, identifier, userId) {
+              axios.post(apiDomain + '/doc/signing', {
+                signature: signature,
+                document: base64Source,
+                qrCode: base64qr,
+                identifier: identifier,
+                userId: userId,
+              }, {headers:getHeader()}).then((response) => {
+                console.log(response.data)
+                if(response.data === null || response.data ===''){
+                  this.$refs['qrModal'].hide();
+                  this.$bvToast.toast('null returned', {
+                    title: 'Не удалось сохранить подпись документ!',
+                    autoHideDelay: 5000
+                  })
+                } else if(response.data === -1){
+                  this.$refs['qrModal'].hide();
+                  this.$bvToast.toast('ids do not match', {
+                    title: 'ИИН-ы пользователя и ЭЦП не совпадают!',
+                    autoHideDelay: 5000
+                  })
+                }
+              })
+              .catch(e=>{
+                console.error(e)
+              })
+
+          },
+
             testBase(){
                 let docContainer = document.getElementById('docContainer');
                 let mainHtml = docContainer.innerHTML;
@@ -348,20 +450,22 @@
 
                 let newHTML=additionalStr.concat(mainHtml).concat("</body></html>");
 
-                
+
                 console.log(newHTML);
 
                 var encodedString =btoa(unescape(encodeURIComponent(newHTML)))
+              this.base64Source = encodedString
+
 
                 console.info("=======BTOA========")
                 console.log(encodedString);
-                
+
                 console.log("=====haitadan html hurdim======")
                 var str2 = decodeURIComponent(escape(window.atob(encodedString)));
 
                 console.log(str2);
-                
-                
+
+                //--------------------------
             }
         },
         computed:{
@@ -378,8 +482,8 @@
     }
 </script>
 <style scoped>
-   
-                        
+
+
     /* Font Definitions */
     @font-face
         {font-family:"Cambria Math";
@@ -415,6 +519,6 @@
         {margin-bottom:0in;}
     ul
         {margin-bottom:0in;}
-                    
-                    
+
+
 </style>
