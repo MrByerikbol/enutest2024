@@ -35,7 +35,7 @@
                         // eger student bolsa tura test tabsiratin jerge baradi
                         if(r.roleName=='STUDENT'){
                             //alert("osi jerge keldi");
-                            window.location.href="/#/studentwelcome"
+                            window.location.href = "/#/sexam";
                             return ;
                         }
                         

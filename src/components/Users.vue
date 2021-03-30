@@ -158,20 +158,29 @@
                 </b-button>
                  <b-button
                   @click="canShow(row.item.userId)"
-                  variant="outline-success" class="mr-2 mb-2">
+                  variant="outline-success" class="mr-2">
                   {{row.item.canShow==1 ? $t('canNotShow') : $t('canShow')}}
                 </b-button>
                 <b-button 
                   variant="outline-info" 
                   class="mr-2" 
                   @click="reportTest(row.item.userId,row.item.lastName+' '+row.item.firstName+' ' + row.item.thirdName)" v-b-modal.reportModal>
-                  Report
+                  Емтихан нәтижесі
                 </b-button>
                 <b-button 
+                  v-if="row.item.roleName=='Студент'"
+                  variant="warning" 
+                  class="mr-2 mt-2" block >
+                  Студенттің файлдары
+                </b-button>
+
+                <b-button 
+                  v-if="row.item.roleName!='Студент'"
                   variant="outline-warning" 
                   class="mr-2" 
                   @click="reportPTest(row.item.userId)" v-b-modal.reportPModal>
                   P Report
+                  
                 </b-button>
             </template>
             <template v-slot:cell(userId)="{ rowSelected }">

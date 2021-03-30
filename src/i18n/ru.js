@@ -74,6 +74,11 @@ export default {
 	"studentPhoto":"фотокарточка размером 3 x 4 сантиметра",
 	"studentPasswordPhoto":"копию документа, удостоверяющего личность",
 	"studentEnt":"сертификат ЕНТ (при его наличии)",
-	"studentMakeRequest":"Өтініш беру"
+	"studentMakeRequest":"Өтініш беру",
+
+	"studentTakenPoint":"Ваш результат:",
+	"studentResult":"Результат вашего экзамена:",
+	"studentPassed":"Вы успешно сдали экзамен",
+	"studentFailed":"Ты провалил экзамен"
 	
 }
