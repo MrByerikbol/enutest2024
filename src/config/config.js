@@ -1,4 +1,4 @@
-export const  apiDomain = "https://localhost:443";
+export const  apiDomain = "http://localhost:8080";
 //export const apiDomain="";
 
 export const loginUrl = apiDomain+"/oauth/token";

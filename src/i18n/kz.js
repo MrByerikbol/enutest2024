@@ -79,6 +79,7 @@ export default {
 	"studentPhoto":"3 x 4 сантиметр көлеміндегі фотосурет",
 	"studentPasswordPhoto":"жеке басын куәландыратын құжаттың көшірмесі",
 	"studentEnt":"ҰБТ сертификаты (бар болған жағдайда)",
-	"studentMakeRequest":"Өтініш беру"
+	"studentMakeRequest":"Өтініш беру",
+	"studentMakeSigning":"Қол қою"
 
 }
