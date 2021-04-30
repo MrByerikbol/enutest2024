@@ -53,6 +53,17 @@
                         :placeholder="$t('enu.ttest.catForm.orderIndex')"
                     ></b-form-input>
                 </b-col>
+                <b-col sm="auto" md="12">
+                    <label for="examTestCount">{{$t('countOfQuestionForExam')}}</label>
+                    <b-form-input
+                        id="examTestCount"
+                        v-model="testCategoryForm.examTestCount"
+                        type="number"
+                        required    
+                        :placeholder="$t('countOfQuestionForExam')"
+                    ></b-form-input>
+                </b-col>
+                
             </b-form-row>
             <b-button type="submit" variant="primary" class="mr-2">{{$t('system.submitButtonText')}}</b-button>
             <b-button type="reset" variant="danger">{{$t('system.cancelButtonText')}}</b-button>
@@ -76,21 +87,23 @@ export default {
                catNameRu:"",
                additionalPoint:0,
                groupId :0,
-               orderIndex :0
+               orderIndex :0,
+               examTestCount:0
             },
             groups:[]
         }
     },
     methods:{
         updateRecord(rData){
-            //alert(rData.blockId);
+            //  alert(rData.examTestCount);
             this.testCategoryForm.catId=rData.catId;
             this.testCategoryForm.catName=rData.catName
             this.testCategoryForm.catNameRu=rData.catNameRu;
             this.testCategoryForm.additionalPoint=rData.additionalPoint;
             this.testCategoryForm.groupId=rData.groupId;
             this.testCategoryForm.orderIndex=rData.orderIndex;
-            
+            this.testCategoryForm.examTestCount=rData.examTestCount;
+
             this.$bvModal.show('modal');
         },
         submitForm(evt){

@@ -66,6 +66,13 @@
             <b-row>
                 <b-col lg="12" class="text-right">
                     <b-button
+                         v-if="showResultBtn"
+                         
+                         variant="outline-info" @click="showExamResult" size="sm" class="mr-2">
+                        {{$i18n.locale()=='kz' ? 'Емтихан нәтижесін көрсету.' : 'Показать результат экзамена.'}}
+                    </b-button>
+
+                    <b-button
                          v-if="questions.length>0"
                          
                          variant="outline-danger" @click="overExam" size="sm">
@@ -143,7 +150,7 @@ import {apiDomain,getHeader} from "@/config/config";
 import { BasicSelect } from 'vue-search-select';
 import axios from 'axios';
 import Vue from 'vue';
-
+//import Router from "@/router";
 export default {
     name : "StudentExam",
     data(){
@@ -163,30 +170,35 @@ export default {
             isExamBegan:false,
             notFully:false,
             notFullyCats:{},
-            examResult:{}
+            examResult:{},
+            studentId:0,
+            showResultBtn:false
         }
     },
     components:{BasicSelect},
     
 
     methods:{
-        finishExam(){
-            axios.post(apiDomain+'/admin/enu/ttest/buisness/finishexam',{userId:'beku'},{headers:getHeader()})
-            .then(response=>{
-                this.examResult=response.data;
-                alert(this.examResult);
-            })
-            .catch(e=>{
-                alert(e.message);
-            })
-        },
+       showExamResult(){
+            if(this.studentId>0){
+                //Router.push({ path: '/stresult/'+this.studentId});
+                let a= document.createElement('a');
+                a.target= '_blank';
+                let hr = Vue.i18n.locale()=='kz' ? '/#/stresult/'+this.studentId : '/#/stresultru/'+this.studentId;
+                a.href= hr;
+                a.click();
+            }
+                
+       },
 
         overExam(){
             let conf = confirm(Vue.i18n.translate('system.confirmMsg'));
             if(conf){
-                axios.post(apiDomain+'/admin/enu/ttest/buisness/loginedcomp',{userId:'beku'},{headers:getHeader()})
+                let groupId = this.selectedGroup.value;
+                axios.post(apiDomain+'/admin/enu/ttest/buisness/loginedcomp',{groupId:groupId},{headers:getHeader()})
                 .then(response=>{
-                    if(response.data=='success'){
+                    if(Number(response.data) > 0){
+
                          let alertMsg = Vue.i18n.translate('system.successMsg');
                          this.$bvToast.toast(alertMsg, {
                             toaster:'b-toaster-top-center',
@@ -196,7 +208,9 @@ export default {
                         });  
                         this.notFully=false;
                         this.notFullyCats={};
-                        this.finishExam();
+
+                        this.studentId = response.data;
+                        this.showResultBtn = true;
                     }
                     if(response.data=='hasAnswers'){
                         if(!response.data.mainResult){
@@ -206,16 +220,12 @@ export default {
                                 title: Vue.i18n.translate('system.errorTitle'),
                                 autoHideDelay: 5000
                             });
-                            this.notFully=true;
-                            this.notFullyCats=response.data;
                         }
-                        
                     }
-                        
                 })
                 .catch((err) => {
                         
-                        this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                        this.$bvToast.toast(Vue.i18n.translate('system.serverError') + err.message, {
                             toaster:'b-toaster-top-center',
                             variant:'danger',
                             title: Vue.i18n.translate('system.errorTitle'),
@@ -231,10 +241,10 @@ export default {
         chooseAnswer(quesitonIndex){
             let qquestionId = this.questions[quesitonIndex].questionId;
             let qanswerId = this.questions[quesitonIndex].answerId;
-            
-            if(qquestionId && qanswerId){
+            let choosenGroupId = this.selectedGroup.value;
+            if(qquestionId && qanswerId && choosenGroupId){
                 if(parseInt(qanswerId)>0){
-                     axios.post(apiDomain+'/admin/enu/ttest/buisness/postanswer',{questionId:qquestionId,answerId:qanswerId},{headers:getHeader()})
+                     axios.post(apiDomain+'/admin/enu/ttest/buisness/postanswer',{questionId:qquestionId,answerId:qanswerId,groupId:choosenGroupId},{headers:getHeader()})
                     .then(response=>{
                         if(response.data=='userBlocked'){
                             this.isBlocked=true;

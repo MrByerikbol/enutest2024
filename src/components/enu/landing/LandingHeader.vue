@@ -342,6 +342,7 @@
                             this.$bvModal.hide('userModal')
                         }
                         this.resetUserForm();
+                        
                         this.$bvToast.toast(alertMsg, {
                             variant:localVariant,
                             title: Vue.i18n.translate('system.successTitle'),

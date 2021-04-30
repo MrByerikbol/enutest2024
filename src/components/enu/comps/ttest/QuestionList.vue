@@ -61,10 +61,10 @@
                         :fields="fields"
                         :busy.sync="isBusy"
                         :current-page="currentPage"
-                        responsive
+                       
                         :per-page="perPage"
                         :filter="filter"
-                        :select-mode="'multi'"
+                        :select-mode="selectMode"
                         
                         
                         selected-variant="danger"
@@ -185,7 +185,8 @@ export default {
             selectedRows:[],
             groupId :0,
             catId:0,
-            testCats:[]
+            testCats:[],
+            selectMode:'multi'
         }
     },
     methods:{
@@ -200,11 +201,12 @@ export default {
                     let o = new Object();
                     let delIndexes = [];
                     this.selectedRows.forEach(r=>{
-                        delIndexes.push(r.docCatId);
+                        delIndexes.push(r.questionId);
                     })
                     o.indexes=delIndexes;
-                    o.name='enu_document_category';
-                    o.unique='doc_cat_id';
+                    
+                    o.name='enu_ttest_question';
+                    o.unique='question_id';
 
                     axios.post(apiDomain+'/admin/enu/ref/deleterecords',o,{headers:getHeader()})
                     .then(()=>{
@@ -223,10 +225,12 @@ export default {
         
         },
         onSelected(items){
+            
             this.selectedRows=items;
         },
 
         updateRecord(){
+            //alert("yes");
             if(this.selectedRows.length==1){
                 let id = this.selectedRows[0].questionId;
                 if(id && id>0){

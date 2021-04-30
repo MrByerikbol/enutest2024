@@ -64,8 +64,7 @@
             <b-row>
                 <b-col lg="12" class="text-right">
                     <b-button
-                         v-if="questions.length>0"
-                         
+                         v-if="questions.length>0" 
                          variant="outline-danger" @click="overExam" size="sm">
                         {{$t('enu.ttest.examModule.overExam')}}
                     </b-button>
@@ -75,12 +74,10 @@
                 <b-alert show variant="danger" class="w-100 my-2">
                     <h5 class="alert-heading">{{$t('notFully')}}</h5>
                     <hr>
-                    <p v-for="(c,ci) in notFullyCats.unCats" :key="ci">
+                    <p v-for="(c,ci) in notFullyCats" :key="ci">
                         {{$i18n.locale()=='kz' ? c.catName + " : " + "("+c.questionCount+")"
                          : c.catNameRu + " : " + "("+c.questionCount+")"}}
                     </p>
-                   
-                    
                 </b-alert>
             </b-row>
         </b-col>
@@ -113,13 +110,49 @@
         <b-col lg="12" v-if="isBlocked" class="text-center">
             <h2 class="text-danger text-center">{{$t('enu.ttest.examModuleBlocked')}}</h2>
         </b-col>
-         <b-modal ref="confirm-modal" hide-footer :title="$t('system.confirmMsg')" @hide="hideModal">
+        <b-modal ref="confirm-modal" hide-footer :title="$t('system.confirmMsg')" @hide="hideModal">
             <!-- <div class="d-block text-center">
                 <h3>{{$t('system.confirmMsg')}}</h3>
             </div> -->
-            <b-button class="mt-3" size="lg" variant="outline-danger" block @click="beginExam">Ok</b-button>
-            <b-button class="mt-2" size="lg" variant="outline-warning" block @click="hideModal">Cancel</b-button>
+            <b-button class="mt-3" size="md" variant="outline-danger" block @click="beginExam">Ok</b-button>
+            <b-button class="mt-2" size="md" variant="outline-warning" block @click="hideModal">Cancel</b-button>
         </b-modal>
+
+
+        <b-modal ref="complete-confirm-modal" size="lg" hide-footer :title="$t('sureComplete')" @hide="hideCompModal">
+            <div class="d-block text-center">
+                <h5 class="text-left text-success">{{$t("filledTestCats")}}</h5>
+                <b-row class="mb-4">
+                    <b-col lg="5" class="text-left"><strong>{{$t("testCatName")}}</strong></b-col>
+                    <b-col lg="3" class="text-center"><strong>{{$t("testCount")}}</strong></b-col>
+                    <b-col lg="2" class="text-center"><strong>{{$t("FilledTestCount")}}</strong></b-col>
+                    <b-col lg="2" class="text-center text-danger"><strong>{{$t("unFilledTestCount")}}</strong></b-col>
+                </b-row>
+                <b-row v-for="(t,i) in notFullyCats" :key="i">
+                    <b-col lg="5" class="text-left">
+                        {{$i18n.locale()=='kz' ? t.catName : t.catNameRu}}
+                    </b-col>
+                    <b-col lg="3" class="text-center">{{t.dbQuestionCount}}</b-col>
+                    <b-col lg="2" class="text-center">{{t.answeredQuestionCount}}</b-col>
+                    <b-col lg="2" class="text-center text-danger">{{Number(t.dbQuestionCount)-Number(t.answeredQuestionCount)}}  </b-col>
+                    <b-col lg="12"><hr></b-col>
+                </b-row>
+
+                
+                <h5 class="text-left text-danger">{{$t("unfilledTestCats")}}</h5>
+                <hr>
+                <b-row v-for="(t,i) in leftCats" :key="i">
+                    <b-col lg="12" class="text-left text-danger">
+                        {{Number(i+1)+'.'+ t.text}}
+                    </b-col>                   
+                </b-row>
+                    
+            </div> 
+            <b-button class="mt-3" size="md" variant="outline-success" block @click="completeExam">{{$t("confirmYes")}}</b-button>
+            <b-button class="mt-2" size="md" variant="outline-danger" block @click="hideCompModal">{{$t("confirmNo")}}</b-button>
+        </b-modal>
+
+
     </b-row>
 
 </template>
@@ -148,7 +181,8 @@ export default {
             isBlocked:false,
             isExamBegan:false,
             notFully:false,
-            notFullyCats:{}
+            notFullyCats:[],
+            leftCats:[]
         }
     },
     components:{BasicSelect},
@@ -156,42 +190,40 @@ export default {
 
     methods:{
         overExam(){
-            let conf = confirm(Vue.i18n.translate('system.confirmMsg'));
-            if(conf){
-                axios.post(apiDomain+'/admin/enu/ttest/buisness/loginedcomp',{userId:'beku'},{headers:getHeader()})
+            let groupId = this.selectedGroup.value;
+            //alert(groupId)
+            if(groupId){
+                axios.post(apiDomain+'/admin/enu/ttest/buisness/loginedcompinfo',{groupId:groupId},{headers:getHeader()})
                 .then(response=>{
-                    if(response.data=='success'){
-                         let alertMsg = Vue.i18n.translate('system.successMsg');
-                         this.$bvToast.toast(alertMsg, {
-                            toaster:'b-toaster-top-center',
-                            variant:'success',
-                            title: Vue.i18n.translate('system.successTitle'),
-                            autoHideDelay: 5000
-                        });  
-                        this.notFully=false;
-                        this.notFullyCats={};
+                    this.notFullyCats=response.data.unCats;
+                    let ltestCats = [];
+                    if(Vue.i18n.locale()=='kz'){
+                        ltestCats=this.testCats.filter(c=>parseInt(c.groupId)==parseInt(this.selectedGroup.value));
                     }
                     else{
-                        //alert("yess");
-                        
-                        
-                        if(!response.data.mainResult){
-                            this.$bvToast.toast(Vue.i18n.translate('error.unFilled.Question'),{
-                                toaster:'b-toaster-top-center',
-                                variant:'danger',
-                                title: Vue.i18n.translate('system.errorTitle'),
-                                autoHideDelay: 5000
-                            });
-                            this.notFully=true;
-                            this.notFullyCats=response.data;
-                        }
-                        
+                        ltestCats=this.testCatsRu.filter(c=>parseInt(c.groupId)==parseInt(this.selectedGroup.value));
                     }
-                        
+                    ltestCats.forEach(t=>{
+                        let canPush = true;
+                        this.notFullyCats.forEach(n=>{
+                            if(Number(t.value)==Number(n.catId)){
+                                canPush=false;
+                                return;
+                            }
+                        })
+
+                        if(canPush){
+                            if(this.leftCats.filter(l=>Number(l.value)==Number(t.value)).length==0){
+                                this.leftCats.push(t);
+                            }
+                        }
+
+                    })
+                    this.$refs["complete-confirm-modal"].show();
                 })
                 .catch((err) => {
                         
-                        this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                        this.$bvToast.toast(Vue.i18n.translate('system.serverError') + " "+err.message, {
                             toaster:'b-toaster-top-center',
                             variant:'danger',
                             title: Vue.i18n.translate('system.errorTitle'),
@@ -200,6 +232,42 @@ export default {
                     }
                 )     
             }
+                
+            
+        },
+        completeExam(){
+            let groupId = this.selectedGroup.value;
+            if(groupId){
+                axios.post(apiDomain+'/admin/enu/ttest/buisness/loginedcomp',{groupId:groupId},{headers:getHeader()})
+                .then(response=>{
+                    if(response.data=='success'){
+                        let alertMsg = Vue.i18n.translate('system.successMsg');
+                            this.$bvToast.toast(alertMsg, {
+                            toaster:'b-toaster-top-center',
+                            variant:'success',
+                            title: Vue.i18n.translate('system.successTitle'),
+                            autoHideDelay: 5000
+                        });  
+                    }
+                    this.$refs["complete-confirm-modal"].hide();
+                })
+                .catch((err) => {
+                        
+                        this.$bvToast.toast(Vue.i18n.translate('system.serverError') + " "+err.message, {
+                            toaster:'b-toaster-top-center',
+                            variant:'danger',
+                            title: Vue.i18n.translate('system.errorTitle'),
+                            autoHideDelay: 5000
+                        })
+                    }
+                )     
+            }
+            
+        },
+        hideCompModal() {       
+            this.notFullyCats=[];
+            this.leftCats=[];
+            this.$refs['complete-confirm-modal'].hide();
         },
         hideModal() {       
             this.$refs['confirm-modal'].hide();
@@ -207,10 +275,11 @@ export default {
         chooseAnswer(quesitonIndex){
             let qquestionId = this.questions[quesitonIndex].questionId;
             let qanswerId = this.questions[quesitonIndex].answerId;
-            
-            if(qquestionId && qanswerId){
+            let choosenGroupId = this.selectedGroup.value;
+            //alert(JSON.stringify(this.selectedGroup));
+            if(qquestionId && qanswerId && choosenGroupId){
                 if(parseInt(qanswerId)>0){
-                     axios.post(apiDomain+'/admin/enu/ttest/buisness/postanswer',{questionId:qquestionId,answerId:qanswerId},{headers:getHeader()})
+                     axios.post(apiDomain+'/admin/enu/ttest/buisness/postanswer',{questionId:qquestionId,answerId:qanswerId,groupId:choosenGroupId},{headers:getHeader()})
                     .then(response=>{
                         if(response.data=='userBlocked'){
                             this.isBlocked=true;
@@ -269,6 +338,7 @@ export default {
                 autoHideDelay: 5000
             });
             clearInterval(this.timer)
+            this.completeExam();
         },
         selectGroup(group){
             this.selectedGroup=group;

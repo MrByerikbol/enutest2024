@@ -2,19 +2,19 @@
     <b-row class="px-3" > 
      <!-- {{reports}}    -->
      <b-col lg="12" id="printContainer">
-         <p style="text-align: center;font-size: 14pt;"><strong>«</strong><strong>Л.Н.
-        Гумилев&nbsp;атындағы&nbsp;Еуразия&nbsp;ұлттық&nbsp;университеті»&nbsp;КеАҚ</strong></p>
-<p style="text-align: center;font-size: 14pt;">&nbsp;</p>
-<p style="text-align: center;font-size: 14pt;">
-    <strong>Үміткерлерді</strong><strong>&nbsp;Қазақстан&nbsp;Республикасының&nbsp;заңнамасы&nbsp;бойынша</strong>
-</p>
-<p style="text-align: center;font-size: 14pt;"><strong>ТЕСТІЛЕУ НӘТИЖЕЛЕРІ</strong></p>
+         <p style="padding:0;margin:0; text-align: center;font-size: 14pt;"><strong>«</strong><strong>Л.Н.
+                Гумилев&nbsp;атындағы&nbsp;Еуразия&nbsp;ұлттық&nbsp;университеті»&nbsp;КеАҚ</strong></p>
+        
+        <p style="padding:0;margin:0; text-align: center;font-size: 14pt;">
+            <strong>Профессорлық-оқытушылық құрамды</strong>
+        </p>
+        <p style="padding:0;margin:0; text-align: center;font-size: 14pt;"><strong>АТЕСТАТТАУ НӘТИЖЕЛЕРІ</strong></p>
 
 
-<p style="font-size: 14pt;"><strong>Өткізу орны:&nbsp;</strong>Л.Н.
-    Гумилев&nbsp;атындағы&nbsp;Еуразия&nbsp;ұлттық&nbsp;университеті&nbsp;(Сәтпаев&nbsp;к-сі, 2, 352&nbsp;дәр.)</p>
-<p style="font-size: 14pt;"><strong>Күні</strong><strong>:</strong>&nbsp;{{currentDate}} ж.</p>
-<p style="font-size: 14pt;"><strong>Уақыты</strong>: {{currentTime}}</p>
+        <p style="padding:0;margin:0; font-size: 14pt;"><strong>Өткізу орны:&nbsp;</strong>Л.Н.
+            Гумилев&nbsp;атындағы&nbsp;Еуразия&nbsp;ұлттық&nbsp;университеті&nbsp;(Сәтпаев&nbsp;к-сі, 2, 352&nbsp;дәр.)</p>
+        <p style="padding:0;margin:0; font-size: 14pt;"><strong>Күні</strong><strong>:</strong>&nbsp;<u>{{currentDate}}</u> ж.</p>
+        <p style="padding:0;margin:0; font-size: 14pt;"><strong>Уақыты</strong>: {{currentTime}}</p>
 
 
 <table border="1" style="border-collapse: collapse; text-align: center;">
@@ -40,33 +40,28 @@
         </tr>
     </tbody>
 </table>
-<p style="text-align: center;">&nbsp;</p>
-
-<p>&nbsp;</p>
-<p style="text-align: center;font-size: 14pt;"><strong>Персонал&nbsp;басқармасының&nbsp;басшысы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+<p style="padding:0;margin:0;">&nbsp;</p>
+<p style="padding:0;margin:0; text-align: center;font-size: 14pt;"><strong>Персонал&nbsp;басқармасының&nbsp;басшысы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ж.Т. Жумабаева</strong></p>
-<p>&nbsp;</p>
+
 <p style="text-align: center; font-size: 14pt;">Таныстырылды _______________ ________________________________</p>
 <p style="text-align: center;font-size: 10pt;">Қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
     &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Аты-жөні</p>
-    <p>&nbsp;</p>
-    
-    
-
     <table border="1" style="border-collapse: collapse;">
         <tbody>
             <tr>
                 <td>
-                    <strong>Ескертпе:</strong>&nbsp;<strong>I
-                            топ</strong>&nbsp;«Құрылымдық&nbsp;бөлімшелер&nbsp;басшыларының&nbsp;және&nbsp;оқытушылар&nbsp;құрамының&nbsp;лауазымдары<br>
+                    <strong><span class="text-danger">Ескертпе:</span></strong>&nbsp;<strong>I топ</strong>&nbsp;(декандар, декан орынбасарлары, кафедра меңгерушілері)<br>
                     
-                    <strong>Барлығы</strong><strong>&nbsp;8</strong><strong>0&nbsp;сұрақ</strong><strong>(120
-                            минут),&nbsp;өту&nbsp;балл –&nbsp;</strong><strong>4</strong><strong>0</strong>
+                    <strong>Барлығы</strong><strong>&nbsp;6</strong><strong>0&nbsp;сұрақ</strong><strong>(120
+                            минут),&nbsp;өту&nbsp;балл –&nbsp;</strong><strong>30</strong>
                 </td>
+
+
                 <td>
-                    <strong>Ескертпе:&nbsp;</strong><strong>II</strong><strong>&nbsp;топ</strong>«Құрылымдық&nbsp;бөлімшелер&nbsp;қызметкерлерінің&nbsp;лауазымдары»<br>
+                    <strong><span class="text-danger">Ескертпе:</span></strong>&nbsp;<strong></strong><strong>II</strong><strong>&nbsp;топ</strong>(профессор-оқутышылар құрамы)<br>
                     
                     <strong>Барлығы </strong><strong>50 </strong><strong>сұрақ </strong><strong>(120
                             минут),&nbsp;өту&nbsp;балл -&nbsp;</strong><strong>25</strong>
@@ -74,54 +69,45 @@
             </tr>
             <tr>
                 <td>
-                    <strong>1)</strong>Қазақстан&nbsp;Республикасының&nbsp;Конституциясы&nbsp;(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5) <br>
+                    <strong>1) </strong><strong>ҚР-ның Конституциясы</strong> &nbsp;(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5) 
                     
-                    <strong>2)
-                        </strong>Қазақстан&nbsp;Республикасының&nbsp;«Ғылым&nbsp;туралы»&nbsp;Заңы(20&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;10)<br>
+                    <br>
                     
-                    <strong>3)
-                        </strong>Қазақстан&nbsp;Республикасының&nbsp;«Білім&nbsp;туралы»&nbsp;Заңы&nbsp;(20&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;10)<br>
+                    <strong>2) </strong><strong>ҚР-ның «Білім туралы» Заңы</strong>&nbsp;Заңы(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)
+                    <br>
                     
-                    <strong>4)
-                        </strong>Қазақстан&nbsp;Республикасының&nbsp;Еңбек&nbsp;кодексі(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
+                    <strong>3) </strong><strong>ҚР-ның «Ғылым туралы» Заңы</strong>(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
                     
-                    <strong>5) </strong>Жоғары&nbsp;білім&nbsp;беру мен
-                        педагогика&nbsp;саласындағы&nbsp;менеджменттің&nbsp;негізгі&nbsp;принциптері(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
+                    <strong>4) </strong><strong>ҚР-ның Еңбек кодексі</strong> (10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
                     
-                    <strong>6) </strong>Цифрлық
-                        дағдылар&nbsp;(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)
+                    <strong>5) </strong><strong>Жоғары білім беру мен педагогика саласындағы менеджменттің негізгі принциптері</strong>(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
+                    <strong>6) </strong><strong>Цифрлық  дағдылар</strong> (10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
                 </td>
                 <td>
-                    <strong>1)
-                        </strong>Қазақстан&nbsp;Республикасының&nbsp;Конституциясы&nbsp;(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
+                    <strong>1) </strong><strong>ҚР-ның Конституциясы</strong>&nbsp;(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
                     
-                    <strong>2)
-                        </strong>&nbsp;Қазақстан&nbsp;Республикасының&nbsp;«Ғылым&nbsp;туралы»&nbsp;Заңы(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
+                    <strong>2) </strong><strong>ҚР-ның «Білім туралы» Заңы</strong> (10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
                     
-                    <strong>3)
-                        </strong>Қазақстан&nbsp;Республикасының&nbsp;«Білім&nbsp;туралы»&nbsp;Заңы&nbsp;(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
+                    <strong>3) </strong><strong>ҚР-ның «Ғылым туралы» Заңы</strong>(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
                     
-                    <strong>4)
-                        </strong>Қазақстан&nbsp;Республикасының&nbsp;Еңбек&nbsp;кодексі(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
+                    <strong>4) </strong><strong>ҚР-ның Еңбек кодексі</strong>(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)<br>
                     
-                    <strong>5) </strong>Цифрлық
-                        дағдылар&nbsp;(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)
+                    <strong>5) </strong><strong>Цифрлық  дағдылар </strong>(10&nbsp;сұрақ,&nbsp;төменгі&nbsp;шектік&nbsp;мәні&nbsp;5)
                 </td>
             </tr>
         </tbody>
     </table>
 
 
-    <p style="text-align: center;page-break-before: always;font-size: 14pt;"><strong>НАО «Евразийский национальный университет им. Л.Н.
+    <p style="padding:0;margin:0; text-align: center;page-break-before: always;font-size: 14pt;"><strong>НАО «Евразийский национальный университет им. Л.Н.
             Гумилева»</strong></p>
-    <p>&nbsp;</p>
-    <p style="text-align: center;font-size: 14pt;"><strong>РЕЗУЛЬТАТЫ ТЕСТИРОВАНИЯ</strong></p>
-    <p style="text-align: center;font-size: 14pt;"><strong>претендентов на знание законодательства Республики Казахстан</strong></p>
+    <p style="padding:0;margin:0; text-align: center;font-size: 14pt;"><strong>РЕЗУЛЬТАТЫ АТТЕСТАЦИИ</strong></p>
+    <p style="padding:0;margin:0; text-align: center;font-size: 14pt;"><strong>Профессорско-преподавательского состава</strong></p>
     
-    <p style="font-size: 14pt;"><strong>Место проведения</strong>: Евразийский национальный университет имени Л.Н. Гумилева (ул. Сатпаева, 2,
+    <p style="padding:0;margin:0; font-size: 14pt;"><strong>Место проведения</strong>: Евразийский национальный университет имени Л.Н. Гумилева (ул. Сатпаева, 2,
         ауд. 352)</p>
-    <p style="font-size: 14pt;"><strong>Дата:</strong>&nbsp;{{currentDate}} г.</p>
-    <p style="font-size: 14pt;"><strong>Время</strong>:&nbsp;{{currentTime}}</p>
+    <p style="padding:0;margin:0; font-size: 14pt;"><strong>Дата:</strong>&nbsp;{{currentDate}} г.</p>
+    <p style="padding:0;margin:0; font-size: 14pt;"><strong>Время</strong>:&nbsp;{{currentTime}}</p>
 
 
     <table border="1" style="border-collapse: collapse;text-align: center;">
@@ -146,60 +132,47 @@
         </tbody>
     </table>
 
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p style="text-align: center;font-size: 14pt;"><strong>Начальник Управления персоналом&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <p style="padding:0;margin:0;">&nbsp;</p>
+    
+    <p style="padding:0;margin:0; text-align: center;font-size: 14pt;"><strong>Начальник Управления персоналом&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ж.Т. Жумабаева</strong></p>
-    <p style="text-align: center;font-size: 14pt;">&nbsp;</p>
-    <p style="text-align: center;font-size: 14pt;">Ознакомлен (а) _______________ ________________________________</p>
-    <p style="text-align: center;font-size: 10pt;">Подпись&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ФИО претендента</p>
-    <p>&nbsp;</p>
+    <p style="padding:0;margin:0; text-align: center;font-size: 14pt;">&nbsp;</p>
+    <p style="padding:0;margin:0; text-align: center;font-size: 14pt;">Ознакомлен (а) _______________ ________________________________</p>
+    <p style="padding:0;margin:0; text-align: center;font-size: 10pt;">Подпись&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ФИО претендента</p>
+    <p style="padding:0;margin:0;" >&nbsp;</p>
     
     <table border="1" style="border-collapse: collapse;">
         <tbody>
             <tr>
                 <td style="width: 50%;">
-                    Примечание:&nbsp;<strong>Группа 1</strong>&nbsp;«Должности руководителей структурных
-                        подразделений и профессорско-преподавательского состава»<br>
-                    <strong>Всего</strong><strong>&nbsp;8</strong><strong>0 вопросов</strong><strong>(120 минут),
+                    <strong><span class="text-danger">Примечание:</span></strong>&nbsp;<strong>Группа 1</strong>&nbsp;Руководители структурных подразделений <br>
+                    <strong>Всего</strong><strong>&nbsp;6</strong><strong>0 вопросов</strong><strong>(120 минут),
                             проходной
-                            бал</strong><strong>л</strong><strong>&nbsp;–&nbsp;</strong><strong>4</strong><strong>0</strong>
-                    
+                            бал</strong><strong>л</strong><strong>&nbsp;–&nbsp;</strong><strong>3</strong><strong>0</strong>
                 </td>
                 <td>
-                    Примечание:&nbsp;<strong>Группа&nbsp;</strong><strong>II</strong>«Должности работников
-                        структурных подразделений» <br>
+                    <strong><span class="text-danger">Примечание:</span></strong>&nbsp;<strong>Группа&nbsp;</strong><strong>II</strong> Специалисты <br>
                     <strong>Всего</strong><strong>&nbsp;5</strong><strong>0 вопросов</strong><strong>(120 минут),
                             проходной бал</strong><strong>л</strong><strong>&nbsp;-&nbsp;</strong><strong>25</strong>
-                    
                 </td>
             </tr>
             <tr>
                 <td>
-                    <strong>1) </strong><strong>Конституция&nbsp;Республики Казахстан&nbsp;</strong>(10 вопросов,
-                        пороговое значение 5)<br>
-                    <strong>2) </strong><strong>Закон Республики Казахстан «О науке»&nbsp;</strong>(20 вопросов,
-                        пороговое значение 10)<br>
-                    <strong>3) </strong><strong>Закон Республики Казахстан «Об образовании»&nbsp;</strong>(20
-                        вопросов, пороговое значение 10)<br>
-                    <strong>4) </strong><strong>Трудовой Кодекс Республики Казахстан&nbsp;</strong>(10 вопросов,
-                        пороговое значение 5)<br>
-                    <strong>5) </strong><strong>Основные принципы менеджмента в области образования и педагогики
-                            высшей школы&nbsp;</strong>(10 вопросов, пороговое значение 5)<br>
-                    <strong>6) </strong><strong>Цифровые навыки&nbsp;</strong>(10 вопросов, пороговое значение 5)
+                    <strong>1) </strong><strong>Конституция Республики Казахстан</strong> &nbsp;(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5) <br>
+                    <strong>2) </strong><strong>Закон Республики Казахстан «Об образовании»</strong>&nbsp;Заңы(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5) <br>
+                    <strong>3) </strong><strong>Закон Республики Казахстан «О науке»</strong>(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5)<br> 
+                    <strong>4) </strong><strong>Трудовой Кодекс Республики Казахстан </strong> (10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5)<br> 
+                    <strong>5) </strong><strong>Цифровые навыки</strong>(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5)<br> 
+                    <strong>6) </strong><strong>Основные принципы менеджмента в области образования и педагогики высшей школы</strong> (10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5)<br> 
                 </td>
                 <td>
-                    <strong>1) </strong><strong>Конституция&nbsp;Республики Казахстан&nbsp;</strong>(10 вопросов,
-                        пороговое значение 5)<br>
-                    <strong>2) </strong><strong>Закон Республики Казахстан «О науке»&nbsp;</strong>(10 вопросов,
-                        пороговое значение 5)<br>
-                    <strong>3) </strong><strong>Закон Республики Казахстан «Об образовании»&nbsp;</strong>(10
-                        вопросов, пороговое значение 5)
-                    <strong>4) </strong><strong>Трудовой Кодекс Республики Казахстан&nbsp;</strong>(10 вопросов,
-                        пороговое значение 5)<br>
-                    <strong>5) </strong><strong>Цифровые навыки&nbsp;</strong>(10 вопросов, пороговое значение 5)
+                    <strong>1) </strong><strong>Конституция Республики Казахстан</strong> &nbsp;(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5) <br>
+                    <strong>2) </strong><strong>Закон Республики Казахстан «Об образовании»  </strong>&nbsp;Заңы(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5) <br>
+                    <strong>3) </strong><strong>Закон Республики Казахстан «О науке»</strong>(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5)<br> 
+                    <strong>4) </strong><strong>Трудовой Кодекс Республики Казахстан </strong> (10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5)<br> 
+                    <strong>5) </strong><strong>Цифровые навыки</strong>(10&nbsp;вопросов,&nbsp;пороговое&nbsp;значение&nbsp;5)<br> 
                 </td>
             </tr>
         </tbody>
@@ -207,7 +180,7 @@
                     
      </b-col>
         <b-col lg="12">
-            <b-button variant="outline-success" @click="printReport" class="mt-3 w-25 float-right">Print</b-button>
+            <b-button variant="outline-success" @click="PrintDiv('printContainer')" class="mt-3 w-25 float-right">Print</b-button>
         </b-col>
     </b-row>
 </template>
@@ -227,10 +200,10 @@ export default {
             myWindow.document.write('</head><body >');
             myWindow.document.write(data);
             myWindow.document.write('</body></html>');
+            myWindow.print();
             myWindow.document.close(); // necessary for IE >= 10
-
+            
             myWindow.onload=function(){ // necessary if the div contain images
-
                 myWindow.focus(); // necessary for IE >= 10
                 myWindow.print();
                 myWindow.close();

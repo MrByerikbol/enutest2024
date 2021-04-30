@@ -259,6 +259,7 @@ export default {
             }
             formData.append("docFile", this.teacherForm.docDetails.docFile);
             formData.append("docDetails",JSON.stringify(this.teacherForm));
+            
             this.overlayShow=true;    
             axios.post(apiDomain+'/admin/enu/kpibuisness/postteacherdocument',formData,{headers:getMultipartHeader()})
             .then((response)=>{

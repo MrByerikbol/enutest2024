@@ -52,7 +52,7 @@
                         responsive
                         :per-page="perPage"
                         :filter="filter"
-                        :select-mode="'multi'"
+                        :select-mode="selectMode"
                         
                         
                         selected-variant="danger"
@@ -157,6 +157,10 @@ export default {
                     key: 'questionCount',
                     label: 'enu.ttest.questionCount',
                     variant:'warning'
+                },
+                {
+                    key: 'examTestCount',
+                    label: 'ExamSurahSani'
                 }
             ],
             isSmall:false,
@@ -166,6 +170,7 @@ export default {
             perPage: 20, 
             filter:"",
             selectedRows:[],
+            selectMode:'multi',
             groupId :0,
             groups:[]
         }
@@ -182,11 +187,11 @@ export default {
                     let o = new Object();
                     let delIndexes = [];
                     this.selectedRows.forEach(r=>{
-                        delIndexes.push(r.docCatId);
+                        delIndexes.push(r.catId);
                     })
                     o.indexes=delIndexes;
-                    o.name='enu_document_category';
-                    o.unique='doc_cat_id';
+                    o.name='enu_ttest_category';
+                    o.unique='cat_id';
 
                     axios.post(apiDomain+'/admin/enu/ref/deleterecords',o,{headers:getHeader()})
                     .then(()=>{

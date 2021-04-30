@@ -21,12 +21,12 @@
 
 <script>
   import LandingHeader from "@/components/enu/landing/LandingHeader";
-  import DepartmentList from "@/components/enu/landing/DepartmentList";
+  // import DepartmentList from "@/components/enu/landing/DepartmentList";
   import LandingFooter from "@/components/enu/landing/LandingFooter";
   export default {
     components:{
       LandingHeader,
-      DepartmentList,
+     
       LandingFooter
     },
     name:"Login"

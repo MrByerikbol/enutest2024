@@ -12,6 +12,7 @@
             size: landscape;
         }
     }
+    @import './assets/landscape.css';
 </style>
 
 

@@ -11,6 +11,7 @@ Vue.config.productionTip = false
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-search-select/dist/VueSearchSelect.css' 
+
 import {BootstrapVue,IconsPlugin} from 'bootstrap-vue'
 import VueAnalytics from 'vue-analytics'
 Vue.use(IconsPlugin)
@@ -66,28 +67,32 @@ import {apiDomain,getHeader} from "./config/config";
 import VueHtmlToPaper from "vue-html-to-paper";
 const options = {
   styles: [
-    "./landscape.css"
+
+    
+    "./assets/landscape.css",
+    
   ]
 };
 Vue.use(VueHtmlToPaper, options);
 
 Vue.use(vuexI18n.plugin, store, {
-	moduleName: 'i18n',
-	onTranslationNotFound (locale, key) {
+	  moduleName: 'i18n'
+    // onTranslationNotFound (locale, key) {
 
-		return new Promise((resolve, reject) => {
-      axios.post(apiDomain+'/login/translations'
-      ,{locale: locale, key:key},{headers:getHeader()})
-			.then((result) => {
+    //   return new Promise((resolve, reject) => {
+    //     axios.post(apiDomain+'/login/translations'
+    //     ,{locale: locale, key:key},{headers:getHeader()})
+    //     .then((result) => {
 
-				resolve(result.data);
-      })
-      .catch(()=>{
-        reject();
-      })
-		});
+    //       resolve(result.data);
+    //     })
+    //     .catch(()=>{
+    //       reject();
+    //     })
+    //   });
 
-	}}
+    // }
+  }
 );
 // import predefined localizations
 import translationsKz from './i18n/kz.js';

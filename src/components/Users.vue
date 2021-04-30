@@ -5,10 +5,10 @@
           <span class="bd-content-title">{{$t('enu.userList.mainTitle')}}</span>
         </h3>
       </b-col>
-      <b-col lg="4" class="mt-3">
+      <!-- <b-col lg="4" class="mt-3">
         <DepartmentList/>  
-      </b-col>
-      <b-col lg="8" class="mt-3">
+      </b-col> -->
+      <b-col lg="12" class="mt-3">
         <b-row>
           <b-col lg="12">
             <h5>
@@ -44,7 +44,10 @@
                   </div>
                 </b-col>
                 <b-col lg="3">
-                  <b-button @click="getMainReport" block variant="outline-success" v-b-modal.reportListModal>Main Exam Report</b-button>
+                  <b-button @click="getMainReport" block variant="outline-success mb-2" v-b-modal.reportListModal>Main Exam Report</b-button>
+
+                  <b-button @click="getStudentMainReport" block variant="outline-info">Student Report</b-button>
+
                 </b-col>
               </b-row>
           </b-col>
@@ -161,15 +164,27 @@
                   variant="outline-success" class="mr-2">
                   {{row.item.canShow==1 ? $t('canNotShow') : $t('canShow')}}
                 </b-button>
-                <b-button 
+
+                 <b-button 
+                 v-if="row.item.roleName!='Студент'"
                   variant="outline-info" 
                   class="mr-2" 
                   @click="reportTest(row.item.userId,row.item.lastName+' '+row.item.firstName+' ' + row.item.thirdName)" v-b-modal.reportModal>
-                  Емтихан нәтижесі
+                  Report
                 </b-button>
                 <b-button 
                   v-if="row.item.roleName=='Студент'"
+                  variant="outline-info" 
+                  class="mr-2" 
+                  @click="showStExamResult(row.item.userId)">
+                  Емтихан нәтижесі
+                </b-button>
+
+                <b-button 
+                  v-if="row.item.roleName=='Студент'"
                   variant="warning" 
+                  @click="downloadDoc(row.item.userId,row.item.firstName)"
+
                   class="mr-2 mt-2" block >
                   Студенттің файлдары
                 </b-button>
@@ -342,6 +357,14 @@
                 hide-footer size="huge">
                 <ReportList :reports="reportList" :currentGroup="currentGroup" :examDate="formattedExamDate"/>   
             </b-modal>
+
+            <!--student negizgi achottari goy-->
+            <b-modal id="studentReportModal" ref="studentReportModal"
+                title="Student Main Report"
+                hide-footer size="huge">
+
+                <StudentTestReport :students="students"  :examDate="formattedExamDate"/>   
+            </b-modal>
         </b-row>
       </b-col>
     </b-row>
@@ -355,6 +378,7 @@ import DepartmentList from "@/components/enu/comps/DepartmentList";
 import TtestReport from "@/components/TtestReport";
 import PtestReport from "@/components/PtestReport";
 import ReportList from "@/components/ReportList";
+import StudentTestReport from "@/components/StudentTestReport";
 import Datepicker from 'vuejs-datepicker';
 const moment = require('moment')
 import Vue from 'vue'
@@ -365,6 +389,7 @@ export default {
     DepartmentList,
     TtestReport,
     ReportList,
+    StudentTestReport,
     Datepicker,
     PtestReport
   },
@@ -450,11 +475,46 @@ export default {
       currentGroup:{},
       formattedExamDate:"",
       pReport:{},
-      examDays:[]
+      examDays:[],
 
+      students :[]
     }
   },
   methods:{
+    showStExamResult(studentId){
+        if(studentId>0){
+            //Router.push({ path: '/stresult/'+this.studentId});
+            let a= document.createElement('a');
+            a.target= '_blank';
+            let hr = Vue.i18n.locale()=='kz' ? '/#/stresult/'+studentId : '/#/stresultru/'+studentId;
+            a.href= hr;
+            a.click();
+        }       
+    },
+    downloadDoc(studentId,firstName='studentFiles'){
+        if(studentId && Number(studentId)>0){
+          axios.post(apiDomain+'/admin/enu/ttest/buisness/downloaddoc',
+              {
+                  'studentId':studentId
+              },
+              {
+                responseType: 'blob', // important
+                headers:getHeader()
+              }
+          )
+          .then((response) => {
+              //alert(JSON.stringify(response.data));
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', firstName+".zip");
+              document.body.appendChild(link);
+              link.click();
+          });    
+        }
+        
+    },
+
     setReportDate(reportDate){
       this.reportDate=reportDate;
     },
@@ -576,6 +636,37 @@ export default {
           }
       )     
     },
+
+    //student main report 
+    getStudentMainReport(){
+      this.formattedExamDate=moment(this.reportDate).format('YYYY-MM-DD');
+
+      this.students=[];
+      if(this.reportDate==null){
+        alert("Please choose exam date !!!");
+        return ;
+      }
+      let dateStr = this.reportDate==null ? 'no-date': moment(this.reportDate).format('YYYY-MM-DD');
+      
+
+      axios.get(apiDomain+'/admin/enu/ttest/buisness/getstudentreport/'+dateStr+'',{headers:getHeader()})
+      .then(response=>{
+        this.students=response.data;  
+        this.$refs["studentReportModal"].show();
+
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
+
+
     getMainReport(){
       this.formattedExamDate=moment(this.reportDate).format('YYYY-MM-DD');
       this.reportList=[];
@@ -592,9 +683,7 @@ export default {
 
       axios.get(apiDomain+'/admin/enu/ttest/buisness/getmainreport/'+this.groupId+'/'+dateStr+'',{headers:getHeader()})
       .then(response=>{
-
         this.reportList=response.data;  
-
       })
       .catch(() => {
               this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
@@ -606,6 +695,8 @@ export default {
           }
       )     
     },
+
+
     docCatChange(d,dUserId){ 
       if(d>0 && dUserId>0){
         // let filtered=this.userForm.docCats.filter(db=>parseInt(db)==parseInt(d));

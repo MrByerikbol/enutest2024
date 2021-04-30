@@ -8,6 +8,8 @@ import AfterAuth from '@/components/AfterAuth';
 import DocumentCategoryList from '@/components/enu/comps/DocumentCategoryList';
 import TeacherDocList from '@/components/enu/comps/TeacherDocList';
 import Home from '@/components/enu/landing/Home';
+import StudentExamResult from '@/components/enu/landing/StudentExamResult';
+import StudentExamResultRu from '@/components/enu/landing/StudentExamResultRu';
 import ContactUs from '@/components/enu/landing/ContactUs';
 import TeacherFillDoc from '@/components/enu/comps/TeacherFillDoc';
 import TestCategoryList from '@/components/enu/comps/ttest/TestCategoryList';
@@ -21,16 +23,19 @@ export default new Router({
    
     routes: [
         {
+            
             path: '/login',
             name: 'Login',
             component: Login,
+
             children: [
                 {
                     path: '/home',
                     name: 'Home',
-
                     component: Home
                 },
+                
+               
                 {
                     path: '/contactus',
                     name: 'ContactUs',
@@ -43,6 +48,16 @@ export default new Router({
             path: '/afterauth',
             name: 'AfterAuth',
             component: AfterAuth,
+        },
+        {
+            path: '/stresult/:studentId',
+            name: 'Stresult',
+            component: StudentExamResult
+        },
+        {
+            path: '/stresultru/:studentId',
+            name: 'Stresultru',
+            component: StudentExamResultRu
         },
         {
             path: '/',
