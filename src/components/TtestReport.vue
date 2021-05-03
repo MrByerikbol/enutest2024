@@ -201,6 +201,8 @@ export default {
             myWindow.document.write(data);
             myWindow.document.write('</body></html>');
             myWindow.print();
+            
+            myWindow.close();
             myWindow.document.close(); // necessary for IE >= 10
             
             myWindow.onload=function(){ // necessary if the div contain images

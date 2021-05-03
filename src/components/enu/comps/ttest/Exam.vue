@@ -203,22 +203,25 @@ export default {
                     else{
                         ltestCats=this.testCatsRu.filter(c=>parseInt(c.groupId)==parseInt(this.selectedGroup.value));
                     }
-                    ltestCats.forEach(t=>{
-                        let canPush = true;
-                        this.notFullyCats.forEach(n=>{
-                            if(Number(t.value)==Number(n.catId)){
-                                canPush=false;
-                                return;
+                    if(this.notFullyCats && this.notFullyCats!=null){
+                        ltestCats.forEach(t=>{
+                            let canPush = true;
+                            this.notFullyCats.forEach(n=>{
+                                if(Number(t.value)==Number(n.catId)){
+                                    canPush=false;
+                                    return;
+                                }
+                            })
+
+                            if(canPush){
+                                if(this.leftCats.filter(l=>Number(l.value)==Number(t.value)).length==0){
+                                    this.leftCats.push(t);
+                                }
                             }
+
                         })
-
-                        if(canPush){
-                            if(this.leftCats.filter(l=>Number(l.value)==Number(t.value)).length==0){
-                                this.leftCats.push(t);
-                            }
-                        }
-
-                    })
+                    }
+                    
                     this.$refs["complete-confirm-modal"].show();
                 })
                 .catch((err) => {
@@ -292,6 +295,7 @@ export default {
                                 title: Vue.i18n.translate('system.errorTitle'),
                                 autoHideDelay: 5000
                             })
+                            this.isBlocked=true;
                         }
                         if(response.data=='cantShow'){
                             this.questions=[];
@@ -309,7 +313,8 @@ export default {
                                 title: Vue.i18n.translate('system.errorTitle'),
                                 autoHideDelay: 5000
                             })
-                            clearInterval(this.timer);    
+                            clearInterval(this.timer);   
+                            this.completeExam(); 
                         }
                     })
                     .catch(() => {
@@ -337,8 +342,8 @@ export default {
                 title: Vue.i18n.translate('system.errorTitle'),
                 autoHideDelay: 5000
             });
-            clearInterval(this.timer)
             this.completeExam();
+            clearInterval(this.timer)
         },
         selectGroup(group){
             this.selectedGroup=group;
@@ -361,12 +366,14 @@ export default {
             
         },
         beginExam(){
+            this.questions=[];
             this.isExamBegan=true;
             if(this.selectedCat!=null){
                 if(parseInt(this.selectedCat.value)>0){
                     axios.get(apiDomain+'/admin/enu/ttest/buisness/choosecat/'+this.selectedCat.value+'/'+this.selectedGroup.value+'',
                     {headers:getHeader()})
                     .then(response=>{
+                        
                         this.hideModal();
                         
                         if(response.data=='cantShow'){
@@ -378,9 +385,20 @@ export default {
                                 autoHideDelay: 5000
                             })
                         }
-                        if(response.data=='userBlocked'){
+                        if(response.data=='userBlocked' || response.data=='examCompleted'){
+
                             this.questions=[];
                             this.isBlocked=true;
+                        }
+                        if(response.data.transactionResult=='hasUncompleted'){
+                            this.questions=[];
+
+                            this.$bvToast.toast(Vue.i18n.translate('enu.ttest.hasUncompleted'), {
+                                toaster:'b-toaster-top-center',
+                                variant:'danger',
+                                title: Vue.i18n.translate('system.errorTitle'),
+                                autoHideDelay: 5000
+                            })
                         }
                         if(response.data.transactionResult=='testBegan'){
                             this.questions=[];
@@ -400,7 +418,7 @@ export default {
                             
                         }
                         if(response.data.transactionResult=='catError'){
-                        this.$bvToast.toast(Vue.i18n.translate('enu.test.examModule.catError'), {
+                            this.$bvToast.toast(Vue.i18n.translate('enu.test.examModule.catError'), {
                                 toaster:'b-toaster-top-center',
                                 variant:'danger',
                                 title: Vue.i18n.translate('system.errorTitle'),

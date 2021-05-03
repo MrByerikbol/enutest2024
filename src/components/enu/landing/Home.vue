@@ -39,7 +39,7 @@ background:#F8F9FA'>Жоғары&nbsp;білім&nbsp;беру мен педаг
 lang=KZ style='color:#212529;background:#F8F9FA'>, Цифрлық дағдылар бойынша
 тесттерді қамтиды.</span></p>
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%"
+<!-- <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%"
  style='border-collapse:collapse;border:none'>
 
         <tbody>
@@ -91,7 +91,7 @@ lang=KZ style='color:#212529;background:#F8F9FA'>, Цифрлық дағдыла
                 </td>
             </tr>
         </tbody>
-    </table>
+    </table> -->
 
 <p class=MsoNormal style='margin-bottom:0in;text-align:justify;text-indent:
 .5in;line-height:normal'><span style='font-size:12.0pt'>&nbsp;</span></p>
@@ -209,7 +209,7 @@ style='font-size:12.0pt'> включает тесты по Конституци�
 <p class=MsoNormal style='margin-bottom:0in;text-align:justify;text-indent:
 .5in;line-height:normal'><span lang=RU style='font-size:12.0pt'>&nbsp;</span></p>
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%"
+<!-- <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%"
  style='border-collapse:collapse;border:none'>
 
         <tbody>
@@ -246,7 +246,7 @@ style='font-size:12.0pt'> включает тесты по Конституци�
                 </td>
             </tr>
         </tbody>
-    </table>
+    </table> -->
 
 <p class=MsoNormal style='margin-bottom:0in;text-align:justify;text-indent:
 .5in;line-height:normal'><span lang=RU style='font-size:12.0pt'>&nbsp;</span></p>
