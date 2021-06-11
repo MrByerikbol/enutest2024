@@ -1,12 +1,15 @@
 <template> 
-    <b-row>
-        
+    <b-row class="pt-3">
+        <b-col lg="12" class="mb-3 pl-4">
+            <b-icon class="mb-3" icon="house" scale="2" variant="info" @click="toTrad" style="color: #7952b3;"></b-icon>
+        </b-col>
         <b-col lg="12" class="py-3">
             <h3>
                 <span class="bd-content-title">{{$t('enu.test.examModulTitle')}}</span>
             </h3>
-
+            
         </b-col>
+        
         
         <b-col lg="12" v-if="!isBlocked">
            
@@ -189,6 +192,9 @@ export default {
     
 
     methods:{
+        toTrad(){
+            window.location.href = "/#/testwelcome";         
+        },
         overExam(){
             let groupId = this.selectedGroup.value;
             //alert(groupId)
