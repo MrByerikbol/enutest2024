@@ -2,12 +2,12 @@
     <div class="w-100">
 	<b-button variant="outline-success" @click="printReport" id="printbtn" class="mt-3 w-25 float-right">Print</b-button>   
     <div class="w-100" id="printContainer">
-        <div  style="width:595px;margin:0 auto 0 auto;">
+        <div  style="width:620px;margin:0 auto 0 auto;">
 			<table width="100%">
 				<tbody>
 					<tr style="font-size: 10;text-align: center;">
 						<td width="30%" style="padding:10px">
-							<p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕ АҚ</p>
+							<p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕАҚ</p>
 						</td>
 						<td width="40%">
 
@@ -30,8 +30,8 @@
 			</table>
 			<hr>
 			<p>&nbsp;</p>
-			<p style="text-align: center;"><strong>&laquo;Педагогикалық ғылымдар&raquo; білім беру саласы бойынша арнаулы емтихан</strong></p>
-			<p style="text-align: center;"><strong>ведомості №______</strong></p>
+			<p style="text-align: center;"><strong>&laquo;Педагогикалық ғылымдар&raquo; білім беру саласы  бойынша арнаулы емтихан</strong></p>
+			<p style="text-align: center;"><strong>ведомосі №______</strong></p>
 			<p>Күні: <strong>{{examDate}}</strong></p>
 			<p style="text-align: center;"><strong>Қазақ бөлімі</strong></p>
 			<table cellspacing="0" width="100%" style="border-collapse:collapse" border="1">
@@ -86,7 +86,7 @@
 				<tbody>
 					<tr style="font-size: 10;text-align: center;">
 						<td width="30%" style="padding:10px">
-							<p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕ АҚ</p>
+							<p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕАҚ</p>
 						</td>
 						<td width="40%">
 
