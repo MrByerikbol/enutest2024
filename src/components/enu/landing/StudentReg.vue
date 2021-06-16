@@ -445,6 +445,13 @@
                                 autoHideDelay: 5000
                             })
                         }
+                        else if(response.data.success === false) {
+                          this.$refs['qrModal'].hide();
+                          this.$bvToast.toast('Verification Error', {
+                            title: response.data.error + ' ' + response.data.data !== null ? response.data.data : '',
+                            autoHideDelay: 5000
+                          })
+                        }
 
                         if(Number(response.data)>0){
                             
