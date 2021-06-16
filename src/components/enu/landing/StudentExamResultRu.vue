@@ -16,7 +16,7 @@
                     <tbody>
                         <tr style="font-size: 10;text-align: center;">
                             <td width="30%" style="padding:10px">
-                                <p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕ АҚ</p>
+                                <p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕАҚ</p>
                             </td>
                             <td width="40%">
 
@@ -39,12 +39,12 @@
                 </table>
                 <hr/>
                 <br/><br/><br/><br/>
-                <p style="text-align: center; font-weight: bold;">ВЫПИСКА<br/>из ведомости специального экзамена по области образования
+                <p style="text-align: center; font-weight: bold;">ВЫПИСКА<br/>из ведомости специального экзамена по области образования 
                 <br/>&laquo;Педагогические науки&raquo;<br/></p>
 
 				<p style="font-size: 12;margin: 10px;">
-					<strong>{{getFullName}}</strong> <br/>
-					в том, что он (а) действительно сдал (а) специальный экзамен и получил (а) (<strong>{{isPassed}}</strong>) <br/>
+					Дана <strong> {{getFullName}} </strong> <br/>
+					в том, что он (а) действительно сдал (а) специальный экзамен и получил (а) <strong>{{isPassed}}</strong> <br/>
 
 				</p>
 				<p style="font-size: 12;font-weight:bold; margin: 10px;">

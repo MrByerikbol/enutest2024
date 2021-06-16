@@ -250,7 +250,7 @@ export default {
                 axios.post(apiDomain+'/admin/enu/ttest/buisness/loginedcomp',{groupId:groupId},{headers:getHeader()})
                 .then(response=>{
                     if(response.data=='success'){
-                        let alertMsg = Vue.i18n.translate('system.successMsg');
+                        let alertMsg = Vue.i18n.translate('studentTestFinished');
                             this.$bvToast.toast(alertMsg, {
                             toaster:'b-toaster-top-center',
                             variant:'success',

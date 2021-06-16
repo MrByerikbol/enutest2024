@@ -66,37 +66,43 @@
                         </b-col>
 
                         <b-col sm="auto" lg="12" md="12">
-                            <label  for="studentPhoto">{{$t('studentPhoto')}}</label>
+                            <label  for="studentPhoto" class="mt-1">{{$t('studentPhoto')}}</label>
                             <b-form-file
-                                class="mt-2"
                                 size="sm"
-
                                 v-model="userForm.studentPhoto"
                                 :state="Boolean(userForm.studentPhoto)"
-                                :placeholder="$t('enu.teacherDocForm.chooseFile')"
+                                :placeholder="$t('studentPhoto')"
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
                             ></b-form-file>
                         </b-col>
                         <b-col sm="auto" lg="12" md="12">
-                            <label  for="studentPasswordPhoto">{{$t('studentPasswordPhoto')}}</label>
+                            <label  for="studentPasswordPhoto" class="mt-1">{{$t('studentPasswordPhoto')}}</label>
                             <b-form-file
-                                class="mt-2"
                                 size="sm"
                                 v-model="userForm.studentPasswordPhoto"
                                 :state="Boolean(userForm.studentPasswordPhoto)"
-                                :placeholder="$t('enu.teacherDocForm.chooseFile')"
+                                :placeholder="$t('studentPasswordPhoto')"
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
                             ></b-form-file>
                         </b-col>
                         <b-col sm="auto" lg="12" md="12">
-                            <label  for="studentEnt">{{$t('studentEnt')}}</label>
+                            <label  for="studentAtes" class="mt-1">{{$t('studentAtes')}}</label>
                             <b-form-file
-                                class="mt-2"
+                                size="sm"
+                                v-model="userForm.studentAtes"
+                                :state="Boolean(userForm.studentAtes)"
+                                :placeholder="$t('studentAtes')"
+                                :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
+                            ></b-form-file>
+                        </b-col>
+                        <b-col sm="auto" lg="12" md="12">
+                            <label  for="studentEnt" class="mt-1">{{$t('studentEnt')}}</label>
+                            <b-form-file
                                 size="sm"
 
                                 v-model="userForm.studentEnt"
                                 :state="Boolean(userForm.studentEnt)"
-                                :placeholder="$t('enu.teacherDocForm.chooseFile')"
+                                :placeholder="$t('studentEnt')"
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
                             ></b-form-file>
                         </b-col>
@@ -124,7 +130,6 @@
                     <b-button type="submit"  variant="primary" class="mr-2">
                         {{$t('studentMakeRequest')}}
                     </b-button>
-
                 </b-form>
             </b-modal>
 
@@ -136,14 +141,14 @@
                         v-on:click="getActiveTokens">
                         {{$t('studentMakeSigning')}}
                     </b-button>
-                    <b-button variant="info" class="ml-1" @click="stPrint('docContainer')">Print</b-button>
+                    <b-button variant="info" class="ml-1" @click="stPrint('docContainer')">{{$t("studentPrint")}}</b-button>
                     <div class="w-100" id="docContainer">
                         <div  style="width:595px;height:842px;margin:0 auto;display:relative !important;">
                             <table>
                                 <tbody>
                                     <tr style="font-size: 12;text-align: center;">
                                         <td width="30%" style="padding:5px">
-                                            <p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕ АҚ</p>
+                                            <p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕАҚ</p>
                                         </td>
                                         <td width="40%">
 
@@ -165,33 +170,54 @@
                                 </tbody>
                             </table>
                             <hr>
-                            <p style="text-align: right;font-size: 12;font-weight: bold;margin: 10px;">«Л.Н. Гумилев атындағы ЕҰУ» КЕ АҚ <br>
-                                басқарма төрағасы- Ректор,<br>
-                                Қабылдау комиссияның төрағасы<br>
-                                Е.Б. Сыдықовқа<br>
-                                Председателюприемной комиссии,<br>
-                                Председатель Правления-Ректор<br>
-                                НАО «ЕНУ им. Л.Н.Гумилева»<br>
-                                Сыдыкову Е.Б.
+                            <p style="width:100%; text-align: left;overflow:hidden; font-size: 12;font-weight: bold;margin: 10px 0 10px 0;">
+                                <span v-if="$i18n.locale()=='kz'" class="float-right">
+                                    «Л.Н. Гумилев атындағы ЕҰУ» КЕАҚ <br>
+                                    Басқарма төрағасы-Ректор,<br>
+                                    Қабылдау комиссиясының төрағасы<br>
+                                    Е.Б. Сыдықовқа<br>
+                                </span>
+                                <span v-if="$i18n.locale()=='ru'" class="float-right">
+                                    Председателю Правления-Ректору<br>
+                                    НАО «ЕНУ им. Л.Н. Гумилева»,<br>
+                                    Председателю приемной комиссии<br>
+                                    Сыдыкову Е.Б.<br>
+                                </span>
                             </p><br>
-                            <p style="font-size: 12;margin: 10px;">Азамат/азаматша/от гр. <strong>{{getFullName}}</strong>&nbsp;</p>
-                            <p style="text-align: center;"><strong>ӨТІНІШ/ЗАЯВЛЕНИЕ</strong></p>
-                                <p style="font-size: 12;margin: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;Мені, «Педагогикалық ғылымдар» білім беру саласы бойынша арнаулы емтиханға жіберуіңізді сұраймын. <br/>
+                            <p style="font-size: 12;margin: 10px;"><span v-if="$i18n.locale()=='kz'">Азамат(ша) </span><span v-if="$i18n.locale()=='ru'">от гражданина(ки) </span> <strong>{{getFullName}}</strong>&nbsp;</p>
+                            <p style="text-align: center;"><strong><span v-if="$i18n.locale()=='kz'">ӨТІНІШ</span><span v-if="$i18n.locale()=='ru'">ЗАЯВЛЕНИЕ</span></strong></p>
+                            <p style="font-size: 12;margin: 10px;">
+                                <span v-if="$i18n.locale()=='kz'">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;Мені, «Педагогикалық ғылымдар» білім беру саласы бойынша арнаулы емтиханға жіберуіңізді сұраймын.
+                                </span>
+                                <span v-if="$i18n.locale()=='ru'">
+                                    <br/>
                                     &nbsp;&nbsp;&nbsp;&nbsp;Прошу допустить меня на специальный экзамен по области образования «Педагогические науки».
+                                </span>
                                 <br/>
                                 <br/>
-                                Байланыс мәліметтері/Контактные данные: <strong>{{getPhoneNumber}}</strong>&nbsp;
+                                <span v-if="$i18n.locale()=='kz'">Байланыс мәліметтері: телефон </span> <span v-if="$i18n.locale()=='ru'">Контактные данные: телефон: </span> <strong>{{getPhoneNumber}}</strong>&nbsp;
                                 <br/>
                                 <br/>
-                                «Л.Н. Гумилев атындағы ЕҰУ» КЕ АҚ қабылдау ережелерімен таныстым. <br/>
-                                С правилами приема в НАО «ЕНУ имени Л.Н. Гумилева» ознакомлен (а)
+                                <span v-if="$i18n.locale()=='kz'">
+                                   «Л.Н. Гумилев атындағы ЕҰУ» КЕАҚ қабылдау ережелерімен таныстым.
+                                </span>
+                                <span v-if="$i18n.locale()=='ru'">
+                                    <br/>
+                                   С правилами приема в НАО «ЕНУ имени Л.Н. Гумилева»  ознакомлен (а).
+                                </span>
                                 <br/>
                                 <br/>
-                                Өзімнің жеке деректерімді жинауға, өңдеуге және таратылуына келісемін.<br/>
-                                На сбор, обработку и распространение моих персональных данных согласен(а)
+                                <span v-if="$i18n.locale()=='kz'">
+                                   Өзімнің жеке деректерімді жинауға, өңдеуге және таратылуына келісемін.
+                                </span>
+                                <span v-if="$i18n.locale()=='ru'">
+                                    <br/>
+                                    На сбор, обработку и распространение моих персональных данных согласен(а).
+                                </span>
                                 <br/>
                                 <br/>
-                                Өтініш берілген күні/Дата подачи заявления: <strong>{{getCurrentDate}}</strong>
+                                <span v-if="$i18n.locale()=='kz'">Өтініш берілген күні</span> <span v-if="$i18n.locale()=='ru'">Дата подачи заявления</span>: <strong>{{getCurrentDate}}</strong>
                             </p>
                         </div>
 
@@ -200,22 +226,20 @@
             </b-modal>
             <b-modal size="lg"  ref="qrModal"
                    :title="$t('studentMakeSigning')" hide-footer @shown="saveSign">
-                   <b-button variant="info" @click="stPrint('WordSection1')">Print</b-button>
+                   <b-button variant="info" @click="stPrint('WordSection1')">{{$t('studentPrint')}}</b-button>
                 <div  id="qrContainer" ref="qrContainer" style="margin:0 auto;">
                     
                     <div class=WordSection1 id="WordSection1">
                         <div class="row" style="width:100%;">
                             <p class=MsoNormal style='text-align:justify;text-indent:35.45pt'>
                                 <span lang=KZ>
-                                    Өтінішіңіз сәтті қабылданды, тест тапсыру уақыты жайлы сіз көрсеткен контактілерге хабарландыру жіберіледі.
-                                    Тіркелу барысында көрсеткен құпия сөз бен электронды пошта адресі арқылы жүйеге кіріп тест тапсыра аласыз.
+                                    Сіздің өтінішіңіз қабылданып, тексерілуде. Ұсынған құжаттарыңыз дұрыс болған жағдайда, көрсетілген байланыс мәліметтері бойынша өтініштің сәтті қабылданғаны және емтиханнан өту мүмкіндігі ашылғандығы жайлы хабарлама жіберіледі.
                                 </span>
                             </p>
                         </div>
                         <div class="row" style="width:100%;">
                             <p class=MsoNormal style='text-align:justify;text-indent:35.45pt'><span
-                            lang=KZ>Заявление успешно принято. На указанные вами контакты будет сообщено от сроках сдачи теста.
-                            Вы можете авторизоваться в системе по указанному при регистрации пароля и адреса электронной почты</span></p>
+                            lang=KZ>Ваше заявление принято, находится в обработке. При правильности поданных Вами документов, на указанный контакт придет сообщение о принятии заявления и открытии доступа к прохождению экзамена.</span></p>
                         </div>
                         <div class="row" style="width:100%;overflow:hidden;">
                             <qr-component v-for="qrValue in qrValues" :psize="psize" :key="qrValue.length" :value="qrValue"/>
@@ -262,7 +286,8 @@
 
                     studentPhoto:null,
                     studentPasswordPhoto:null,
-                    studentEnt:null
+                    studentEnt:null,
+                    studentAtes:null,
                 },
                 qrValues: [],
                 CMSSignature: null,

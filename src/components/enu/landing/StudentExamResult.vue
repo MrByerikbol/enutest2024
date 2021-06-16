@@ -15,7 +15,7 @@
                     <tbody>
                         <tr style="font-size: 10;text-align: center;">
                             <td width="30%" style="padding:10px">
-                                <p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕ АҚ</p>
+                                <p>«Л.Н.Гумилев атындағы Еуразия ұлттық университеті» КЕАҚ</p>
                             </td>
                             <td width="40%">
 
@@ -38,11 +38,11 @@
                 </table>
                 <hr/>
                 <br/><br/><br/><br/>
-                <p style="text-align: center; font-weight: bold;">&laquo;Педагогикалық ғылымдар&raquo; білім беру саласы бойынша арнаулы <br/>емтихан ведомостінің<br/>КӨШІРМЕСІ<br/></p>
+                <p style="text-align: center; font-weight: bold;">&laquo;Педагогикалық ғылымдар&raquo; білім беру саласы бойынша арнаулы <br/>емтихан ведомосінің<br/>КӨШІРМЕСІ<br/></p>
 
                 <p style="font-size: 12;margin: 10px;">
                     <strong>{{getFullName}}</strong> <br/>
-                    расымен арнаулы емтиханды (<strong>{{isPassed}}</strong>) тапсырғаны үшін берілді. <br/>
+                    расымен арнаулы емтиханды  тапсырып, <strong>{{isPassed}}</strong> деп бағаланды. <br/>
 
                 </p>
                 <p style="font-size: 12;font-weight:bold; margin: 10px;">

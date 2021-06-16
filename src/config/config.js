@@ -1,6 +1,5 @@
 //export const  apiDomain = "https://localhost:443";
 export const apiDomain="";
-
 export const loginUrl = apiDomain+"/oauth/token";
 export const getHeader = function(){
   const tokenData = JSON.parse(window.localStorage.getItem("authUser"));
