@@ -376,7 +376,7 @@ export default {
             this.isExamBegan=true;
             if(this.selectedCat!=null){
                 if(parseInt(this.selectedCat.value)>0){
-                    axios.get(apiDomain+'/admin/enu/ttest/buisness/choosecat/'+this.selectedCat.value+'/'+this.selectedGroup.value+'',
+                    axios.get(apiDomain+'/admin/enu/ttest/buisness/choosecat/'+this.selectedCat.value+'/'+this.selectedGroup.value+'/'+Vue.i18n.locale()+'',
                     {headers:getHeader()})
                     .then(response=>{
                         

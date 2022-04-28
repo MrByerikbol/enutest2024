@@ -171,13 +171,13 @@
                             </table>
                             <hr>
                             <p style="width:100%; text-align: left;overflow:hidden; font-size: 12;font-weight: bold;margin: 10px 0 10px 0;">
-                                <span v-if="$i18n.locale()=='kz'" class="float-right">
+                                <span v-if="$i18n.locale()=='kz'" style="float:right;">
                                     «Л.Н. Гумилев атындағы ЕҰУ» КЕАҚ <br>
                                     Басқарма төрағасы-Ректор,<br>
                                     Қабылдау комиссиясының төрағасы<br>
                                     Е.Б. Сыдықовқа<br>
                                 </span>
-                                <span v-if="$i18n.locale()=='ru'" class="float-right">
+                                <span v-if="$i18n.locale()=='ru'" style="float:right;">
                                     Председателю Правления-Ректору<br>
                                     НАО «ЕНУ им. Л.Н. Гумилева»,<br>
                                     Председателю приемной комиссии<br>
@@ -320,6 +320,15 @@
                     })
                     return ;
                 }
+                if(this.userForm.studentAtes==null){
+                    //alert("ates null error");
+                    this.$bvToast.toast(Vue.i18n.translate('chooseFileError'),{
+                        title: Vue.i18n.translate('system.errorTitle'),
+                        variant:"danger",
+                        autoHideDelay: 5000
+                    })
+                    return ;
+                }
                 if(this.userForm.studentPasswordPhoto==null){
                     this.$bvToast.toast(Vue.i18n.translate('studentPasswordPhotoAlert'),{
                         title: Vue.i18n.translate('system.errorTitle'),
@@ -375,7 +384,7 @@
                 try {
                     tokens = await NCALaClient.getActiveTokens()
                     this.activeTokens = this.activeTokens.concat(tokens)
-                    console.log(this.activeTokens.length)
+                    //console.log(this.activeTokens.length)
                     if (this.activeTokens.length <= 1) {
                     await this.sign(this.base64Source, this.activeToken)
                     } else {
@@ -437,6 +446,8 @@
                 formData.append("apiData",JSON.stringify(restObj));
                 formData.append("studentPhoto",this.userForm.studentPhoto);
                 formData.append("studentPasswordPhoto",this.userForm.studentPasswordPhoto);
+                formData.append("studentAtes",this.userForm.studentAtes);
+
                 let endPointPath = null;
 
                 //alert(this.userForm.studentEnt);

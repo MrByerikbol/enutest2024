@@ -150,6 +150,7 @@ import {apiDomain,getHeader} from "@/config/config";
 import { BasicSelect } from 'vue-search-select';
 import axios from 'axios';
 import Vue from 'vue';
+import {mapState} from 'vuex';
 //import Router from "@/router";
 export default {
     name : "StudentExam",
@@ -331,12 +332,21 @@ export default {
 
             if(this.selectedCat!=null){
                 if(parseInt(this.selectedCat.value)>0){
-                    axios.get(apiDomain+'/admin/enu/ttest/buisness/choosecat/'+this.selectedCat.value+'/'+this.selectedGroup.value+'',
+                    axios.get(apiDomain+'/admin/enu/ttest/buisness/choosecat/'+this.selectedCat.value+'/'+this.selectedGroup.value+'/'+Vue.i18n.locale()+'',
                     {headers:getHeader()})
                     .then(response=>{
+                        //alert(JSON.stringify(response.data));
                         this.hideModal();
-                        
-                        if(response.data=='cantShow'){
+                        if(response.data=='error'){
+                           this.showResultBtn = true;
+                           this.studentId=Number(this.loginedUser.userId); 
+                        }
+                        if(response.data.result=='examCompleted'){
+                           this.showResultBtn = true;
+                           this.studentId=Number(this.loginedUser.userId);
+                           Vue.i18n.set(response.data.lan);
+                        }
+                        if(response.data.result=='cantShow'){
                             this.questions=[];
                             this.$bvToast.toast(Vue.i18n.translate('enu.ttest.examModuleCantShow'), {
                                 toaster:'b-toaster-top-center',
@@ -344,6 +354,8 @@ export default {
                                 title: Vue.i18n.translate('system.errorTitle'),
                                 autoHideDelay: 5000
                             })
+                            this.studentId=Number(this.loginedUser.userId);
+                            Vue.i18n.set(response.data.lan);
                         }
                         if(response.data=='userBlocked'){
                             this.questions=[];
@@ -359,7 +371,11 @@ export default {
                             })
                         }
                         if(response.data.transactionResult=='success'){
+                            
                             this.questions=response.data.questions;
+                            if(response.data.lan!='no')
+                                Vue.i18n.set(response.data.lan);
+
                             if(this.time==null){
                                 this.time=parseInt(response.data.leftTime);
                                 this.timer = setInterval(this.decrementOrAlert, 1000);
@@ -378,6 +394,7 @@ export default {
 
                     })
                     .catch(() => {
+                            
                             this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
                                 toaster:'b-toaster-top-center',
                                 variant:'danger',
@@ -409,6 +426,7 @@ export default {
                     });
                     
                 }
+
                 if(Vue.i18n.locale()=='kz'){
                     this.selectedGroup=this.testGroups[0];
                     this.selectedCat=this.testCats[0];
@@ -433,10 +451,9 @@ export default {
         }
     },
     created(){
+        //alert("yes");
         this.getRef("category");
         this.getRef("ttestCategory");
-
-        
     },
     computed:{
         timeLeft(){
@@ -447,7 +464,12 @@ export default {
         },
         seconds(){
             return String(this.time % 60).padStart(2, '0')
-        }    
+        },
+        
+        ...mapState([
+            'loginedUser'
+        ])
+    
     }
 
 }

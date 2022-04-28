@@ -2,7 +2,7 @@
     <div class="w-100">
 	<b-button variant="outline-success" @click="printReport" id="printbtn" class="mt-3 w-25 float-right">Print</b-button>   
     <div class="w-100" id="printContainer">
-        <div  style="width:620px;margin:0 auto 0 auto;">
+        <div  style="width:595px;margin:0 auto;position:relative;">
 			<table width="100%">
 				<tbody>
 					<tr style="font-size: 10;text-align: center;">
@@ -22,7 +22,7 @@
 								</g>
 							</svg>
 						</td>
-						<td width="30%"  style="padding:10px;text-align:right;">
+						<td width="30%"  style="padding:10px;text-align:center;">
 							<p>НАО «Евразийский национальный университет имени Л.Н.Гумилева»</p>
 						</td>
 					</tr>
@@ -30,10 +30,17 @@
 			</table>
 			<hr>
 			<p>&nbsp;</p>
-			<p style="text-align: center;"><strong>&laquo;Педагогикалық ғылымдар&raquo; білім беру саласы  бойынша арнаулы емтихан</strong></p>
-			<p style="text-align: center;"><strong>ведомосі №______</strong></p>
-			<p>Күні: <strong>{{examDate}}</strong></p>
-			<p style="text-align: center;"><strong>Қазақ бөлімі</strong></p>
+			<p style="text-align: center;" v-if="$i18n.locale()=='kz'"><strong>&laquo;Педагогикалық ғылымдар&raquo; білім беру саласы  бойынша арнаулы емтихан</strong></p>
+			<p style="text-align: center;" v-if="$i18n.locale()=='kz'"><strong>ведомосі №______</strong></p>
+
+			<p style="text-align: center;" v-if="$i18n.locale()=='ru'"><strong>Ведомость №_____</strong></p>
+			<p style="text-align: center;" v-if="$i18n.locale()=='ru'"><strong>специального экзамена по области образования</strong> &laquo;Педагогические науки&raquo;</p>
+			
+
+			<p v-if="$i18n.locale()=='kz'">Күні: <strong>{{examDate}}</strong></p>
+			<p v-if="$i18n.locale()=='ru'">Дата: <strong>{{examDate}}</strong></p>
+			<p v-if="$i18n.locale()=='kz'" style="text-align: center;"><strong>Қазақ бөлімі</strong></p>
+			<p v-if="$i18n.locale()=='ru'" style="text-align: center;"><strong>Русское отделение</strong></p>
 			<table cellspacing="0" width="100%" style="border-collapse:collapse" border="1">
 				<thead style="display: table-header-group;">
 					<tr style="height: 51px;">
@@ -41,10 +48,12 @@
 							<p style="text-align: center;"><strong>№</strong></p>
 						</td>
 						<td style="width: 674px; height: 51px;" colspan="1" rowspan="1">
-							<p style="text-align: center;"><strong>ТАӘ</strong></p>
+							<p style="text-align: center;" v-if="$i18n.locale()=='kz'"><strong>ТАӘ</strong></p>
+							<p style="text-align: center;" v-if="$i18n.locale()=='ru'"><strong>ФИО</strong></p>
 						</td>
 						<td style="width: 117px; height: 51px;" colspan="1" rowspan="1">
-							<p style="text-align: center;"><strong>Өтті/Өтпеді</strong></p>
+							<p v-if="$i18n.locale()=='kz'" style="text-align: center;"><strong>Өтті/Өтпеді</strong></p>
+							<p v-if="$i18n.locale()=='ru'" style="text-align: center;"><strong>Допуск/Не допуск</strong></p>
 						</td>
 					</tr>
 				</thead>
@@ -57,31 +66,63 @@
 							<p style="text-align: center;">{{s.fullName}}</p>
 						</td>
 						<td style="width: 117px; height: 31px;" colspan="1" rowspan="1">
-							<p style="text-align: center;">
+							<p style="text-align: center;" v-if="$i18n.locale()=='kz'">
                                 {{Number(s.point)>4 ? 'Өтті' : 'Өтпеді'}}
+                            </p>
+							<p style="text-align: center;" v-if="$i18n.locale()=='ru'">
+                                {{Number(s.point)>4 ? 'Допуск' : 'Не допуск'}}
                             </p>
 						</td>
 					</tr>
 				</tbody>
 			</table>
-			<p>&nbsp;</p>
-			<p>Комиссия төрағасы: ______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ТАӘ</p>
-			<p>Комиссия мүшелері: ______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-            <br><br>
-			<div>
-				<p style="text-align: center;">ЕҰУ ЕР Ф 08-21-21 Арнаулы емтихан ведомості. Бесінші басылым</p>
+			
+
+			
+			<div v-if="$i18n.locale()=='ru'">
+				<p>&nbsp;</p>
+				<p ><span v-if="$i18n.locale()=='ru'">Председатель комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия төрағасы</span>:_______________________Айкинбаева Г. К</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+				<span v-if="$i18n.locale()=='kz'">ТАӘ</span><span v-if="$i18n.locale()=='ru'">ФИО</span>
+				</p>
+
+
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Ботабаева А. Е</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 
+				
+				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
+				</p>
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Сергазина Л. Д</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
+				</p>
 			</div>
+
+			<div v-if="$i18n.locale()=='kz'">
+				<p>&nbsp;</p>
+				<p>Комиссия төрағасы: _______________________Айкинбаева Г. К</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
+				<p>Комиссия мүшелері: ______________________Ботабаева А. Е</p>
+				<p>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ТАӘ</p>
+
+				<p>Комиссия мүшелері: ______________________Сергазина Л. Д</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
+				
+				<br><br>	
+			</div>
+
+
+			<!-- <div style="position:fixed;bottom:0;">
+				<p v-if="$i18n.locale()=='kz'" style="text-align: center;">ЕҰУ ЕР Ф 08-21-21 Арнаулы емтихан ведомосі. Бесінші басылым</p>
+				<p v-if="$i18n.locale()=='ru'" style="text-align: center;">Ф ПР ЕНУ 08-21-21 Ведомость специального экзамена. Издание пятое</p>
+			</div> -->
             
 		</div>
         
 
-        <div  style="width:595px;margin:0 auto;page-break-before:always;">
+        <div  style="width:595px;margin:0 auto;page-break-before:always;position:relative;">
 			<table width="100%">
 				<tbody>
 					<tr style="font-size: 10;text-align: center;">
@@ -101,7 +142,7 @@
 								</g>
 							</svg>
 						</td>
-						<td width="30%"  style="padding:10px;text-align:right;">
+						<td width="30%"  style="padding:10px;text-align:center;">
 							<p>НАО «Евразийский национальный университет имени Л.Н.Гумилева»</p>
 						</td>
 					</tr>
@@ -109,11 +150,20 @@
 			</table>
 			<hr>
 			<p>&nbsp;</p>
-			<p style="text-align: center;padding:0;margin:0;"><strong>Педагогикалық ғылымдар білім беру саласы бойынша арнаулы емтихан туралы</strong></p>
-			<p style="text-align: center;padding:0;margin:0;"><strong>пәндік комиссия отырысының</strong></p>
-			<p style="text-align: center;padding:0;margin:0;"><strong>ХАТТАМАСЫ</strong></p>
-			<p>Күні: <strong>{{examDate}}</strong></p>
-			<p style="text-align: center;"><strong>Қазақ бөлімі</strong></p>
+
+			<p v-if="$i18n.locale()=='kz'" style="text-align: center;padding:0;margin:0;"><strong>«Педагогикалық ғылымдар» білім беру саласы бойынша арнаулы емтихан туралы</strong></p>
+			<p v-if="$i18n.locale()=='kz'" style="text-align: center;padding:0;margin:0;"><strong>пәндік комиссия отырысының</strong></p>
+			<p v-if="$i18n.locale()=='kz'" style="text-align: center;padding:0;margin:0;"><strong>ХАТТАМАСЫ №______</strong></p>
+
+			<p v-if="$i18n.locale()=='ru'" style="text-align: center;padding:0;margin:0;"><strong>ПРОТОКОЛ № __________</strong></p>
+			<p v-if="$i18n.locale()=='ru'" style="text-align: center;padding:0;margin:0;"><strong>Заседания экзаменационной комиссии</strong></p>
+			<p v-if="$i18n.locale()=='ru'" style="text-align: center;padding:0;margin:0;"><strong>специального экзамена по области образования  «Педагогические науки»</strong></p>
+			
+
+			<p v-if="$i18n.locale()=='kz'">Күні: <strong>{{examDate}}</strong></p>
+			<p v-if="$i18n.locale()=='ru'">Время: <strong>{{examDate}}</strong></p>
+			<p v-if="$i18n.locale()=='kz'" style="text-align: center; "><strong>Қазақ бөлімі</strong></p>
+			<p v-if="$i18n.locale()=='ru'" style="text-align: center; "><strong>Русское отделение</strong></p>
 			<table cellspacing="0" width="100%" style="border-collapse:collapse" border="1">
 				<thead style="display: table-header-group;">
 					<tr style="height: 51px;">
@@ -121,10 +171,12 @@
 							<p style="text-align: center;"><strong>№</strong></p>
 						</td>
 						<td style="width: 674px; height: 51px;" colspan="1" rowspan="1">
-							<p style="text-align: center;"><strong>ТАӘ</strong></p>
+							<p style="text-align: center;" v-if="$i18n.locale()=='kz'"><strong>ТАӘ</strong></p>
+							<p style="text-align: center;" v-if="$i18n.locale()=='ru'"><strong>ФИО</strong></p>
 						</td>
 						<td style="width: 117px; height: 51px;" colspan="1" rowspan="1">
-							<p style="text-align: center;"><strong>Өтті/Өтпеді</strong></p>
+							<p v-if="$i18n.locale()=='kz'" style="text-align: center;"><strong>Өтті/Өтпеді</strong></p>
+							<p v-if="$i18n.locale()=='ru'" style="text-align: center;"><strong>Допуск/Недопуск</strong></p>
 						</td>
 					</tr>
 				</thead>
@@ -138,25 +190,53 @@
 							<p style="text-align: center;">{{s.fullName}}</p>
 						</td>
 						<td style="width: 117px; height: 31px;" colspan="1" rowspan="1">
-							<p style="text-align: center;">
+							<p style="text-align: center;" v-if="$i18n.locale()=='kz'">
                                 {{Number(s.point)>4 ? 'Өтті' : 'Өтпеді'}}
+                            </p>
+							<p style="text-align: center;" v-if="$i18n.locale()=='ru'">
+                                {{Number(s.point)>4 ? 'Допуск' : 'Не допуск'}}
                             </p>
 						</td>
 					</tr>
+					
 				</tbody>
 			</table>
-			<p>&nbsp;</p>
-			<p>Комиссия төрағасы: ______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ТАӘ</p>
-			<p>Комиссия мүшелері: ______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;______________ _______________________________________</p>
-			<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-            <br><br>
-			<div>
-				<p style="text-align: center;">ЕҰУ ЕР Ф 08-21-21 Арнаулы емтихан ведомості. Бесінші басылым</p>
+			<div v-if="$i18n.locale()=='ru'">
+				<p>&nbsp;</p>
+				<p ><span v-if="$i18n.locale()=='ru'">Председатель комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия төрағасы</span>:_______________________Айкинбаева Г. К</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+				<span v-if="$i18n.locale()=='kz'">ТАӘ</span><span v-if="$i18n.locale()=='ru'">ФИО</span>
+				</p>
+
+
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Ботабаева А. Е</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 
+				
+				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
+				</p>
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Сергазина Л. Д</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
+				</p>
+			</div>
+
+			<div v-if="$i18n.locale()=='kz'">
+				<p>&nbsp;</p>
+				<p>Комиссия төрағасы: _______________________Айкинбаева Г. К</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
+				<p>Комиссия мүшелері: ______________________Ботабаева А. Е</p>
+				<p>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ТАӘ</p>
+
+				<p>Комиссия мүшелері: ______________________Сергазина Л. Д</p>
+				<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
+				
+				<br><br>	
+			</div>
+			<div style="position:fixed;bottom:0;width:100%;display:block;text-align:center;font-size:10px !important;">
+				<p style="text-align: center;font-size:10px !important;" v-if="$i18n.locale()=='kz'">ЕҰУ ЕР Ф 08-21-21 Арнаулы емтихан ведомосі. Бесінші басылым</p>
+				<p style="text-align: center;font-size:10px !important;" v-if="$i18n.locale()=='ru'">Ф ПР ЕНУ 08-21-21 Ведомость специального экзамена. Издание пятое</p>
 			</div>
             
 		</div>
@@ -181,12 +261,11 @@
     }
 </script>
 <style scoped>
-    @media print {
-        @page {
-            size: portrait;
-        }
-        #printbtn {
-            display :  none;
-        }
-    }
+    @page{ size:auto; margin:5mm;}
+	@media print {
+		div.divFooter {
+			position: absolute;
+			bottom: 0;
+		}
+	}
 </style>

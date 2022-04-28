@@ -21,17 +21,10 @@ lang=KZ>Онлайн тестілеу жүйесі </span></span><span style='fo
 <p class=MsoNormal style='margin-bottom:0in;text-align:justify;text-indent:
 .5in;line-height:normal'><span style='font-size:12.0pt'>&nbsp;</span></p>
 
-<p class=MsoNormal style='text-indent:21.3pt'><span style='font-size:12.0pt;
-line-height:107%'>1) </span><span style='color:#212529;background:#F8F9FA'>Құрылымдық
-бөлімшелер басшыларының және оқытушыл</span><span lang=KZ style='color:#212529;
-background:#F8F9FA'>ар</span><span style='color:#212529;background:#F8F9FA'>
-құрам</span><span lang=KZ style='color:#212529;background:#F8F9FA'>ы</span><span
-style='color:#212529;background:#F8F9FA'>ның, сондай-ақ құрылымдық бөлімшелер
-қызметкерлерінің </span><b><span lang=KZ style='color:#212529;background:#F8F9FA'>вакантты</span></b><b><span
-style='color:#212529;background:#F8F9FA'> лауазымдарына</span></b><span
-style='color:#212529;background:#F8F9FA'> <b>үміткерлерді ҚР заңнамасын білуіне
-тестілеу.</b></span><b><span style='color:#212529;background:#F8F9FA'> </span></b><span
-lang=KZ style='color:#212529;background:#F8F9FA'>Жүйе ҚР Конституциясы, ҚР
+<p class=MsoNormal><span style='font-size:12.0pt;
+line-height:107%'>1) Құрылымдық бөлімшелер басшыларының және оқытушылар
+құрамының, сондай-ақ құрылымдық бөлімшелер қызметкерлерінің <b>вакантты лауазымдарына үміткерлердің ҚР заңнамасы бойынша білімін
+тестілеу.</b></span><span lang=KZ style='color:#212529;background:#F8F9FA'>Жүйе ҚР Конституциясы, ҚР
 &quot;Ғылым туралы&quot; </span><span style='color:#212529;background:#F8F9FA'>Заңы</span><span
 lang=KZ style='color:#212529;background:#F8F9FA'>,  ҚР  &quot;Білім
 туралы&quot; Заңы, ҚР Еңбек кодексі, </span><span style='color:#212529;
@@ -101,7 +94,7 @@ lang=KZ style='color:#212529;background:#F8F9FA'>, Цифрлық дағдыла
 lang=KZ style='font-size:12.0pt'>Қызметкерлерді психологиялық тестілеу.</span></b><span
 lang=KZ style='font-size:12.0pt'> Жүйе қызметкердің коммуникативтік-әлеуметтік
 құзыреттілігін, жүйке-психикалық тұрақтылығын, педагог тұлғасының кәсіби
-бағыттылығын, басшының эмпатиялығын автоматты түрде бағалауға мүмкіндік береді.</span></p>
+бағыттылығын, басшының эмпатиялығын автоматты түрде бағалауға мүмкіндік береді. </span></p>
 
 <p class=MsoNormal style='margin-bottom:0in;text-align:justify;text-indent:
 .5in;line-height:normal'><b><span lang=KZ style='font-size:12.0pt'>Барлығы 287

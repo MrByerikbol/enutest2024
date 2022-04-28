@@ -45,9 +45,9 @@
                 </b-col>
                 <b-col lg="3">
                   <b-button @click="getMainReport" block variant="outline-success mb-2" v-b-modal.reportListModal>Main Exam Report</b-button>
-
-                  <b-button @click="getStudentMainReport" block variant="outline-info">Student Report</b-button>
-
+                  <b-button @click="getStudentMainReport"  variant="outline-info mr-1">Student Report</b-button>
+                  <b-button @click="getStudentDailyReport"  variant="outline-danger mr-1">Daily Report</b-button>
+                  <b-button @click="getStudentStatistic"  variant="outline-success ml-auto">Statistic</b-button>
                 </b-col>
               </b-row>
           </b-col>
@@ -185,8 +185,22 @@
                   variant="warning" 
                   @click="downloadDoc(row.item.userId,row.item.firstName)"
 
-                  class="mr-2 mt-2" block >
+                  class="mr-2 mt-2">
                   Студенттің файлдары
+                </b-button>
+
+                <b-button 
+                  v-if="row.item.roleName=='Студент' && Number(row.item.userId)!=Number(loadingId)"
+                  variant="primary" 
+                  class="mr-2" 
+                  @click="sendMail(row.item)">
+                  Емтихан нәтижесін жіберу
+                </b-button>
+                <b-button 
+                  v-if="row.item.roleName=='Студент' && Number(row.item.userId)==Number(loadingId)"
+                  variant="primary" disabled>
+                   <b-spinner small type="grow"></b-spinner>
+                   Емтихан нәтижесін жіберуде...
                 </b-button>
 
                 <b-button 
@@ -362,8 +376,20 @@
             <b-modal id="studentReportModal" ref="studentReportModal"
                 title="Student Main Report"
                 hide-footer size="huge">
-
                 <StudentTestReport :students="students"  :examDate="formattedExamDate"/>   
+            </b-modal>
+
+            <!--daily report-->
+            <b-modal id="dailyReport" ref="dailyReport"
+                title="Daily Student Report"
+                hide-footer size="huge">
+                <DailyStudentReport :students="students"  :examDate="formattedExamDate"/>   
+            </b-modal>
+            <!--student statistic-->
+            <b-modal id="studentStatistic" ref="studentStatistic"
+                title="Statistic"
+                hide-footer size="huge">
+                <StudentStatisticReport :statisticData="statisticData"/>   
             </b-modal>
         </b-row>
       </b-col>
@@ -379,6 +405,8 @@ import TtestReport from "@/components/TtestReport";
 import PtestReport from "@/components/PtestReport";
 import ReportList from "@/components/ReportList";
 import StudentTestReport from "@/components/StudentTestReport";
+import DailyStudentReport from "@/components/DailyStudentReport";
+import StudentStatisticReport from '@/components/StudentStatisticReport'
 import Datepicker from 'vuejs-datepicker';
 const moment = require('moment')
 import Vue from 'vue'
@@ -391,7 +419,9 @@ export default {
     ReportList,
     StudentTestReport,
     Datepicker,
-    PtestReport
+    PtestReport,
+    DailyStudentReport,
+    StudentStatisticReport
   },
   data(){
     return {
@@ -477,10 +507,101 @@ export default {
       pReport:{},
       examDays:[],
 
-      students :[]
+      students :[],
+      loadingId:-10,
+      statisticData:{}
     }
   },
   methods:{
+    formattedCurDate(){
+      return moment(new Date()).format('YYYY-MM-DD')
+    },
+    //student daily report
+    getStudentDailyReport(){
+      this.formattedExamDate=moment(this.reportDate).format('YYYY-MM-DD');
+      this.students=[];
+      if(this.reportDate==null){
+        this.reportDate="";
+      }
+      let dateStr = this.reportDate!=null ? moment(this.reportDate).format('YYYY-MM-DD') : this.reportDate;
+      if(dateStr=='Invalid date') dateStr="no-date";
+      axios.get(apiDomain+'/admin/enu/ttest/buisness/getdailyreport/'+dateStr+'',{headers:getHeader()})
+      .then(response=>{
+        this.students=response.data;  
+        this.$refs["dailyReport"].show();
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
+    getStudentStatistic(){
+      //alert("ene bol busgui chinii zurag");
+      axios.get(apiDomain+'/admin/enu/ttest/buisness/getstatistic',{headers:getHeader()})
+      .then(response=>{
+        this.statisticData=response.data;  
+        this.$refs["studentStatistic"].show();
+      })
+      .catch(() => {
+              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                  toaster:'b-toaster-top-center',
+                  variant:'danger',
+                  title: Vue.i18n.translate('system.errorTitle'),
+                  autoHideDelay: 5000
+              })
+          }
+      )     
+    },
+    sendMail(item){
+      this.loadingId=item.userId;
+      let userEmail = item.userEmail;
+      let subject = Vue.i18n.locale()=='kz' ? "Емтихан нәтижесі" : "Результаты экзамена" ;
+      let text = Vue.i18n.locale()=='kz' ? `Құрметті, емтихан тапсырушы жас түлек! 
+        Сіз «Педагогикалық ғылымдар» білім беру саласы бойынша арнаулы емтиханды тапсырдыңыз. 
+        Сізге емтихан нәтижесін растайтын көшірме (выписка) жіберілді. Көшірмені сақтау үшін төменде көрсетілген сілтемеге өтіңіз.`
+       : `Уважаемый(-ая) ,  выпускник(-ца)! Вы сдали специальный экзамен по области образования 
+          "Педагогические науки". Вам отправлена выписка, 
+          подтверждающая результат экзамена. Чтобы сохранить выписку, перейдите по ссылке, указанной ниже.` ;
+      let studentId = item.userId;
+
+      let locale = Vue.i18n.locale();
+
+      let resultLink=locale=='kz' ? 'https://best.enu.kz/#/stresult/'+studentId : 'https://best.enu.kz/#/stresultru/'+studentId;
+      //(String to, String subject, String text,String resultLink)
+      if(Number(studentId)>0){
+        axios.post(apiDomain+'/admin/enu/ttest/buisness/sendmail',{
+                  'to':userEmail,
+                  'subject':subject,
+                  'text':text,
+                  'resultLink':resultLink
+              },
+              {
+                headers:getHeader()
+              }
+          )
+          .then((response) => {
+              if(response.data=='success'){
+                this.loadingId=-10;
+                let alertMsg = Vue.i18n.translate('system.successMsg');
+                this.$bvToast.toast(alertMsg, {
+                    variant:'success',
+                    title: Vue.i18n.translate('system.successTitle'),
+                    autoHideDelay: 5000
+                })
+              }
+              else{
+                alert("An server error");
+                this.loadingId=-10;
+              }
+          });    
+      }
+
+    },
     showStExamResult(studentId){
         if(studentId>0){
             //Router.push({ path: '/stresult/'+this.studentId});
@@ -649,11 +770,10 @@ export default {
       let dateStr = this.reportDate==null ? 'no-date': moment(this.reportDate).format('YYYY-MM-DD');
       
 
-      axios.get(apiDomain+'/admin/enu/ttest/buisness/getstudentreport/'+dateStr+'',{headers:getHeader()})
+      axios.get(apiDomain+'/admin/enu/ttest/buisness/getstudentreport/'+dateStr+'/'+Vue.i18n.locale()+'',{headers:getHeader()})
       .then(response=>{
         this.students=response.data;  
         this.$refs["studentReportModal"].show();
-
       })
       .catch(() => {
               this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
