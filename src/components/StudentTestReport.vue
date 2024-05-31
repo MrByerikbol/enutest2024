@@ -81,19 +81,19 @@
 			
 			<div v-if="$i18n.locale()=='ru'">
 				<p>&nbsp;</p>
-				<p ><span v-if="$i18n.locale()=='ru'">Председатель комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия төрағасы</span>:_______________________Айкинбаева Г. К</p>
+				<p ><span v-if="$i18n.locale()=='ru'">Председатель комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия төрағасы</span>:_______________________Асылбекова М. П</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
 				<span v-if="$i18n.locale()=='kz'">ТАӘ</span><span v-if="$i18n.locale()=='ru'">ФИО</span>
 				</p>
 
 
-				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Ботабаева А. Е</p>
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Муталиева А. Ш</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 
 				
 				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
 				</p>
-				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Сергазина Л. Д</p>
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Ахтанова С. К</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
 				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
@@ -102,12 +102,12 @@
 
 			<div v-if="$i18n.locale()=='kz'">
 				<p>&nbsp;</p>
-				<p>Комиссия төрағасы: _______________________Айкинбаева Г. К</p>
+				<p>Комиссия төрағасы: _______________________Асылбекова М. П</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-				<p>Комиссия мүшелері: ______________________Ботабаева А. Е</p>
+				<p>Комиссия мүшелері: ______________________Муталиева А. Ш</p>
 				<p>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ТАӘ</p>
 
-				<p>Комиссия мүшелері: ______________________Сергазина Л. Д</p>
+				<p>Комиссия мүшелері: ______________________Ахтанова С. К</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
 				
 				<br><br>	
@@ -203,19 +203,19 @@
 			</table>
 			<div v-if="$i18n.locale()=='ru'">
 				<p>&nbsp;</p>
-				<p ><span v-if="$i18n.locale()=='ru'">Председатель комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия төрағасы</span>:_______________________Айкинбаева Г. К</p>
+				<p ><span v-if="$i18n.locale()=='ru'">Председатель комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия төрағасы</span>:_______________________Асылбекова М. П</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
 				<span v-if="$i18n.locale()=='kz'">ТАӘ</span><span v-if="$i18n.locale()=='ru'">ФИО</span>
 				</p>
 
 
-				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Ботабаева А. Е</p>
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Муталиева А. Ш</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
 				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 
 				
 				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
 				</p>
-				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Сергазина Л. Д</p>
+				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Ахтанова С. К</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
 				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
@@ -224,12 +224,12 @@
 
 			<div v-if="$i18n.locale()=='kz'">
 				<p>&nbsp;</p>
-				<p>Комиссия төрағасы: _______________________Айкинбаева Г. К</p>
+				<p>Комиссия төрағасы: _______________________Асылбекова М. П</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-				<p>Комиссия мүшелері: ______________________Ботабаева А. Е</p>
+				<p>Комиссия мүшелері: ______________________Муталиева А. Ш</p>
 				<p>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ТАӘ</p>
 
-				<p>Комиссия мүшелері: ______________________Сергазина Л. Д</p>
+				<p>Комиссия мүшелері: ______________________Ахтанова С. К</p>
 				<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
 				
 				<br><br>	

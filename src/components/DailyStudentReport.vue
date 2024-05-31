@@ -85,48 +85,6 @@
 					</tr>
 				</tbody>
 			</table>
-			
-
-			
-			<!-- <div v-if="$i18n.locale()=='ru'">
-				<p>&nbsp;</p>
-				<p ><span v-if="$i18n.locale()=='ru'">Председатель комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия төрағасы</span>:_______________________Айкинбаева Г. К</p>
-				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-				<span v-if="$i18n.locale()=='kz'">ТАӘ</span><span v-if="$i18n.locale()=='ru'">ФИО</span>
-				</p>
-
-
-				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Шолпанкулова Г. К</p>
-				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
-				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; 
-				
-				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
-				</p>
-				<p><span v-if="$i18n.locale()=='ru'">Члены комиссии</span><span v-if="$i18n.locale()=='kz'">Комиссия мүшелері</span>: &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; _______________________Сергазина Л. Д</p>
-				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-				<span v-if="$i18n.locale()=='ru'">подпись</span><span v-if="$i18n.locale()=='kz'">қолы</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-				<span v-if="$i18n.locale()=='ru'">ФИО</span><span v-if="$i18n.locale()=='kz'">ТАӘ</span>
-				</p>
-			</div>
-
-			<div v-if="$i18n.locale()=='kz'">
-				<p>&nbsp;</p>
-				<p>Комиссия төрағасы: _______________________Айкинбаева Г. К</p>
-				<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-				<p>Комиссия мүшелері: ______________________Шолпанкулова Г. К</p>
-				<p>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ТАӘ</p>
-
-				<p>Комиссия мүшелері: ______________________Сергазина Л. Д</p>
-				<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; қолы&nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ТАӘ</p>
-				
-				<br><br>	
-			</div> -->
-
-			<!-- <div style="position:fixed;bottom:0;">
-				<p v-if="$i18n.locale()=='kz'" style="text-align: center;">ЕҰУ ЕР Ф 08-21-21 Арнаулы емтихан ведомосі. Бесінші басылым</p>
-				<p v-if="$i18n.locale()=='ru'" style="text-align: center;">Ф ПР ЕНУ 08-21-21 Ведомость специального экзамена. Издание пятое</p>
-			</div> -->
-            
 		</div>
         
 

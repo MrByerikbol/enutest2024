@@ -531,12 +531,12 @@ export default {
         this.$refs["dailyReport"].show();
       })
       .catch(() => {
-              this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
-                  toaster:'b-toaster-top-center',
-                  variant:'danger',
-                  title: Vue.i18n.translate('system.errorTitle'),
-                  autoHideDelay: 5000
-              })
+            this.$bvToast.toast(Vue.i18n.translate('system.serverError'), {
+                toaster:'b-toaster-top-center',
+                variant:'danger',
+                title: Vue.i18n.translate('system.errorTitle'),
+                autoHideDelay: 5000
+            })
           }
       )     
     },

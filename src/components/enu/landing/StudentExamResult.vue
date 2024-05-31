@@ -46,7 +46,7 @@
 
                 </p>
                 <p style="font-size: 12;font-weight:bold; margin: 10px;">
-                    Техникалық хатшы: Майгул Серикқажықызы <br/> </p>
+                    Техникалық хатшы: Сериккажина Майгул Серикқажықызы <br/> </p>
                     <br/><br/>
                 <p style="font-size: 12;margin: 10px;float:left;">
                     <strong>{{getCurrentDate}}</strong> <br/>

@@ -2,7 +2,7 @@
     <b-row>
         <b-col lg="12">
             <b-modal size="lg" id="studentRegForm"
-                :title="$t('userList.userModal')" ref="studentRegForm" hide-footer>
+                :title="$t('userList.userModal')" ref="studentRegForm" hide-footer @shown="clearForm">
                 <b-form v-on:submit.prevent="handleStudentReg">
                     <b-form-row class="mb-3">
 
@@ -53,17 +53,7 @@
                                 :placeholder="$t('userList.email')"
                             />
                         </b-col>
-                        <b-col sm="auto" lg="12" md="12">
-                            <label  for="passwordNumber">{{$t('enu.landing.teacherForm.regNumber')}}</label>
-                            <b-form-input
-                                id="passwordNumber"
-                                v-model="userForm.passwordNumber"
-                                type="number" 
-                                pattern="\d*" maxlength="12"
-                                required
-                                :placeholder="$t('enu.landing.teacherForm.regNumber')"
-                            ></b-form-input>
-                        </b-col>
+                       
 
                         <b-col sm="auto" lg="12" md="12">
                             <label  for="studentPhoto" class="mt-1">{{$t('studentPhoto')}}</label>
@@ -75,16 +65,142 @@
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
                             ></b-form-file>
                         </b-col>
+                        
+                        <b-col sm="auto" lg="12" md="12" class="my-3">
+                            <label  for="regType" class="mt-1">
+                               <b>{{$t('selectUser')}}</b>
+                            </label>
+                            <select id="regType" v-model="userForm.regType" class="form-control">
+                                <option :value=-1>{{$t('selectUser')}}</option>
+
+                                <option :value=0>{{$t('year18')}}</option>
+                                <option :value=2>{{$t('parents')}}</option>
+                                <option :value=3>{{$t('relatives')}}</option>
+                            </select>
+                        </b-col>
+
+
+                       
+                        
+                       
+
+
+
+                        <div v-if="userForm.regType>-1" class="w-100 p-0 m-0">
                         <b-col sm="auto" lg="12" md="12">
-                            <label  for="studentPasswordPhoto" class="mt-1">{{$t('studentPasswordPhoto')}}</label>
-                            <b-form-file
+                            <label  for="privateNum" v-if="userForm.regType==3">
+                                {{$t('relNum')}}
+                            </label>
+                            <label  for="passwordNumber" v-if="userForm.regType==2">
+                                {{$t('parentNum')}}
+                            </label>
+                            <label  for="passwordNumber"  v-if="userForm.regType==0">
+                                {{$t('privateNum')}}
+                            </label>
+                            <b-form-input
+                                id="passwordNumber"
+                                v-model="userForm.passwordNumber"
+                                type="number" 
+                                pattern="\d*" maxlength="12"
+                                required
+                                 :placeholder="userForm.regType==2 ? $t('parentNum') : 
+                                 userForm.regType==3 ? $t('relNum') : $t('privateNum')
+                                "
+                            ></b-form-input>
+                        </b-col>
+                        <b-col sm="auto" lg="12" md="12"
+                             >
+                            <label  for="studentPasswordPhoto" class="mt-1" v-if="userForm.regType==0">
+                                {{$t('studentPasswordPhoto')}}
+                            </label>
+                            <label  for="studentPasswordPhoto" class="mt-1" v-if="userForm.regType==2 || userForm.regType==3" >
+                               {{$t("birnDoc")}}
+                            </label>
+                             <b-form-file
+                                 v-if="userForm.regType==0"
                                 size="sm"
                                 v-model="userForm.studentPasswordPhoto"
                                 :state="Boolean(userForm.studentPasswordPhoto)"
                                 :placeholder="$t('studentPasswordPhoto')"
                                 :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
                             ></b-form-file>
+                             <b-form-file
+                                 v-else
+                                size="sm"
+                                v-model="userForm.studentPasswordPhoto"
+                                :state="Boolean(userForm.studentPasswordPhoto)"
+                                :placeholder="$t('birnDoc')"
+                                :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
+                            ></b-form-file>
+                           
+                           
+                           
                         </b-col>
+
+                        <!-- bul jerde negizi birn photo soninan hosildi aldinda passworddin suretine birn photo ala salatinbiz sonninan birn photo jane password ekeui de bolatin case hosildi 
+                        sal tusiniksiz bolui mumkin password photonin label suzin paidalnaniz file bolganda birnphoto -->
+                        <b-col sm="auto" lg="12" md="12" v-if="userForm.regType==2 || userForm.regType==3"
+                             >
+                            <label  for="studentPasswordPhoto" class="mt-1">
+                                {{$t('studentPasswordPhoto')}}
+                            </label>
+                             <b-form-file
+                                
+                                size="sm"
+                                v-model="userForm.birthDocument"
+                                :state="Boolean(userForm.birthDocument)" 
+                                :placeholder="$t('studentPasswordPhoto')"
+                                :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
+                            ></b-form-file>
+                        </b-col>
+
+                        <b-col sm="auto" lg="12" md="12" v-if="userForm.regType==2 || userForm.regType==3">
+                            <label  for="repDocument" class="mt-1" v-if="userForm.regType==2">
+                                {{$t("parentsDoc")}}
+                            </label>
+                             <b-form-file
+                                v-if="userForm.regType==2"
+                                size="sm"
+                                v-model="userForm.repDocument"
+                                :state="Boolean(userForm.repDocument)"
+                                :placeholder="$t('parentsDoc')"
+                                :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
+                            ></b-form-file>
+
+                            <label  for="repDocument" class="mt-1" v-if="userForm.regType==3">
+                               {{$t('relativeDoc')}}
+                            </label>
+
+                            <b-form-file
+                                id="repDocument"
+                                v-if="userForm.regType==3"
+                                size="sm"
+                                v-model="userForm.repDocument"
+                                :state="Boolean(userForm.repDocument)"
+                                :placeholder="$t('relativeDoc')"
+                                :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
+                            ></b-form-file>
+                        </b-col>
+
+
+                        <b-col sm="auto" lg="12" md="12" v-if="userForm.regType==3">
+                            <label  for="proofDocument" class="mt-1">
+                               {{$t('proofDoc')}}
+                            </label>
+                            
+                            <b-form-file
+                                id="proofDocument"
+                                size="sm"
+                                v-model="userForm.proofDocument"
+                                :state="Boolean(userForm.proofDocument)"
+                                :placeholder="$t('proofDoc')"
+                                :drop-placeholder="$t('enu.teacherDocForm.dropHere')"
+                            ></b-form-file>
+                        </b-col>
+                       
+
+
+
                         <b-col sm="auto" lg="12" md="12">
                             <label  for="studentAtes" class="mt-1">{{$t('studentAtes')}}</label>
                             <b-form-file
@@ -126,6 +242,9 @@
                                 :placeholder="$t('enu.teacherForm.reEnterPassword')"
                             ></b-form-input>
                         </b-col>
+                        </div>
+
+
                     </b-form-row>
                     <b-button type="submit"  variant="primary" class="mr-2">
                         {{$t('studentMakeRequest')}}
@@ -285,10 +404,18 @@
                     reuserPassword:"",
 
                     studentPhoto:null,
+
+                    repDocument : null, // ake sheshesini nemese aga bauiri
+                    proofDocument: null, // eger aga bauri bolsa dalel natorius
+                    birthDocument:null, // soninan hosilgan jeke basin rastau
+
                     studentPasswordPhoto:null,
                     studentEnt:null,
                     studentAtes:null,
+
+                    regType:-1 // 0 - 18 ge tolgan , 2 - 18 ge tolmagan ata anasi arhili tirkelu, 3 - 18 ge tolmagan tuiskandar arhili
                 },
+                
                 qrValues: [],
                 CMSSignature: null,
                 base64Source: null,
@@ -329,6 +456,7 @@
                     })
                     return ;
                 }
+
                 if(this.userForm.studentPasswordPhoto==null){
                     this.$bvToast.toast(Vue.i18n.translate('studentPasswordPhotoAlert'),{
                         title: Vue.i18n.translate('system.errorTitle'),
@@ -337,6 +465,27 @@
                     })
                     return ;
                 }
+                if(this.userForm.regType==2 || this.userForm.regType==3){
+                   if(this.userForm.repDocument==null){
+                        this.$bvToast.toast(Vue.i18n.translate('chooseFileError'),{
+                            title: Vue.i18n.translate('system.errorTitle'),
+                            variant:"danger",
+                            autoHideDelay: 5000
+                        })
+                        return;
+                   }
+                   if(this.userForm.regType==3){
+                        if(this.userForm.proofDocument==null){
+                             this.$bvToast.toast(Vue.i18n.translate('chooseFileError'),{
+                                title: Vue.i18n.translate('system.errorTitle'),
+                                variant:"danger",
+                                autoHideDelay: 5000
+                            })
+                            return;
+                        }
+                   }
+                }
+                
                 // if(this.userForm.studentEnt==null){
                 //     this.$bvToast.toast(Vue.i18n.translate('studentEntPhotoAlert'),{
                 //         title: Vue.i18n.translate('system.errorTitle'),
@@ -445,11 +594,19 @@
 
                 formData.append("apiData",JSON.stringify(restObj));
                 formData.append("studentPhoto",this.userForm.studentPhoto);
+                //alert(this.userForm.studentPasswordPhoto);
                 formData.append("studentPasswordPhoto",this.userForm.studentPasswordPhoto);
                 formData.append("studentAtes",this.userForm.studentAtes);
-
+                if(Number(restObj.userObj.regType)==2 || Number(restObj.userObj.regType)==3){
+                    formData.append("repDocument",this.userForm.repDocument);
+                    if(Number(restObj.userObj.regType)==3){
+                        formData.append("proofDocument",this.userForm.proofDocument);
+                    }
+                    if(restObj.userObj.birthDocument!=null){
+                        formData.append("birthDocument",this.userForm.birthDocument);
+                    }
+                }
                 let endPointPath = null;
-
                 //alert(this.userForm.studentEnt);
                 
                 if(this.userForm.studentEnt!=null){
@@ -459,6 +616,9 @@
                 else{
                     endPointPath="/doc/signingnoent"
                 }  
+
+
+
                 if(endPointPath!=null){
                     axios.post(apiDomain + endPointPath,formData,{headers:{
                         'Accept': 'application/json',
@@ -490,15 +650,12 @@
                         }
 
                         if(Number(response.data)>0){
-                            
                             let alertMsg = Vue.i18n.locale()=='kz' ? "Сіз сәтті тіркелдіңіз." : "Вы успешно зарегистрировались.";
-                            //alert("bul alertMSG " + alertMsg);
-                            //alert("osi jerge jaisha kelip tur goy negizi "+alertMsg);
-
-                            //this.$refs['qrModal'].hide();
-                            //this.$refs['requestModal'].hide();
-                            this.$refs['studentRegForm'].hide();
                             
+
+
+                            this.clearForm();
+                            this.$refs['studentRegForm'].hide();
                             this.$bvToast.toast(alertMsg, {
                                 variant:'success',
                                 title: Vue.i18n.translate('system.successTitle'),
@@ -514,7 +671,30 @@
                 
 
           },
+          clearForm(){
+             this.userForm={
+                    thirdName:"",
+                    firstName :"",
+                    lastName:"",
+                    passwordNumber:"",
+                    userPhone:"",
+                    userEmail:"",
+                    userPassword:"",
+                    reuserPassword:"",
 
+                    studentPhoto:null,
+
+                    repDocument : null, // ake sheshesini nemese aga bauiri
+                    proofDocument: null, // eger aga bauri bolsa dalel natorius
+
+                    studentPasswordPhoto:null,
+                    studentEnt:null,
+                    studentAtes:null,
+
+                    regType:-1 // 0 - 18 ge tolgan , 2 - 18 ge tolmagan ata anasi arhili tirkelu, 3 - 18 ge tolmagan tuiskandar arhili
+                };
+                
+          },
           testBase(){
                 let docContainer = document.getElementById('docContainer');
                 let mainHtml = docContainer.innerHTML;

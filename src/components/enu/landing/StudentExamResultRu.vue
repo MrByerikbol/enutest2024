@@ -48,7 +48,7 @@
 
 				</p>
 				<p style="font-size: 12;font-weight:bold; margin: 10px;">
-					Технический секретарь: Сериккажина Майгул  <br/> </p>
+					Технический секретарь: Сериккажина Майгул Серикқажықызы  <br/> </p>
 					<br/><br/>
 				<p style="font-size: 12;margin: 10px; float:left;">
 					<strong>{{getCurrentDate}}</strong> <br/>
@@ -56,12 +56,7 @@
                 <div style="font-size: 12;margin: 10px; float:right;">
 					<qrcode-vue :value="qrText" :size="psize" render-as="svg" level="H"></qrcode-vue>
 				</div>
-
-		    </div>
-	
-	
-
-              
+            </div>
         </div> 
     </div>  
 </template>
